@@ -101,8 +101,8 @@ import { BanyanData } from './data.js';
         }
       `;
       const uniforms = {
-        topColor: { value: new THREE.Color(0x4492d1) },
-        bottomColor: { value: new THREE.Color(0xe0e4d6) }
+        topColor: { value: new THREE.Color(0x1A4C8B) }, // Deep majestic celestial blue
+        bottomColor: { value: new THREE.Color(0x8DA9C4) } // Crisp atmospheric dawn blue
       };
       const skyGeo = new THREE.SphereGeometry(4000, 32, 16);
       const skyMat = new THREE.ShaderMaterial({
@@ -127,7 +127,7 @@ import { BanyanData } from './data.js';
       }
       geo.computeVertexNormals();
 
-      const mat = new THREE.MeshLambertMaterial({ color: 0x93a185, side: THREE.DoubleSide });
+      const mat = new THREE.MeshLambertMaterial({ color: 0x2C4C3B, side: THREE.DoubleSide }); // Rich forest green
       const m = new THREE.Mesh(geo, mat);
       m.rotation.x = -Math.PI / 2;
       m.position.y = -65; // Sink slightly to embed roots naturally
@@ -761,7 +761,7 @@ import { BanyanData } from './data.js';
 
     _initScene() {
       this.scene = new THREE.Scene();
-      this.scene.fog = new THREE.FogExp2(0xe0e4d6, 0.00048);
+      this.scene.fog = new THREE.FogExp2(0x8DA9C4, 0.00048); // Match fog to new horizon color
       this.scene.background = null;
       this.scene.userData.uniforms = { uTime: { value: 0 } };
     }
@@ -771,9 +771,9 @@ import { BanyanData } from './data.js';
     }
 
     _initLights() {
-      this.scene.add(new THREE.AmbientLight(0xfff8f0, 0.62));
+      this.scene.add(new THREE.AmbientLight(0xfff8f0, 0.65));
 
-      const sun = new THREE.DirectionalLight(0xfff0cc, 0.95);
+      const sun = new THREE.DirectionalLight(0xffeedd, 1.35); // Boosted sun intensity for contrast
       sun.position.set(360, 640, 240);
       sun.castShadow = true;
       sun.shadow.mapSize.set(1024, 1024);
@@ -783,9 +783,14 @@ import { BanyanData } from './data.js';
       sun.shadow.bias = -0.001;
       this.scene.add(sun);
 
-      this.scene.add(new THREE.HemisphereLight(0xfff0e4, 0xc8b090, 0.44));
+      // Add a cinematic rim light from behind to make the trunk pop
+      const rim = new THREE.DirectionalLight(0x8DA9C4, 0.90);
+      rim.position.set(-400, 300, -800);
+      this.scene.add(rim);
 
-      const fill = new THREE.PointLight(0xd89830, 0.30, 1900);
+      this.scene.add(new THREE.HemisphereLight(0xfff0e4, 0x2C4C3B, 0.55)); // Tie hemisphere to new ground color
+
+      const fill = new THREE.PointLight(0xd89830, 0.35, 1900);
       fill.position.set(0, -40, 500);
       this.scene.add(fill);
 
