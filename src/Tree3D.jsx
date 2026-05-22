@@ -876,6 +876,8 @@ import { BanyanData } from './data.js';
       if (this._raf) cancelAnimationFrame(this._raf);
       window.removeEventListener('resize', this._onResize);
       this.renderer.dispose();
+      const ext = this.renderer.getContext().getExtension('WEBGL_lose_context');
+      if (ext) ext.loseContext();
       if (this.renderer.domElement.parentNode)
         this.renderer.domElement.parentNode.removeChild(this.renderer.domElement);
     }
