@@ -86,8 +86,10 @@ function TreeScene3D({
         if (!el) return;
         const p = tipPts[i];
         if (p && p.vis && i < cat.conditions.length) {
-          // Hang the element DOWN from the aerial root attachment: top of element = anchor
+          // Add an alternating vertical drop to ensure dense clusters don't overlap perfectly
+          const drop = (i % 4) * 42;
           el.style.transform = `translate(${p.x.toFixed(1)}px,${p.y.toFixed(1)}px) translate(-50%,0%)`;
+          el.style.setProperty('--drop', `${drop}px`);
           el.style.visibility = '';
         } else {
           el.style.visibility = 'hidden';

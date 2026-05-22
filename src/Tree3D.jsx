@@ -325,7 +325,7 @@ import { BanyanData } from './data.js';
           const mesh = new THREE.Mesh(mergeGeos(geos), mat);
           mesh.castShadow = true;
           this.scene.add(mesh);
-          this.branchGroups[i] = { mesh, mat, tips, anchor };
+          this.branchGroups[i] = { mesh, mat, tips, anchor, primCurve };
         }
         this._makeLeaves(i, leafPts);
       }
@@ -503,6 +503,12 @@ import { BanyanData } from './data.js';
           const t = 0.35 + 0.60 * step; // Spread between 0.35 and 0.95
           const attachPt = bg.primCurve.getPoint(t);
           attachPt.y -= 4.0; // Sink inside the tube slightly
+
+          // Fan them out tangentially so they don't overlap in perspective
+          const outward = new THREE.Vector3(attachPt.x, 0, attachPt.z).normalize();
+          const perp = new THREE.Vector3(-outward.z, 0, outward.x);
+          const fanOffset = (j % 3 === 0) ? -1 : (j % 3 === 1) ? 0 : 1;
+          attachPt.add(perp.multiplyScalar(fanOffset * 22));
 
           // Randomize X and Z slightly for natural swaying, but keep top securely anchored
           const groundY = 1 + this.rand() * 7;
@@ -931,9 +937,16 @@ import { BanyanData } from './data.js';
         const n       = pts.length || 1;
         const tx      = pts.reduce((a, t) => a + t.x, 0) / n;
         const ty      = pts.reduce((a, t) => a + t.y, 0) / n;
-        // Shift camera toward the branch while keeping generous Z for context
-        this._tPos.set(tx * 0.65, Math.max(ty, 60) + 120, 750);
-        this._tTarget.set(tx * 0.80, Math.max(ty, 30) + 40, 0);
+        const tz      = pts.reduce((a, t) => a + t.z, 0) / n;
+        
+        // Shift camera to the side of the branch rather than looking down the barrel, so labels spread horizontally
+        const dir = new THREE.Vector3(tx, 0, tz).normalize();
+        const perp = new THREE.Vector3(-dir.z, 0, dir.x);
+        
+        const camPos = new THREE.Vector3(tx, Math.max(ty, 60) + 120, tz).add(dir.multiplyScalar(150)).add(perp.multiplyScalar(320));
+
+        this._tPos.copy(camPos);
+        this._tTarget.set(tx, Math.max(ty, 30), tz);
         this.tree.setLitCategory(selectedCategory);
         this.tree.setLitRoot(-1);
 

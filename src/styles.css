@@ -270,7 +270,7 @@ body {
   align-self: center;
   margin-bottom: 4px;
 }
-.ol-cond.is-visible::before { height: 32px; }
+.ol-cond.is-visible::before { height: calc(32px + var(--drop, 0px)); }
 
 .ol-cond__halo {
   position: absolute; width: 20px; height: 20px; border-radius: 50%;
@@ -363,10 +363,6 @@ body {
   font-family: var(--mono); font-size: 10px; letter-spacing: 0.45em;
   text-transform: uppercase; color: var(--ink-faint);
   display: flex; align-items: center; gap: 12px; margin-bottom: 18px;
-}
-.hero-tagline .label::before {
-  content: ""; width: 28px; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--gold));
 }
 .hero-tagline h1 {
   font-family: var(--serif); font-weight: 300;
