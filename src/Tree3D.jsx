@@ -742,7 +742,7 @@ import { BanyanData } from './data.js';
     _initRenderer() {
       // Disable antialias on high DPI screens to massively improve performance
       const isHighDPI = window.devicePixelRatio > 1;
-      const r = new THREE.WebGLRenderer({ antialias: !isHighDPI, alpha: true, powerPreference: "high-performance" });
+      const r = new THREE.WebGLRenderer({ antialias: !isHighDPI, alpha: true });
       // Clamp pixel ratio to 1.5 max (retina 2.0 is usually overkill and halves FPS)
       r.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
       r.setSize(this.w, this.h);
