@@ -132,7 +132,7 @@ body {
 .nav > * { pointer-events: auto; }
 .nav-mark {
   font-family: var(--serif); font-style: italic; font-size: 22px;
-  display: flex; align-items: center; gap: 10px; color: var(--ink);
+  display: flex; align-items: center; gap: 10px; color: rgba(255, 255, 255, 0.95);
 }
 .nav-mark::before {
   content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--gold);
@@ -140,7 +140,7 @@ body {
 .nav-right { display: flex; align-items: center; gap: 28px; }
 .nav-links {
   display: flex; gap: 22px;
-  font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--ink-mute);
+  font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(255, 255, 255, 0.55);
 }
 .nav-links a {
   color: inherit; text-decoration: none; position: relative; padding-bottom: 4px;
@@ -151,7 +151,7 @@ body {
   height: 1px; width: 0; background: var(--gold);
   transition: width 0.5s var(--ease);
 }
-.nav-links a:hover { color: var(--ink); }
+.nav-links a:hover { color: rgba(255, 255, 255, 0.95); }
 .nav-links a:hover::after { width: 100%; }
 .nav-cta {
   padding: 9px 18px; border-radius: 999px;
@@ -367,13 +367,13 @@ body {
 }
 .hero-tagline .label {
   font-family: var(--mono); font-size: 10px; letter-spacing: 0.45em;
-  text-transform: uppercase; color: var(--ink-faint);
+  text-transform: uppercase; color: rgba(255, 255, 255, 0.55);
   display: flex; align-items: center; gap: 12px; margin-bottom: 18px;
 }
 .hero-tagline h1 {
   font-family: var(--serif); font-weight: 300;
   font-size: clamp(28px, 3.4vw, 48px);
-  line-height: 1.05; letter-spacing: -0.018em; color: var(--ink);
+  line-height: 1.05; letter-spacing: -0.018em; color: rgba(255, 255, 255, 0.95);
 }
 .hero-tagline h1 em { font-style: italic; color: var(--gold-deep); font-weight: 400; }
 
@@ -382,11 +382,11 @@ body {
   pointer-events: none; display: flex; flex-direction: column; align-items: flex-end;
   gap: 14px; text-align: right; transition: opacity 0.8s var(--ease);
 }
-.hero-cue .text { max-width: 36ch; font-size: 13.5px; line-height: 1.55; color: var(--ink-mute); }
+.hero-cue .text { max-width: 36ch; font-size: 13.5px; line-height: 1.55; color: rgba(255, 255, 255, 0.65); }
 .hero-cue .meta {
   display: flex; gap: 14px; align-items: center;
   font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.36em;
-  text-transform: uppercase; color: var(--ink-faint);
+  text-transform: uppercase; color: rgba(255, 255, 255, 0.55);
 }
 .hero-cue .meta strong { color: var(--gold-deep); font-weight: 500; }
 .hero-cue .meta .sep { width: 18px; height: 1px; background: var(--line-strong); }

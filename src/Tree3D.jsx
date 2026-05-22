@@ -134,13 +134,7 @@ import { BanyanData } from './data.js';
       m.receiveShadow = true;
       this.scene.add(m);
 
-      // Darker inner disk under canopy
-      const d = new THREE.Mesh(
-        new THREE.CircleGeometry(480, 48),
-        new THREE.MeshBasicMaterial({ color: C.groundFar, transparent: true, opacity: 0.5, depthWrite: false })
-      );
-      d.rotation.x = -Math.PI / 2; d.position.y = 0.5;
-      this.scene.add(d);
+      // Fake shadow disk removed for better realism and to rely on actual shadow map
     }
 
     /* ── Trunk — multi-layered realistic bark ────────────────────────────── */

@@ -41,17 +41,31 @@ function TreeScene3D({
       const container = containerRef.current;
       if (!container) return;
 
-      // Category label positions
+      // Category label positions (with basic 2D anti-overlap)
+      const activeCats = [];
       catRefs.current.forEach((ref, i) => {
-        const el = ref.current;
-        if (!el) return;
         const p = catPts[i];
         if (p && p.vis) {
-          el.style.transform = `translate(${p.x.toFixed(1)}px,${p.y.toFixed(1)}px) translate(-50%,-50%)`;
-          el.style.visibility = '';
-        } else {
-          el.style.visibility = 'hidden';
+          activeCats.push({ el: ref.current, p: { ...p }, i });
+        } else if (ref.current) {
+          ref.current.style.visibility = 'hidden';
         }
+      });
+      // Sort top to bottom
+      activeCats.sort((a, b) => a.p.y - b.p.y);
+      for (let j = 1; j < activeCats.length; j++) {
+        const curr = activeCats[j];
+        const prev = activeCats[j - 1];
+        // If labels are horizontally close, push the current one down
+        if (Math.abs(curr.p.x - prev.p.x) < 140) {
+          if (curr.p.y - prev.p.y < 46) {
+            curr.p.y = prev.p.y + 46;
+          }
+        }
+      }
+      activeCats.forEach(({ el, p }) => {
+        el.style.transform = `translate(${p.x.toFixed(1)}px,${p.y.toFixed(1)}px) translate(-50%,-50%)`;
+        el.style.visibility = '';
       });
 
       // Root node positions
@@ -136,7 +150,6 @@ function TreeScene3D({
           >
             <span className="ol-cat__dot" />
             <span className="ol-cat__name">{cat.name}</span>
-            <span className="ol-cat__tag">{cat.conditions.length}</span>
           </button>
         ))}
 
