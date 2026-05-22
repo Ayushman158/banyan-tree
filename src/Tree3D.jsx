@@ -458,27 +458,30 @@ import { BanyanData } from './data.js';
         const cat     = BanyanData.categories[catIdx];
         if (!cat) continue;
         const numConds = cat.conditions.length;
-        // Use all tips above ground, sorted by X so we spread conditions evenly
-        const tips = (this.branchGroups[catIdx]?.tips ?? [])
-          .filter(t => t.y > 8 && Math.abs(t.x) < 700)
-          .sort((a, b) => a.x - b.x);
-        if (!tips.length) continue;
+        
+        // Use the tips from this specific branch group
+        const tips = this.branchGroups[catIdx]?.tips ?? [];
+        const bg = this.branchGroups[catIdx];
+        if (!tips.length || !bg) continue;
 
         const anchors = [], geos = [];
 
         for (let j = 0; j < numConds; j++) {
-          // Distribute conditions evenly across available tips
-          const idx  = Math.floor((j / numConds) * tips.length);
-          const base = tips[Math.min(idx, tips.length - 1)];
+          let attachPt;
+          if (j < tips.length) {
+            // Attach securely just inside the branch tip
+            attachPt = tips[j].clone();
+            attachPt.y -= 2.0;
+          } else {
+            // Attach securely along the primary branch curve for remaining conditions
+            const rem = numConds - tips.length;
+            const step = rem > 1 ? (j - tips.length) / (rem - 1) : 0.5;
+            const t = 0.35 + 0.55 * step; // Spread between 0.35 and 0.9
+            attachPt = bg.primCurve.getPoint(t);
+            attachPt.y -= 4.0;
+          }
 
-          // Tighter alignment to the branch tip to prevent floating roots
-          const jX = (j - (numConds - 1) / 2) * 25 + (this.rand() - 0.5) * 4;
-          const jZ = (this.rand() - 0.5) * 6;
-          const attachY = Math.max(base.y - 1.0, 10);
-
-          const attachPt = new THREE.Vector3(base.x + jX, attachY, base.z + jZ);
-
-          // Hang the root down to near ground level with a gentle sway
+          // Randomize X and Z slightly for natural swaying, but keep top securely anchored
           const groundY = 1 + this.rand() * 7;
           const swayX   = (this.rand() - 0.5) * 16;
           const swayZ   = (this.rand() - 0.5) * 10;
