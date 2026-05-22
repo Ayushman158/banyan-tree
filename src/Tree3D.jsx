@@ -783,18 +783,13 @@ import { BanyanData } from './data.js';
       sun.shadow.bias = -0.001;
       this.scene.add(sun);
 
-      // Add a cinematic rim light from behind to make the trunk pop
-      const rim = new THREE.DirectionalLight(0x8DA9C4, 0.90);
-      rim.position.set(-400, 300, -800);
-      this.scene.add(rim);
-
       this.scene.add(new THREE.HemisphereLight(0xfff0e4, 0x2C4C3B, 0.55)); // Tie hemisphere to new ground color
 
       const fill = new THREE.PointLight(0xd89830, 0.35, 1900);
       fill.position.set(0, -40, 500);
       this.scene.add(fill);
 
-      const rim = new THREE.DirectionalLight(0xc0e0f8, 0.22);
+      const rim = new THREE.DirectionalLight(0x8DA9C4, 0.90); // Cinematic rim
       rim.position.set(-480, 360, -540);
       this.scene.add(rim);
 
