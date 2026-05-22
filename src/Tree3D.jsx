@@ -120,9 +120,9 @@ import { BanyanData } from './data.js';
       for (let i = 0; i < pos.length; i += 3) {
         const x = pos[i];
         const y = pos[i + 1];
-        // Procedural noise for natural rolling landscape
-        const noise = Math.sin(x * 0.0008) * Math.cos(y * 0.0008) * 350 +
-                      Math.sin(x * 0.003 + y * 0.004) * 60;
+        // Procedural noise for natural rolling landscape (softened to prevent exposing trunk base)
+        const noise = Math.sin(x * 0.001) * Math.cos(y * 0.001) * 20 +
+                      Math.sin(x * 0.003 + y * 0.004) * 8;
         pos[i + 2] = noise;
       }
       geo.computeVertexNormals();
@@ -130,7 +130,7 @@ import { BanyanData } from './data.js';
       const mat = new THREE.MeshLambertMaterial({ color: 0x2C4C3B, side: THREE.DoubleSide }); // Rich forest green
       const m = new THREE.Mesh(geo, mat);
       m.rotation.x = -Math.PI / 2;
-      m.position.y = -65; // Sink slightly to embed roots naturally
+      m.position.y = -5; // Meet the trunk base perfectly
       m.receiveShadow = true;
       this.scene.add(m);
 
