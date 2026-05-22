@@ -740,8 +740,11 @@ import { BanyanData } from './data.js';
     }
 
     _initRenderer() {
-      const r = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-      r.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      // Disable antialias on high DPI screens to massively improve performance
+      const isHighDPI = window.devicePixelRatio > 1;
+      const r = new THREE.WebGLRenderer({ antialias: !isHighDPI, alpha: true, powerPreference: "high-performance" });
+      // Clamp pixel ratio to 1.5 max (retina 2.0 is usually overkill and halves FPS)
+      r.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
       r.setSize(this.w, this.h);
       r.shadowMap.enabled   = true;
       r.shadowMap.type      = THREE.PCFSoftShadowMap;
@@ -770,7 +773,8 @@ import { BanyanData } from './data.js';
       const sun = new THREE.DirectionalLight(0xffeedd, 1.35); // Boosted sun intensity for contrast
       sun.position.set(360, 640, 240);
       sun.castShadow = true;
-      sun.shadow.mapSize.set(1024, 1024);
+      // Lower shadow map size from 1024 to 512 for significantly better performance
+      sun.shadow.mapSize.set(512, 512);
       sun.shadow.camera.near = 10; sun.shadow.camera.far = 2800;
       sun.shadow.camera.left = sun.shadow.camera.bottom = -1000;
       sun.shadow.camera.right = sun.shadow.camera.top   =  1000;
