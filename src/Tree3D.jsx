@@ -82,8 +82,8 @@ import { BanyanData } from './data.js';
     /* ── Ground ─────────────────────────────────────────────────────────── */
     _ground() {
       const m = new THREE.Mesh(
-        new THREE.CircleGeometry(2400, 48),
-        new THREE.MeshLambertMaterial({ color: C.ground, side: THREE.DoubleSide })
+        new THREE.PlaneGeometry(16000, 16000),
+        new THREE.MeshLambertMaterial({ color: 0xc8cebd, side: THREE.DoubleSide })
       );
       m.rotation.x = -Math.PI / 2; m.receiveShadow = true;
       this.scene.add(m);
@@ -694,7 +694,7 @@ import { BanyanData } from './data.js';
     }
 
     _initRenderer() {
-      const r = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+      const r = new THREE.WebGLRenderer({ antialias: true, alpha: true });
       r.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       r.setSize(this.w, this.h);
       r.shadowMap.enabled   = true;
@@ -702,15 +702,15 @@ import { BanyanData } from './data.js';
       r.toneMapping         = THREE.ACESFilmicToneMapping;
       r.toneMappingExposure = 1.18;
       r.outputColorSpace    = THREE.SRGBColorSpace;
-      r.setClearColor(0xece4d4, 1);
+      r.setClearColor(0x000000, 0);
       this.container.appendChild(r.domElement);
       this.renderer = r;
     }
 
     _initScene() {
       this.scene = new THREE.Scene();
-      this.scene.fog = new THREE.FogExp2(0xece4d4, 0.00048);
-      this.scene.background = new THREE.Color(0xece4d4);
+      this.scene.fog = new THREE.FogExp2(0xe0e4d6, 0.00048);
+      this.scene.background = null;
       this.scene.userData.uniforms = { uTime: { value: 0 } };
     }
 

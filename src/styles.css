@@ -46,10 +46,7 @@ html, body {
 body {
   cursor: none;
   min-height: 100vh;
-  background:
-    radial-gradient(ellipse 80% 55% at 50% 0%,  hsl(48, 32%, 92%), transparent 68%),
-    radial-gradient(ellipse 62% 42% at 50% 105%, hsl(38, 28%, 87%), transparent 62%),
-    var(--paper);
+  background: linear-gradient(to bottom, #4492d1 0%, #90c2e6 30%, #e0e4d6 55%, #c8cebd 100%);
 }
 
 /* ── Paper texture overlay ───────────────────────────────────────────────── */
