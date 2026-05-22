@@ -103,71 +103,58 @@ import { BanyanData } from './data.js';
       const H = 155;
 
       // Core trunk shape — wider at base, strong taper
-      const geo = new THREE.CylinderGeometry(15, 52, H, 20, 4);
-      // Organic taper: push mid-verts outward slightly for belly
+      // High polygon count to support detailed vertex displacement
+      const geo = new THREE.CylinderGeometry(15, 38, H, 64, 32);
+      
       const posArr = geo.attributes.position.array;
       for (let i = 0; i < posArr.length; i += 3) {
-        const y = posArr[i + 1] + H / 2;
-        const t = y / H;
-        // Belly factor: slightly bulge at 20% height
-        const belly = Math.max(0, 1 - Math.pow((t - 0.2) / 0.35, 2)) * 4;
-        const r = Math.sqrt(posArr[i] ** 2 + posArr[i + 2] ** 2);
+        let vx = posArr[i], vy = posArr[i + 1], vz = posArr[i + 2];
+        const y = vy + H / 2; // 0 at bottom, H at top
+        const t = y / H;      // 0.0 to 1.0
+
+        const angle = Math.atan2(vz, vx);
+        
+        // Organic twist: the buttresses twist slightly as they go up
+        const a = angle + Math.sin(y * 0.03) * 0.4;
+
+        // Create 7 main buttress ridges
+        let ridge1 = Math.cos(a * 7);
+        ridge1 = Math.pow((ridge1 + 1) / 2, 2.0);
+
+        // Break symmetry with 3 secondary ridges
+        let ridge2 = Math.cos(a * 3 + 2.0);
+        ridge2 = Math.pow((ridge2 + 1) / 2, 1.5);
+
+        // Mix ridges
+        const totalRidge = (ridge1 * 0.75 + ridge2 * 0.25);
+
+        // Calculate expansion based on height. 
+        // Huge expansion at bottom (t=0) fading sharply as it goes up
+        const buttressExpansion = totalRidge * 55 * Math.pow(1 - t, 2.2);
+        
+        // Additional organic base flare (uniform)
+        const baseFlare = 15 * Math.pow(1 - t, 4.0);
+        
+        // Bark texture noise
+        const noise = Math.sin(y * 0.5) * Math.sin(angle * 15) * 0.8;
+
+        const r = Math.sqrt(vx * vx + vz * vz);
         if (r > 0) {
-          const scale = (r + belly) / r;
+          const newR = r + buttressExpansion + baseFlare + noise;
+          const scale = newR / r;
           posArr[i]     *= scale;
           posArr[i + 2] *= scale;
         }
       }
       geo.computeVertexNormals();
       geo.translate(0, H / 2, 0);
+      
       const mat = new THREE.MeshLambertMaterial({ color: C.bark });
       this.trunkMats.push({ mat, color: C.bark });
       const mesh = new THREE.Mesh(geo, mat);
       mesh.castShadow = true;
       this.scene.add(mesh);
 
-      // Buttress roots — organic flanges curving outward to anchor the base
-      const buttMat = new THREE.MeshLambertMaterial({ color: C.barkMid });
-      this.trunkMats.push({ mat: buttMat, color: C.barkMid });
-      for (let i = 0; i < 7; i++) {
-        const a = (i / 7) * Math.PI * 2 + this.rand() * 0.3;
-        const R = [85, 62, 44, 28, 16];
-        const Y = [0, 25, 60, 100, 140];
-        const pts = R.map((r, j) => new THREE.Vector3(
-          Math.cos(a) * r + (this.rand() - 0.5) * 3,
-          Y[j],
-          Math.sin(a) * r + (this.rand() - 0.5) * 3
-        ));
-        const w = 4.5 + (1 - i / 7) * 4;
-        this.scene.add(new THREE.Mesh(
-          new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 10, w, 6),
-          buttMat
-        ));
-      }
-
-      // Bark grooves — thin darker tubes wrapping the tapered surface
-      const grooveMat = new THREE.MeshLambertMaterial({ color: C.barkShade });
-      this.trunkMats.push({ mat: grooveMat, color: C.barkShade });
-      for (let i = 0; i < 8; i++) {
-        const a  = this.rand() * Math.PI * 2;
-        const sy = 5 + this.rand() * 105;
-        const ey = Math.min(150, sy + 15 + this.rand() * 40);
-        const my = (sy + ey) / 2;
-        
-        const rS = (52 - (sy / 155) * 37) * 0.98;
-        const rM = (52 - (my / 155) * 37) * 0.98;
-        const rE = (52 - (ey / 155) * 37) * 0.98;
-
-        const pts = [
-          new THREE.Vector3(Math.cos(a) * rS, sy, Math.sin(a) * rS),
-          new THREE.Vector3(Math.cos(a + (this.rand() - 0.5) * 0.08) * rM, my, Math.sin(a + (this.rand() - 0.5) * 0.08) * rM),
-          new THREE.Vector3(Math.cos(a + (this.rand() - 0.5) * 0.15) * rE, ey, Math.sin(a + (this.rand() - 0.5) * 0.15) * rE),
-        ];
-        this.scene.add(new THREE.Mesh(
-          new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 6, 0.8 + this.rand() * 0.8, 4),
-          grooveMat
-        ));
-      }
     }
 
     /* ── Canopy — 12 category branches ─────────────────────────────────── */
@@ -459,27 +446,17 @@ import { BanyanData } from './data.js';
         if (!cat) continue;
         const numConds = cat.conditions.length;
         
-        // Use the tips from this specific branch group
-        const tips = this.branchGroups[catIdx]?.tips ?? [];
         const bg = this.branchGroups[catIdx];
-        if (!tips.length || !bg) continue;
+        if (!bg || !bg.primCurve) continue;
 
         const anchors = [], geos = [];
 
         for (let j = 0; j < numConds; j++) {
-          let attachPt;
-          if (j < tips.length) {
-            // Attach securely just inside the branch tip
-            attachPt = tips[j].clone();
-            attachPt.y -= 2.0;
-          } else {
-            // Attach securely along the primary branch curve for remaining conditions
-            const rem = numConds - tips.length;
-            const step = rem > 1 ? (j - tips.length) / (rem - 1) : 0.5;
-            const t = 0.35 + 0.55 * step; // Spread between 0.35 and 0.9
-            attachPt = bg.primCurve.getPoint(t);
-            attachPt.y -= 4.0;
-          }
+          // Distribute securely along the primary branch curve for all conditions
+          const step = numConds > 1 ? j / (numConds - 1) : 0.5;
+          const t = 0.35 + 0.60 * step; // Spread between 0.35 and 0.95
+          const attachPt = bg.primCurve.getPoint(t);
+          attachPt.y -= 4.0; // Sink inside the tube slightly
 
           // Randomize X and Z slightly for natural swaying, but keep top securely anchored
           const groundY = 1 + this.rand() * 7;
@@ -622,16 +599,6 @@ import { BanyanData } from './data.js';
 
     /* ── State setters ───────────────────────────────────────────────────── */
     setLitCategory(catIdx) {
-      const trunkDim = catIdx != null;
-      if (this.trunkMats) {
-        this.trunkMats.forEach(tm => {
-          tm.mat.color.setHex(trunkDim ? 0x160c04 : tm.color);
-          tm.mat.transparent = trunkDim;
-          tm.mat.opacity = trunkDim ? 0.16 : 1.0;
-          tm.mat.needsUpdate = true;
-        });
-      }
-
       for (let i = 0; i < 12; i++) {
         const bg = this.branchGroups[i], lg = this.leafGroups[i];
         const am = this.catAerialMeshes?.[i];
@@ -639,7 +606,7 @@ import { BanyanData } from './data.js';
         const isLit = catIdx === i, isDim = catIdx != null && !isLit;
 
         // Branches
-        bg.mat.color.setHex(isLit ? C.barkHighlight : isDim ? 0x160c04 : C.bark);
+        bg.mat.color.setHex(isDim ? 0x160c04 : C.bark);
         bg.mat.transparent = isDim; bg.mat.opacity = isDim ? 0.16 : 1.0; bg.mat.needsUpdate = true;
 
         // Leaves
@@ -661,9 +628,9 @@ import { BanyanData } from './data.js';
             am.mat.color.setHex(C.barkLight);
             am.mat.opacity = 0.22;
           } else if (isLit) {
-            // Selected: show brightly so roots are clearly part of the branch
+            // Category selected: highlight its roots
             am.mesh.visible = true;
-            am.mat.color.setHex(C.barkHighlight);
+            am.mat.color.setHex(C.bark);
             am.mat.opacity = 0.62;
           } else {
             // Dim: hide entirely for performance
