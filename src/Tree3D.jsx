@@ -197,11 +197,11 @@ import { BanyanData } from './data.js';
         const sp   = LIMBS[i];
         const geos = [], tips = [], leafPts = [];
 
-        // Origin: inside the trunk surface at startY to ensure a clean, gap-free intersection
+        // Origin: deep inside the trunk so the Tube intersects the surface cleanly
         const tR    = 52 - (sp.startY / H) * 37; // trunk radius at startY
         const outward = new THREE.Vector3(Math.sin(sp.angle * 0.18), 0, sp.z).normalize();
-        const sx    = outward.x * tR * 0.65;
-        const sz    = outward.z * tR * 0.65;
+        const sx    = outward.x * tR * 0.1;
+        const sz    = outward.z * tR * 0.1;
         const start = new THREE.Vector3(sx, sp.startY, sz);
 
         const limLen = sp.len * (0.90 + this.rand() * 0.16);
@@ -210,20 +210,6 @@ import { BanyanData } from './data.js';
         const primCurve = this._makeLimbCurve(start, sp.angle, sp.z, limLen, sp.droop);
         const primSegs  = 16;
         geos.push(new THREE.TubeGeometry(primCurve, primSegs, sp.W / 2, 12, false));
-        
-        // Flare at the base to merge smoothly into the trunk
-        const p1 = primCurve.getPoint(0.05);
-        const flareDir = new THREE.Vector3().subVectors(p1, start).normalize();
-        const flareLen = sp.W * 2.5;
-        const flareGeo = new THREE.CylinderGeometry(sp.W / 2, sp.W * 1.6, flareLen, 12, 1);
-        flareGeo.translate(0, -flareLen / 2, 0); // Top (narrow) at local Y=0
-        const dummy = new THREE.Object3D();
-        dummy.position.copy(start);
-        dummy.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), flareDir);
-        dummy.translateY(flareLen * 0.35); // Shift outward to bridge trunk and branch
-        dummy.updateMatrix();
-        flareGeo.applyMatrix4(dummy.matrix);
-        geos.push(flareGeo);
 
         const primEnd = primCurve.getPoint(1.0);
 
@@ -543,7 +529,7 @@ import { BanyanData } from './data.js';
       const ANGLES = [-1.28, -0.84, -0.44, 0, 0.44, 0.84, 1.28];
       ANGLES.forEach((a, i) => {
         const geos = [], tipH = { v: new THREE.Vector3(0, -220, 0) };
-        const start = new THREE.Vector3(Math.cos(a)*46 + (this.rand()-0.5)*4, -14, Math.sin(a)*46 + (this.rand()-0.5)*4);
+        const start = new THREE.Vector3(Math.cos(a)*10 + (this.rand()-0.5)*4, -5, Math.sin(a)*10 + (this.rand()-0.5)*4);
         this._growRoot(start, a, 128 + this.rand() * 28, 9.5, 4, geos, tipH);
         if (geos.length) {
           const mat  = new THREE.MeshLambertMaterial({ color: C.rootDark });
