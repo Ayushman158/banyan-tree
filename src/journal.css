@@ -1,0 +1,221 @@
+.journal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.journal-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(236, 228, 212, 0.95);
+  backdrop-filter: blur(8px);
+}
+
+.journal-container, .profile-container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 600px;
+  padding: 40px;
+}
+
+.journal-close {
+  position: absolute;
+  top: 0px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 32px;
+  color: #3e2610;
+  cursor: pointer;
+  z-index: 2;
+  font-family: 'Manrope', sans-serif;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+.journal-close:hover {
+  opacity: 1;
+}
+
+.journal-card {
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(62, 38, 16, 0.1);
+  padding: 48px;
+  border-radius: 4px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(62, 38, 16, 0.05);
+}
+
+.journal-card h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-size: 32px;
+  color: #3e2610;
+  margin-bottom: 24px;
+}
+
+.journal-card p {
+  font-family: 'Manrope', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #4e3018;
+  margin-bottom: 32px;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.journal-step {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: #8c5e2c;
+  margin-bottom: 24px;
+  letter-spacing: 2px;
+}
+
+.journal-question {
+  font-size: 28px !important;
+  margin-bottom: 40px !important;
+}
+
+.journal-options {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.journal-option {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(62, 38, 16, 0.15);
+  padding: 16px 24px;
+  border-radius: 4px;
+  font-family: 'Manrope', sans-serif;
+  font-size: 15px;
+  color: #3e2610;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+.journal-option:hover {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(62, 38, 16, 0.4);
+}
+
+.profile-container {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(62, 38, 16, 0.1);
+  padding: 56px;
+  border-radius: 4px;
+  box-shadow: 0 20px 40px rgba(62, 38, 16, 0.05);
+}
+
+.profile-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.profile-header h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 400;
+  font-style: italic;
+  font-size: 36px;
+  color: #3e2610;
+  margin-bottom: 16px;
+}
+
+.profile-header p {
+  font-family: 'Manrope', sans-serif;
+  font-size: 16px;
+  color: #6a4420;
+}
+
+.profile-metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  margin-bottom: 48px;
+}
+
+.profile-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.metric-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.metric-info h3 {
+  font-family: 'Manrope', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: #3e2610;
+  margin: 0;
+}
+
+.metric-status {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #8aaa28;
+}
+.metric-status.is-low {
+  color: #d97b53;
+}
+
+.metric-bar-bg {
+  width: 100%;
+  height: 4px;
+  background: rgba(62, 38, 16, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.metric-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+}
+
+.metric-insight {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px;
+  font-style: italic;
+  color: #6a4420;
+  margin: 4px 0 0 0;
+  line-height: 1.4;
+}
+
+.profile-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+
+.nav-link-btn {
+  background: none;
+  border: none;
+  font-family: 'Manrope', sans-serif;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #4e3018;
+  cursor: pointer;
+  padding: 0;
+}
+.nav-link-btn:hover {
+  color: #3e2610;
+}
