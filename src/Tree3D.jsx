@@ -99,6 +99,7 @@ import { BanyanData } from './data.js';
 
     /* ── Trunk — multi-layered realistic bark ────────────────────────────── */
     _trunk() {
+      this.trunkMats = [];
       const H = 155;
 
       // Core trunk shape — wider at base, strong taper
@@ -120,12 +121,14 @@ import { BanyanData } from './data.js';
       geo.computeVertexNormals();
       geo.translate(0, H / 2, 0);
       const mat = new THREE.MeshLambertMaterial({ color: C.bark });
+      this.trunkMats.push({ mat, color: C.bark });
       const mesh = new THREE.Mesh(geo, mat);
       mesh.castShadow = true;
       this.scene.add(mesh);
 
       // Buttress roots — organic flanges curving outward to anchor the base
       const buttMat = new THREE.MeshLambertMaterial({ color: C.barkMid });
+      this.trunkMats.push({ mat: buttMat, color: C.barkMid });
       for (let i = 0; i < 7; i++) {
         const a = (i / 7) * Math.PI * 2 + this.rand() * 0.3;
         const R = [85, 62, 44, 28, 16];
@@ -144,6 +147,7 @@ import { BanyanData } from './data.js';
 
       // Bark grooves — thin darker tubes wrapping the tapered surface
       const grooveMat = new THREE.MeshLambertMaterial({ color: C.barkShade });
+      this.trunkMats.push({ mat: grooveMat, color: C.barkShade });
       for (let i = 0; i < 8; i++) {
         const a  = this.rand() * Math.PI * 2;
         const sy = 5 + this.rand() * 105;
@@ -210,6 +214,9 @@ import { BanyanData } from './data.js';
         const primCurve = this._makeLimbCurve(start, sp.angle, sp.z, limLen, sp.droop);
         const primSegs  = 16;
         geos.push(new THREE.TubeGeometry(primCurve, primSegs, sp.W / 2, 12, false));
+        const capGeo = new THREE.SphereGeometry(sp.W / 2, 8, 8);
+        capGeo.translate(start.x, start.y, start.z);
+        geos.push(capGeo);
 
         const primEnd = primCurve.getPoint(1.0);
 
@@ -509,10 +516,13 @@ import { BanyanData } from './data.js';
       // Root trunk (mirror of above trunk)
       const rGeo = new THREE.CylinderGeometry(52, 14, 138, 16, 1);
       rGeo.translate(0, -69, 0);
-      this.scene.add(new THREE.Mesh(rGeo, new THREE.MeshLambertMaterial({ color: C.barkShade })));
+      const rMat = new THREE.MeshLambertMaterial({ color: C.barkShade });
+      if (this.trunkMats) this.trunkMats.push({ mat: rMat, color: C.barkShade });
+      this.scene.add(new THREE.Mesh(rGeo, rMat));
 
       // Lateral root spread at base
       const sMat = new THREE.MeshLambertMaterial({ color: C.rootMid });
+      if (this.trunkMats) this.trunkMats.push({ mat: sMat, color: C.rootMid });
       for (let i = 0; i < 6; i++) {
         const a = (i / 6) * Math.PI * 2;
         const pts = [
@@ -590,7 +600,7 @@ import { BanyanData } from './data.js';
         new THREE.QuadraticBezierCurve3(start, mid, end),
         Math.max(3, Math.floor(len / 22)), width / 2, 5
       ));
-      const sGeo = new THREE.SphereGeometry(width / 2, 5, 5);
+      const sGeo = new THREE.SphereGeometry(width / 2, 8, 8);
       sGeo.translate(start.x, start.y, start.z);
       geos.push(sGeo);
       const eGeo = new THREE.SphereGeometry(width / 2, 5, 5);
@@ -609,6 +619,16 @@ import { BanyanData } from './data.js';
 
     /* ── State setters ───────────────────────────────────────────────────── */
     setLitCategory(catIdx) {
+      const trunkDim = catIdx != null;
+      if (this.trunkMats) {
+        this.trunkMats.forEach(tm => {
+          tm.mat.color.setHex(trunkDim ? 0x160c04 : tm.color);
+          tm.mat.transparent = trunkDim;
+          tm.mat.opacity = trunkDim ? 0.16 : 1.0;
+          tm.mat.needsUpdate = true;
+        });
+      }
+
       for (let i = 0; i < 12; i++) {
         const bg = this.branchGroups[i], lg = this.leafGroups[i];
         const am = this.catAerialMeshes?.[i];
