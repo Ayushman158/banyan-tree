@@ -765,6 +765,9 @@ import { BanyanData } from './data.js';
 
     _initCamera() {
       this.camera = new THREE.PerspectiveCamera(58, this.w / this.h, 1, 9000);
+      const aspect = this.w / this.h;
+      this.camera.fov = aspect < 1.0 ? Math.min(85, 58 / aspect * 0.75) : 58;
+      this.camera.updateProjectionMatrix();
     }
 
     _initLights() {
@@ -860,7 +863,12 @@ import { BanyanData } from './data.js';
     _initResize() {
       this._onResize = () => {
         this.w = this.container.clientWidth; this.h = this.container.clientHeight;
-        this.camera.aspect = this.w / this.h;
+        const aspect = this.w / this.h;
+        this.camera.aspect = aspect;
+        
+        // Dynamically widen the field of view on narrow mobile screens so the wide tree fits
+        this.camera.fov = aspect < 1.0 ? Math.min(85, 58 / aspect * 0.75) : 58;
+        
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(this.w, this.h);
       };
