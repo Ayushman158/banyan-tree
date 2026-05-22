@@ -72,6 +72,7 @@ import { BanyanData } from './data.js';
     }
 
     _build() {
+      this._sky();
       this._ground();
       this._trunk();
       this._canopy();
@@ -79,13 +80,58 @@ import { BanyanData } from './data.js';
       this._roots();
     }
 
+    /* ── Sky Dome ───────────────────────────────────────────────────────── */
+    _sky() {
+      const vertexShader = `
+        varying vec3 vWorldPosition;
+        void main() {
+          vec4 worldPosition = modelMatrix * vec4(position, 1.0);
+          vWorldPosition = worldPosition.xyz;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `;
+      const fragmentShader = `
+        uniform vec3 topColor;
+        uniform vec3 bottomColor;
+        varying vec3 vWorldPosition;
+        void main() {
+          float h = normalize(vWorldPosition).y;
+          float t = max(pow(max(h, 0.0), 0.6), 0.0);
+          gl_FragColor = vec4(mix(bottomColor, topColor, t), 1.0);
+        }
+      `;
+      const uniforms = {
+        topColor: { value: new THREE.Color(0x4492d1) },
+        bottomColor: { value: new THREE.Color(0xe0e4d6) }
+      };
+      const skyGeo = new THREE.SphereGeometry(4000, 32, 16);
+      const skyMat = new THREE.ShaderMaterial({
+        vertexShader, fragmentShader, uniforms,
+        side: THREE.BackSide, depthWrite: false
+      });
+      this.scene.add(new THREE.Mesh(skyGeo, skyMat));
+    }
+
     /* ── Ground ─────────────────────────────────────────────────────────── */
     _ground() {
-      const m = new THREE.Mesh(
-        new THREE.PlaneGeometry(16000, 16000),
-        new THREE.MeshLambertMaterial({ color: 0xc8cebd, side: THREE.DoubleSide })
-      );
-      m.rotation.x = -Math.PI / 2; m.receiveShadow = true;
+      const geo = new THREE.PlaneGeometry(16000, 16000, 128, 128);
+      
+      const pos = geo.attributes.position.array;
+      for (let i = 0; i < pos.length; i += 3) {
+        const x = pos[i];
+        const y = pos[i + 1];
+        // Procedural noise for natural rolling landscape
+        const noise = Math.sin(x * 0.0008) * Math.cos(y * 0.0008) * 350 +
+                      Math.sin(x * 0.003 + y * 0.004) * 60;
+        pos[i + 2] = noise;
+      }
+      geo.computeVertexNormals();
+
+      const mat = new THREE.MeshLambertMaterial({ color: 0x93a185, side: THREE.DoubleSide });
+      const m = new THREE.Mesh(geo, mat);
+      m.rotation.x = -Math.PI / 2;
+      m.position.y = -65; // Sink slightly to embed roots naturally
+      m.receiveShadow = true;
       this.scene.add(m);
 
       // Darker inner disk under canopy
@@ -103,8 +149,8 @@ import { BanyanData } from './data.js';
       const H = 155;
 
       // Core trunk shape — wider at base, strong taper
-      // High polygon count to support detailed vertex displacement
-      const geo = new THREE.CylinderGeometry(15, 38, H, 64, 32);
+      // High polygon count to support detailed vertex displacement, optimized slightly
+      const geo = new THREE.CylinderGeometry(15, 38, H, 48, 24);
       
       const posArr = geo.attributes.position.array;
       for (let i = 0; i < posArr.length; i += 3) {
@@ -380,8 +426,8 @@ import { BanyanData } from './data.js';
       const perPt = 5, total = pts.length * perPt, dummy = new THREE.Object3D();
 
       const makeLayer = (color, opacity, yOff, sx, sy) => {
-        // Use a slightly smoother sphere geometry for nicer organic shape
-        const geo  = new THREE.SphereGeometry(1, 8, 6);
+        // Low-poly sphere geometry for massive performance boost
+        const geo  = new THREE.SphereGeometry(1, 4, 3);
         const mat  = new THREE.MeshLambertMaterial({ color, transparent: opacity < 1, opacity });
         
         mat.onBeforeCompile = (shader) => {

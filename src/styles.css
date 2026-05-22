@@ -46,7 +46,7 @@ html, body {
 body {
   cursor: none;
   min-height: 100vh;
-  background: linear-gradient(to bottom, #4492d1 0%, #90c2e6 30%, #e0e4d6 55%, #c8cebd 100%);
+  background: #e0e4d6;
 }
 
 /* ── Paper texture overlay ───────────────────────────────────────────────── */
