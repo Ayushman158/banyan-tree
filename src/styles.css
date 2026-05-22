@@ -335,11 +335,27 @@ body {
   background: var(--gold); position: relative; z-index: 1;
   transition: transform 0.4s var(--ease), background 0.4s var(--ease);
 }
+.ol-root__connector {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 1px; height: 35px;
+  background: linear-gradient(to bottom, var(--gold), transparent);
+  transform-origin: top;
+  z-index: 0;
+  opacity: 0.6;
+}
+.ol-root__label-box {
+  position: absolute;
+  top: 35px; left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  z-index: 1;
+}
 .ol-root__label {
   font-family: var(--sans); font-size: 11px; font-weight: 600;
   letter-spacing: 0.25em; text-transform: uppercase;
-  color: var(--ink); white-space: nowrap; position: relative; z-index: 1;
-  margin-top: 6px;
+  color: var(--ink); white-space: nowrap; position: relative;
   background: var(--glass-strong);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);

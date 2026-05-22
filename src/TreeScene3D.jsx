@@ -194,9 +194,12 @@ function TreeScene3D({
               tabIndex={vis ? 0 : -1}
             >
               <span className="ol-root__ring" />
+              <span className="ol-root__connector" />
               <span className="ol-root__halo" />
               <span className="ol-root__core" />
-              <span className="ol-root__label">{rc.name}</span>
+              <div className="ol-root__label-box">
+                <span className="ol-root__label">{rc.name}</span>
+              </div>
             </button>
           );
         })}

@@ -613,8 +613,8 @@ import { BanyanData } from './data.js';
 
     _growRoot(start, angle, len, width, depth, geos, tipHolder) {
       const end = new THREE.Vector3(
-        start.x + Math.sin(angle) * len,
-        start.y - Math.cos(angle) * len,
+        start.x + Math.sin(angle) * len * 0.85,
+        start.y - len * (0.6 + Math.abs(Math.cos(angle)) * 0.4),
         start.z + (this.rand() - 0.5) * len * 0.26
       );
       const mid = new THREE.Vector3(
