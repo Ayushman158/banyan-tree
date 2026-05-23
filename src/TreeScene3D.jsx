@@ -41,25 +41,34 @@ function TreeScene3D({
       const container = containerRef.current;
       if (!container) return;
 
-      // Category label positions (with basic 2D anti-overlap)
+      // Category label positions (with dynamic offsetWidth-based anti-overlap)
       const activeCats = [];
       catRefs.current.forEach((ref, i) => {
         const p = catPts[i];
         if (p && p.vis) {
-          activeCats.push({ el: ref.current, p: { ...p }, i });
+          const el = ref.current;
+          const w = el ? (el.offsetWidth || 140) : 140;
+          const h = el ? (el.offsetHeight || 38) : 38;
+          activeCats.push({ el, p: { ...p }, w, h, i });
         } else if (ref.current) {
           ref.current.style.visibility = 'hidden';
         }
       });
       // Sort top to bottom
       activeCats.sort((a, b) => a.p.y - b.p.y);
-      for (let j = 1; j < activeCats.length; j++) {
+      for (let j = 0; j < activeCats.length; j++) {
         const curr = activeCats[j];
-        const prev = activeCats[j - 1];
-        // If labels are horizontally close, push the current one down
-        if (Math.abs(curr.p.x - prev.p.x) < 140) {
-          if (curr.p.y - prev.p.y < 46) {
-            curr.p.y = prev.p.y + 46;
+        for (let k = 0; k < j; k++) {
+          const prev = activeCats[k];
+          const dx = Math.abs(curr.p.x - prev.p.x);
+          const combinedHalfWidths = (curr.w + prev.w) / 2;
+          const minHorizontalGap = 16;
+          if (dx < combinedHalfWidths + minHorizontalGap) {
+            const dy = curr.p.y - prev.p.y;
+            const minVerticalDistance = (curr.h + prev.h) / 2 + 10;
+            if (dy < minVerticalDistance) {
+              curr.p.y = prev.p.y + minVerticalDistance;
+            }
           }
         }
       }
@@ -95,19 +104,61 @@ function TreeScene3D({
       if (!container) return;
       const tipPts = appRef.current.getAerialPositions(selectedCategory);
       const cat    = BanyanData.categories[selectedCategory];
+      if (!cat) return;
+
+      const activeConds = [];
       condRefs.current.forEach((ref, i) => {
         const el = ref.current;
         if (!el) return;
+        if (i >= cat.conditions.length) {
+          el.style.visibility = 'hidden';
+          return;
+        }
         const p = tipPts[i];
-        if (p && p.vis && i < cat.conditions.length) {
-          // Add an alternating vertical drop to ensure dense clusters don't overlap perfectly
-          const drop = (i % 4) * 42;
-          el.style.transform = `translate(${p.x.toFixed(1)}px,${p.y.toFixed(1)}px) translate(-50%,0%)`;
-          el.style.setProperty('--drop', `${drop}px`);
-          el.style.visibility = '';
+        if (p && p.vis) {
+          const labelEl = el.querySelector('.ol-cond__label');
+          const w = labelEl ? (labelEl.offsetWidth || 100) : 100;
+          const h = labelEl ? (labelEl.offsetHeight || 24) : 24;
+          activeConds.push({
+            el,
+            p,
+            w,
+            h,
+            index: i,
+            drop: (i % 4) * 20
+          });
         } else {
           el.style.visibility = 'hidden';
         }
+      });
+
+      // Sort by Y position (p.y + initial drop) top-to-bottom
+      activeConds.sort((a, b) => (a.p.y + a.drop) - (b.p.y + b.drop));
+
+      // Resolve overlaps cascading top-to-bottom
+      for (let j = 0; j < activeConds.length; j++) {
+        const curr = activeConds[j];
+        for (let k = 0; k < j; k++) {
+          const prev = activeConds[k];
+          const dx = Math.abs(curr.p.x - prev.p.x);
+          const combinedHalfWidths = (curr.w + prev.w) / 2;
+          const minHorizontalGap = 12;
+
+          if (dx < combinedHalfWidths + minHorizontalGap) {
+            const currY = curr.p.y + curr.drop;
+            const prevY = prev.p.y + prev.drop;
+            const minVerticalDistance = prev.h + 8; // prev label height + 8px gap
+            if (currY < prevY + minVerticalDistance) {
+              curr.drop = Math.max(curr.drop, prevY + minVerticalDistance - curr.p.y);
+            }
+          }
+        }
+      }
+
+      activeConds.forEach(({ el, p, drop }) => {
+        el.style.transform = `translate(${p.x.toFixed(1)}px,${p.y.toFixed(1)}px) translate(-50%,0%)`;
+        el.style.setProperty('--drop', `${drop.toFixed(1)}px`);
+        el.style.visibility = '';
       });
     };
 

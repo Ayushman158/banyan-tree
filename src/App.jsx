@@ -108,8 +108,19 @@ function Loader({ gone }) {
 
 /* ---------- Nav ---------- */
 function Nav({ onOpenJournal }) {
+  const [scrolled, setScrolled] = useS(false);
+
+  useE(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <nav className="nav">
+    <nav className={`nav ${scrolled ? "is-scrolled" : ""}`}>
       <div className="nav-mark">Banyan</div>
       <div className="nav-right">
         <div className="nav-links">

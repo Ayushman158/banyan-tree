@@ -195,11 +195,92 @@ import { BanyanData } from './data.js';
       mesh.castShadow = true;
       this.scene.add(mesh);
 
+      // Add a smooth dome cap at the top of the trunk (at H = 155)
+      const capGeo = new THREE.SphereGeometry(15.2, 48, 24);
+      capGeo.translate(0, H, 0);
+      const capMesh = new THREE.Mesh(capGeo, mat);
+      capMesh.castShadow = true;
+      this.scene.add(capMesh);
+
+      // Add 3 small organic crown branches at the top of the trunk to complete the tree crown
+      const crownGeos = [];
+      const crownLeafPts = [];
+      
+      const crownLimbs = [
+        { dir: new THREE.Vector3(-6, 32, 4),  w: 6 },
+        { dir: new THREE.Vector3(8, 28, -6),  w: 5.5 },
+        { dir: new THREE.Vector3(-2, 35, -8), w: 5 }
+      ];
+
+      crownLimbs.forEach((cl) => {
+        // Curve from top of trunk
+        const p0 = new THREE.Vector3(0, H - 2, 0);
+        const p1 = new THREE.Vector3(cl.dir.x * 0.4, H + cl.dir.y * 0.4, cl.dir.z * 0.4);
+        const p2 = new THREE.Vector3(cl.dir.x, H + cl.dir.y, cl.dir.z);
+        const curve = new THREE.CatmullRomCurve3([p0, p1, p2]);
+        
+        // Tube geometry for the crown branch (tapered)
+        crownGeos.push(new THREE.TubeGeometry(curve, 8, cl.w / 2, 8, false));
+        
+        // Add a sphere at the end
+        const tipGeo = new THREE.SphereGeometry(cl.w / 3, 6, 6);
+        tipGeo.translate(cl.dir.x, H + cl.dir.y, cl.dir.z);
+        crownGeos.push(tipGeo);
+
+        // Save tip point for leaves
+        crownLeafPts.push(p2);
+
+        // Grow a tiny sub-twig
+        const twigDir = new THREE.Vector3(cl.dir.x * 1.3, H + cl.dir.y + 12, cl.dir.z * 1.3);
+        const twigCurve = new THREE.CatmullRomCurve3([p2, twigDir]);
+        crownGeos.push(new THREE.TubeGeometry(twigCurve, 4, cl.w / 4, 6, false));
+        crownLeafPts.push(twigDir);
+      });
+
+      if (crownGeos.length) {
+        const crownMesh = new THREE.Mesh(mergeGeos(crownGeos), mat);
+        crownMesh.castShadow = true;
+        this.scene.add(crownMesh);
+      }
+
+      // Add leafy canopy on top of the crown branches
+      const leafGeos = [];
+      crownLeafPts.forEach(pt => {
+        for (let j = 0; j < 8; j++) {
+          const size = 3 + this.rand() * 5;
+          const leafGeo = new THREE.SphereGeometry(size, 8, 6);
+          const ox = (this.rand() - 0.5) * 12;
+          const oy = (this.rand() - 0.5) * 10;
+          const oz = (this.rand() - 0.5) * 12;
+          leafGeo.translate(pt.x + ox, pt.y + oy, pt.z + oz);
+          leafGeos.push(leafGeo);
+        }
+      });
+
+      if (leafGeos.length) {
+        const leafMat = new THREE.MeshLambertMaterial({
+          color: C.leaf1,
+          transparent: true,
+          opacity: 0.85
+        });
+        const leafMesh = new THREE.Mesh(mergeGeos(leafGeos), leafMat);
+        this.scene.add(leafMesh);
+      }
     }
 
     /* ── Canopy — 12 category branches ─────────────────────────────────── */
     _canopy() {
       const H = 155; // trunk top
+
+      const getSubCurve = (curve, tStart, tEnd) => {
+        const pts = [];
+        const steps = 6;
+        for (let s = 0; s <= steps; s++) {
+          const t = tStart + (tEnd - tStart) * (s / steps);
+          pts.push(curve.getPoint(t));
+        }
+        return new THREE.CatmullRomCurve3(pts);
+      };
 
       /* Each limb has:
            angle   — final arch direction from vertical (rad). Max ±0.88 (≈50°).
@@ -239,11 +320,57 @@ import { BanyanData } from './data.js';
 
         // Build primary scaffold limb as a single organic S-curve
         const primCurve = this._makeLimbCurve(start, sp.angle, sp.z, limLen, sp.droop);
-        const primSegs  = 16;
-        geos.push(new THREE.TubeGeometry(primCurve, primSegs, sp.W / 2, 12, false));
-        const capGeo = new THREE.SphereGeometry(sp.W / 2, 8, 8);
-        capGeo.translate(start.x, start.y, start.z);
-        geos.push(capGeo);
+
+        // Segment the primary limb curve into 4 segments and taper them using TubeGeometry
+        const joints = [0, 0.45, 0.65, 0.80, 1.0];
+        const radii = [
+          sp.W / 2,
+          sp.W / 2 * 0.82,
+          sp.W / 2 * 0.64,
+          sp.W / 2 * 0.48,
+          sp.W / 2 * 0.35
+        ];
+
+        // Draw segments with average radii of their endpoints
+        for (let s = 0; s < 4; s++) {
+          const tStart = joints[s];
+          const tEnd = joints[s + 1];
+          const avgRad = (radii[s] + radii[s + 1]) / 2;
+          const subCurve = getSubCurve(primCurve, tStart, tEnd);
+          geos.push(new THREE.TubeGeometry(subCurve, 6, avgRad, 10, false));
+        }
+
+        // Draw joint spheres to smooth the segment transitions and close ends
+        joints.forEach((t, s) => {
+          const pt = primCurve.getPoint(t);
+          const rad = radii[s];
+          const jointGeo = new THREE.SphereGeometry(rad, 8, 8);
+          jointGeo.translate(pt.x, pt.y, pt.z);
+          geos.push(jointGeo);
+        });
+
+        // Find the exact exit point on the trunk surface to place the branch collar
+        let exitPt = null;
+        for (let tVal = 0; tVal <= 1.0; tVal += 0.02) {
+          const pt = primCurve.getPoint(tVal);
+          const clampY = Math.max(0, Math.min(H, pt.y));
+          const trunkR = 38 - (clampY / H) * 23 + 6; // average radius including minor buttress
+          const distXZ = Math.sqrt(pt.x * pt.x + pt.z * pt.z);
+          if (distXZ >= trunkR) {
+            exitPt = pt.clone();
+            break;
+          }
+        }
+        if (!exitPt) {
+          exitPt = primCurve.getPoint(0.3); // fallback
+        }
+
+        // Place the organic vertically flared collar at the surface exit point
+        const collarR = sp.W * 0.75;
+        const collarGeo = new THREE.SphereGeometry(collarR, 12, 12);
+        collarGeo.scale(1.0, 1.25, 1.0); // vertical shoulder flare
+        collarGeo.translate(exitPt.x, exitPt.y, exitPt.z);
+        geos.push(collarGeo);
 
         const primEnd = primCurve.getPoint(1.0);
 
@@ -504,30 +631,37 @@ import { BanyanData } from './data.js';
           const fanOffset = (j % 3 === 0) ? -1 : (j % 3 === 1) ? 0 : 1;
           attachPt.add(perp.multiplyScalar(fanOffset * 22));
 
-          // Randomize X and Z slightly for natural swaying, but keep top securely anchored
-          const groundY = 1 + this.rand() * 7;
-          const swayX   = (this.rand() - 0.5) * 16;
-          const swayZ   = (this.rand() - 0.5) * 10;
+          // Set tipPt hanging in the air dynamically based on category limb height
+          const rootLength = 50 + (j % 4) * 22 + this.rand() * 12;
+          const swayX   = (this.rand() - 0.5) * 20;
+          const swayZ   = (this.rand() - 0.5) * 12;
+          const tipPt = new THREE.Vector3(
+            attachPt.x + swayX,
+            attachPt.y - rootLength,
+            attachPt.z + swayZ
+          );
+
           const curvePts = [
             attachPt.clone(),
             new THREE.Vector3(
-              attachPt.x + swayX * 0.38,
-              attachPt.y * 0.55 + groundY * 0.45,
-              attachPt.z + swayZ * 0.38
+              attachPt.x + swayX * 0.4,
+              attachPt.y - rootLength * 0.5,
+              attachPt.z + swayZ * 0.4
             ),
-            new THREE.Vector3(attachPt.x + swayX, groundY, attachPt.z + swayZ),
+            tipPt.clone()
           ];
 
-          const thick = 0.50 + this.rand() * 0.65;
+          // Make the roots thicker and more real: 1.2 to 2.4 units (radius 0.6 to 1.2)
+          const thick = 1.2 + this.rand() * 1.2;
           geos.push(new THREE.TubeGeometry(
-            new THREE.CatmullRomCurve3(curvePts), 9, thick, 4, false
+            new THREE.CatmullRomCurve3(curvePts), 12, thick, 6, false
           ));
-          anchors.push(attachPt.clone());
+          anchors.push(tipPt);
         }
 
         if (geos.length) {
           const mat  = new THREE.MeshLambertMaterial({
-            color: C.barkLight, transparent: true, opacity: 0.22
+            color: C.barkLight, transparent: true, opacity: 0.40
           });
           const mesh = new THREE.Mesh(mergeGeos(geos), mat);
           this.scene.add(mesh);
@@ -672,12 +806,12 @@ import { BanyanData } from './data.js';
             // Canopy: show all dimly
             am.mesh.visible = true;
             am.mat.color.setHex(C.barkLight);
-            am.mat.opacity = 0.22;
+            am.mat.opacity = 0.40;
           } else if (isLit) {
             // Category selected: highlight its roots
             am.mesh.visible = true;
-            am.mat.color.setHex(C.bark);
-            am.mat.opacity = 0.62;
+            am.mat.color.setHex(C.barkMid);
+            am.mat.opacity = 0.90;
           } else {
             // Dim: hide entirely for performance
             am.mesh.visible = false;

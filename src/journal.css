@@ -16,8 +16,10 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(236, 228, 212, 0.95);
-  backdrop-filter: blur(8px);
+  background: hsla(36, 22%, 80%, 0.46);
+  backdrop-filter: blur(14px) saturate(110%);
+  -webkit-backdrop-filter: blur(14px) saturate(110%);
+  transition: opacity 0.6s var(--ease);
 }
 
 .journal-container, .profile-container {
@@ -26,48 +28,57 @@
   width: 100%;
   max-width: 600px;
   padding: 40px;
+  margin: 20px;
+}
+
+.journal-card, .profile-container {
+  background: var(--glass-strong);
+  border: 1px solid var(--glass-line);
+  backdrop-filter: blur(24px) saturate(140%);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+  border-radius: 22px;
+  box-shadow: 0 50px 110px hsla(32, 22%, 22%, 0.20),
+              0 2px 8px   hsla(32, 22%, 22%, 0.06),
+              inset 0 1px 0 hsla(42, 100%, 100%, 0.55);
+  padding: 48px;
+  text-align: center;
+  transition: all 0.5s var(--ease);
 }
 
 .journal-close {
   position: absolute;
-  top: 0px;
-  right: 20px;
-  background: none;
-  border: none;
-  font-size: 32px;
-  color: #3e2610;
-  cursor: pointer;
-  z-index: 2;
-  font-family: 'Manrope', sans-serif;
-  opacity: 0.6;
-  transition: opacity 0.2s;
+  top: 18px;
+  right: 18px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid var(--glass-line);
+  color: var(--ink-mute);
+  font-size: 16px;
+  display: grid;
+  place-items: center;
+  transition: all 0.4s var(--ease);
+  cursor: none;
 }
 .journal-close:hover {
-  opacity: 1;
-}
-
-.journal-card {
-  background: rgba(255, 255, 255, 0.4);
-  border: 1px solid rgba(62, 38, 16, 0.1);
-  padding: 48px;
-  border-radius: 4px;
-  text-align: center;
-  box-shadow: 0 20px 40px rgba(62, 38, 16, 0.05);
+  border-color: var(--gold);
+  color: var(--gold-deep);
 }
 
 .journal-card h2 {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: var(--serif);
   font-weight: 300;
   font-size: 32px;
-  color: #3e2610;
+  color: var(--ink);
   margin-bottom: 24px;
 }
 
 .journal-card p {
-  font-family: 'Manrope', sans-serif;
-  font-size: 16px;
-  line-height: 1.6;
-  color: #4e3018;
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--ink-mute);
   margin-bottom: 32px;
   max-width: 400px;
   margin-left: auto;
@@ -76,80 +87,84 @@
 
 .journal-step {
   display: block;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
-  color: #8c5e2c;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--gold-deep);
   margin-bottom: 24px;
   letter-spacing: 2px;
+  text-transform: uppercase;
 }
 
 .journal-question {
-  font-size: 28px !important;
-  margin-bottom: 40px !important;
+  font-size: 26px !important;
+  margin-bottom: 36px !important;
+  line-height: 1.25;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--ink);
 }
 
 .journal-options {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 
 .journal-option {
-  background: rgba(255, 255, 255, 0.6);
-  border: 1px solid rgba(62, 38, 16, 0.15);
-  padding: 16px 24px;
-  border-radius: 4px;
-  font-family: 'Manrope', sans-serif;
-  font-size: 15px;
-  color: #3e2610;
-  cursor: pointer;
-  transition: all 0.2s;
-  text-align: left;
+  background: var(--glass);
+  border: 1px solid var(--glass-line);
+  padding: 16px 28px;
+  border-radius: 999px;
+  font-family: var(--sans);
+  font-size: 14.5px;
+  color: var(--ink);
+  cursor: none;
+  transition: all 0.4s var(--ease);
+  text-align: center;
 }
 .journal-option:hover {
-  background: rgba(255, 255, 255, 0.9);
-  border-color: rgba(62, 38, 16, 0.4);
+  background: var(--glass-strong);
+  border-color: var(--gold);
+  color: var(--gold-deep);
 }
 
 .profile-container {
-  background: rgba(255, 255, 255, 0.5);
-  border: 1px solid rgba(62, 38, 16, 0.1);
   padding: 56px;
-  border-radius: 4px;
-  box-shadow: 0 20px 40px rgba(62, 38, 16, 0.05);
+  text-align: left;
 }
 
 .profile-header {
   text-align: center;
-  margin-bottom: 48px;
+  margin-bottom: 40px;
 }
 
 .profile-header h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-weight: 400;
+  font-family: var(--serif);
+  font-weight: 300;
   font-style: italic;
   font-size: 36px;
-  color: #3e2610;
-  margin-bottom: 16px;
+  color: var(--ink);
+  margin-bottom: 12px;
 }
 
 .profile-header p {
-  font-family: 'Manrope', sans-serif;
-  font-size: 16px;
-  color: #6a4420;
+  font-family: var(--sans);
+  font-size: 15px;
+  color: var(--ink-mute);
 }
 
 .profile-metrics {
   display: flex;
   flex-direction: column;
-  gap: 32px;
-  margin-bottom: 48px;
+  gap: 28px;
+  margin-bottom: 40px;
 }
 
 .profile-metric {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .metric-info {
@@ -159,19 +174,20 @@
 }
 
 .metric-info h3 {
-  font-family: 'Manrope', sans-serif;
-  font-size: 16px;
+  font-family: var(--sans);
+  font-size: 15px;
   font-weight: 500;
-  color: #3e2610;
+  color: var(--ink);
   margin: 0;
 }
 
 .metric-status {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
+  font-family: var(--mono);
+  font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 1px;
   color: #8aaa28;
+  font-weight: 600;
 }
 .metric-status.is-low {
   color: #d97b53;
@@ -179,43 +195,56 @@
 
 .metric-bar-bg {
   width: 100%;
-  height: 4px;
-  background: rgba(62, 38, 16, 0.1);
-  border-radius: 2px;
+  height: 6px;
+  background: var(--line);
+  border-radius: 3px;
   overflow: hidden;
 }
 
 .metric-bar-fill {
   height: 100%;
-  border-radius: 2px;
+  border-radius: 3px;
 }
 
 .metric-insight {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 16px;
+  font-family: var(--serif);
+  font-size: 15px;
   font-style: italic;
-  color: #6a4420;
+  color: var(--gold-deep);
   margin: 4px 0 0 0;
-  line-height: 1.4;
+  line-height: 1.45;
+  border-left: 1px solid hsla(38, 62%, 36%, 0.3);
+  padding-left: 12px;
 }
 
 .profile-actions {
   display: flex;
-  gap: 16px;
+  gap: 14px;
   justify-content: center;
 }
 
 .nav-link-btn {
   background: none;
   border: none;
-  font-family: 'Manrope', sans-serif;
-  font-size: 13px;
+  font-family: var(--sans);
+  font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  color: #4e3018;
-  cursor: pointer;
+  letter-spacing: 0.3em;
+  color: rgba(255, 255, 255, 0.55);
+  cursor: none;
   padding: 0;
+  transition: color 0.4s var(--ease);
 }
 .nav-link-btn:hover {
-  color: #3e2610;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+@media (max-width: 600px) {
+  .journal-card, .profile-container {
+    padding: 32px 24px;
+  }
+  .profile-actions {
+    flex-direction: column;
+    gap: 12px;
+  }
 }
