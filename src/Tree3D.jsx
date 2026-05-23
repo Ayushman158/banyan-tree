@@ -871,6 +871,22 @@ import { BanyanData } from './data.js';
       this.camera.lookAt(this._camTarget);
 
       this.onTick = null; this._running = false; this._raf = null;
+
+      this._mouseX = 0;
+      this._mouseY = 0;
+      this._scrollOffset = 0;
+      this._phase = 'canopy';
+
+      this._onMouseMove = (e) => {
+        this._mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+        this._mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+      };
+      this._onScroll = () => {
+        this._scrollOffset = window.scrollY;
+      };
+
+      window.addEventListener('mousemove', this._onMouseMove);
+      window.addEventListener('scroll', this._onScroll, { passive: true });
     }
 
     _initRenderer() {
@@ -1015,6 +1031,8 @@ import { BanyanData } from './data.js';
       this._running = false;
       if (this._raf) cancelAnimationFrame(this._raf);
       window.removeEventListener('resize', this._onResize);
+      window.removeEventListener('mousemove', this._onMouseMove);
+      window.removeEventListener('scroll', this._onScroll);
       this.renderer.dispose();
       const ext = this.renderer.getContext().getExtension('WEBGL_lose_context');
       if (ext) ext.loseContext();
@@ -1030,6 +1048,23 @@ import { BanyanData } from './data.js';
       this._camTarget.lerp(this._tTarget, 0.040);
       this.camera.position.copy(this._camPos);
       this.camera.lookAt(this._camTarget);
+
+      // 1. Mouse Parallax (Drift) relative to camera's orientation
+      const mouseOffset = new THREE.Vector3(
+        this._mouseX * 60,
+        this._mouseY * 30,
+        0
+      );
+      mouseOffset.applyQuaternion(this.camera.quaternion);
+      this.camera.position.add(mouseOffset);
+
+      // 2. Scroll Parallax - camera sinks down and pulls back on scroll (canopy & category only)
+      if (this._phase === 'canopy' || this._phase === 'category') {
+        const scrollFactor = Math.min(this._scrollOffset / window.innerHeight, 1.2);
+        this.camera.position.y -= scrollFactor * 100;
+        this.camera.position.z += scrollFactor * 60;
+      }
+
       this.renderer.render(this.scene, this.camera);
       if (this.onTick) this.onTick(this._projectCats(), this._projectRoots());
     }
@@ -1066,6 +1101,7 @@ import { BanyanData } from './data.js';
     }
 
     setPhase(phase, selectedCategory, selectedRoot) {
+      this._phase = phase;
       if (phase === 'canopy') {
         this._tPos.set(0, 150, 950);
         this._tTarget.set(0, 175, 0);
