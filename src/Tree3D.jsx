@@ -61,6 +61,68 @@ import { BanyanData } from './data.js';
     groundFar:     0xcabfa8,
   };
 
+  function applyBarkShader(mat) {
+    mat.onBeforeCompile = (shader) => {
+      shader.vertexShader = `
+        varying vec3 vWorldPos;
+        ${shader.vertexShader}
+      `.replace(
+        `#include <worldpos_vertex>`,
+        `
+        #include <worldpos_vertex>
+        vWorldPos = (modelMatrix * vec4(transformed, 1.0)).xyz;
+        `
+      );
+
+      shader.fragmentShader = `
+        varying vec3 vWorldPos;
+        
+        float hash(vec3 p) {
+          p = fract(p * 0.3183099 + .1);
+          p *= 17.0;
+          return fract(p.x * p.y * p.z * (p.x + p.y + p.z));
+        }
+        
+        float noise(vec3 x) {
+          vec3 p = floor(x);
+          vec3 f = fract(x);
+          f = f * f * (3.0 - 2.0 * f);
+          return mix(
+            mix(mix(hash(p + vec3(0,0,0)), hash(p + vec3(1,0,0)), f.x),
+                mix(hash(p + vec3(0,1,0)), hash(p + vec3(1,1,0)), f.x), f.y),
+            mix(mix(hash(p + vec3(0,0,1)), hash(p + vec3(1,0,1)), f.x),
+                mix(hash(p + vec3(0,1,1)), hash(p + vec3(1,1,1)), f.x), f.y), f.z);
+        }
+        
+        float fbm(vec3 p) {
+          float v = 0.0;
+          float a = 0.5;
+          vec3 shift = vec3(100.0);
+          for (int i = 0; i < 3; ++i) {
+            v += a * noise(p);
+            p = p * 2.0 + shift;
+            a *= 0.5;
+          }
+          return v;
+        }
+        
+        ${shader.fragmentShader}
+      `.replace(
+        `#include <map_fragment>`,
+        `
+        #include <map_fragment>
+        float n = fbm(vWorldPos * vec3(0.08, 0.015, 0.08));
+        vec3 barkBase = vec3(0.65, 0.55, 0.45);
+        vec3 barkHighlights = vec3(1.2, 1.1, 0.95);
+        vec3 textureMod = mix(barkBase, barkHighlights, n);
+        float cracks = smoothstep(0.4, 0.18, n);
+        textureMod -= vec3(0.25, 0.20, 0.15) * cracks;
+        diffuseColor.rgb *= textureMod;
+        `
+      );
+    };
+  }
+
   /* ═══════════════════════════════════════════════════════════════════════════
      BanyanTree
    ═══════════════════════════════════════════════════════════════════════════ */
@@ -190,7 +252,7 @@ import { BanyanData } from './data.js';
       geo.translate(0, H / 2, 0);
       
       const mat = new THREE.MeshLambertMaterial({ color: C.bark });
-      this._applyBarkShader(mat);
+      applyBarkShader(mat);
       this.trunkMats.push({ mat, color: C.bark });
       const mesh = new THREE.Mesh(geo, mat);
       mesh.castShadow = true;
@@ -444,7 +506,7 @@ import { BanyanData } from './data.js';
 
         if (geos.length) {
           const mat  = new THREE.MeshLambertMaterial({ color: C.bark });
-          this._applyBarkShader(mat);
+          applyBarkShader(mat);
           const mesh = new THREE.Mesh(mergeGeos(geos), mat);
           mesh.castShadow = true;
           this.scene.add(mesh);
@@ -923,68 +985,6 @@ import { BanyanData } from './data.js';
       const aspect = this.w / this.h;
       this.camera.fov = aspect < 1.0 ? Math.min(85, 58 / aspect * 0.75) : 58;
       this.camera.updateProjectionMatrix();
-    }
-
-    _applyBarkShader(mat) {
-      mat.onBeforeCompile = (shader) => {
-        shader.vertexShader = `
-          varying vec3 vWorldPos;
-          ${shader.vertexShader}
-        `.replace(
-          `#include <worldpos_vertex>`,
-          `
-          #include <worldpos_vertex>
-          vWorldPos = (modelMatrix * vec4(transformed, 1.0)).xyz;
-          `
-        );
-
-        shader.fragmentShader = `
-          varying vec3 vWorldPos;
-          
-          float hash(vec3 p) {
-            p = fract(p * 0.3183099 + .1);
-            p *= 17.0;
-            return fract(p.x * p.y * p.z * (p.x + p.y + p.z));
-          }
-          
-          float noise(vec3 x) {
-            vec3 p = floor(x);
-            vec3 f = fract(x);
-            f = f * f * (3.0 - 2.0 * f);
-            return mix(
-              mix(mix(hash(p + vec3(0,0,0)), hash(p + vec3(1,0,0)), f.x),
-                  mix(hash(p + vec3(0,1,0)), hash(p + vec3(1,1,0)), f.x), f.y),
-              mix(mix(hash(p + vec3(0,0,1)), hash(p + vec3(1,0,1)), f.x),
-                  mix(hash(p + vec3(0,1,1)), hash(p + vec3(1,1,1)), f.x), f.y), f.z);
-          }
-          
-          float fbm(vec3 p) {
-            float v = 0.0;
-            float a = 0.5;
-            vec3 shift = vec3(100.0);
-            for (int i = 0; i < 3; ++i) {
-              v += a * noise(p);
-              p = p * 2.0 + shift;
-              a *= 0.5;
-            }
-            return v;
-          }
-          
-          ${shader.fragmentShader}
-        `.replace(
-          `#include <map_fragment>`,
-          `
-          #include <map_fragment>
-          float n = fbm(vWorldPos * vec3(0.08, 0.015, 0.08));
-          vec3 barkBase = vec3(0.65, 0.55, 0.45);
-          vec3 barkHighlights = vec3(1.2, 1.1, 0.95);
-          vec3 textureMod = mix(barkBase, barkHighlights, n);
-          float cracks = smoothstep(0.4, 0.18, n);
-          textureMod -= vec3(0.25, 0.20, 0.15) * cracks;
-          diffuseColor.rgb *= textureMod;
-          `
-        );
-      };
     }
 
     _initLights() {
