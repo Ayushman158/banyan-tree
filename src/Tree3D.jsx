@@ -123,6 +123,73 @@ import { BanyanData } from './data.js';
     };
   }
 
+  function createSingleLeafGeometry() {
+    const geo = new THREE.BufferGeometry();
+    
+    // Vertices for a beautiful creased organic leaf:
+    // Base at (0,0,0), tip at (0, 1.4, 0), mid-left/right at X = -0.45 / 0.45
+    // Spreading slightly on Z axis for organic curvature
+    const vertices = new Float32Array([
+      0.0,  0.0,  0.0,     // 0: base
+     -0.45, 0.6, -0.05,    // 1: mid-left (bent back)
+      0.0,  0.7,  0.15,    // 2: mid-spine (creased forward)
+      0.45, 0.6, -0.05,    // 3: mid-right (bent back)
+      0.0,  1.4,  0.0      // 4: tip
+    ]);
+
+    // Front indices
+    const indices = new Uint16Array([
+      0, 2, 1, // left half base
+      1, 2, 4, // left half tip
+      0, 3, 2, // right half base
+      2, 3, 4  // right half tip
+    ]);
+
+    geo.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+    geo.setIndex(new THREE.BufferAttribute(indices, 1));
+    geo.computeVertexNormals();
+
+    return geo;
+  }
+
+  function createLeafClusterGeometry() {
+    const leafGeos = [];
+    const leafCount = 8;
+    
+    // 8 leaves radially distributed in a beautiful cluster
+    for (let i = 0; i < leafCount; i++) {
+      const leaf = createSingleLeafGeometry();
+      
+      // Jitter scale slightly
+      const scale = 1.0 + Math.sin(i * 1.7) * 0.25; // 0.75 to 1.25
+      leaf.scale(scale, scale, scale);
+      
+      // Radial distribution angle
+      const angleY = (i / leafCount) * Math.PI * 2 + Math.sin(i * 2.3) * 0.2;
+      
+      // Outward tilt: alternate between slightly higher/lower angles for volume
+      const tilt = 0.4 + Math.sin(i * 1.5) * 0.25; // 0.15 to 0.65 rad (~8 to 37 deg)
+      
+      leaf.rotateX(tilt);
+      leaf.rotateY(angleY);
+      
+      // Translate outwards from the center branchlet stem
+      const dist = 0.6 + Math.sin(i * 1.1) * 0.2;
+      leaf.translate(
+        Math.sin(angleY) * dist,
+        Math.cos(tilt) * 0.35 + (i * 0.15), // stack vertically to form a lush bunch
+        Math.cos(angleY) * dist
+      );
+      
+      leafGeos.push(leaf);
+    }
+    
+    const merged = mergeGeos(leafGeos);
+    leafGeos.forEach(g => g.dispose());
+    return merged;
+  }
+
+
   /* ═══════════════════════════════════════════════════════════════════════════
      BanyanTree
    ═══════════════════════════════════════════════════════════════════════════ */
@@ -130,6 +197,7 @@ import { BanyanData } from './data.js';
     constructor(scene, rand) {
       this.scene = scene; this.rand = rand;
       this.branchGroups = {}; this.leafGroups = {}; this.rootGroups = {};
+      this.leafGeo = createLeafClusterGeometry();
       this._build();
     }
 
@@ -605,15 +673,23 @@ import { BanyanData } from './data.js';
       }
     }
 
-    /* ── Leaves — 3-layer instanced spheres ─────────────────────────────── */
+    /* ── Leaves — Realistic instanced leaf clusters with high-end micro-animations ── */
     _makeLeaves(catIdx, pts) {
       if (!pts.length) return;
       const perPt = 5, total = pts.length * perPt, dummy = new THREE.Object3D();
 
-      const makeLayer = (color, opacity, yOff, sx, sy) => {
-        // Low-poly sphere geometry for massive performance boost
-        const geo  = new THREE.SphereGeometry(1, 4, 3);
-        const mat  = new THREE.MeshLambertMaterial({ color, transparent: opacity < 1, opacity });
+      const makeLayer = (colorHex, opacity, yOff, sx, sy) => {
+        const geo = this.leafGeo;
+        // Use MeshStandardMaterial with double-sided rendering for natural shading & glossy specular highlights
+        const mat = new THREE.MeshStandardMaterial({
+          color: colorHex,
+          roughness: 0.38,
+          metalness: 0.1,
+          transparent: opacity < 1,
+          opacity: opacity,
+          side: THREE.DoubleSide,
+          shadowSide: THREE.DoubleSide
+        });
         
         mat.onBeforeCompile = (shader) => {
           shader.uniforms.uTime = this.scene.userData.uniforms.uTime;
@@ -625,42 +701,83 @@ import { BanyanData } from './data.js';
             `
             #include <begin_vertex>
             vec3 worldPos = vec3(instanceMatrix[3][0], instanceMatrix[3][1], instanceMatrix[3][2]);
-            float swayX = sin(uTime * 1.5 + worldPos.x * 0.02 + worldPos.y * 0.05) * 1.5;
-            float swayZ = cos(uTime * 1.1 + worldPos.z * 0.02 - worldPos.y * 0.05) * 1.5;
+            
+            // Slow organic branch sway
+            float swayX = sin(uTime * 1.4 + worldPos.x * 0.02 + worldPos.y * 0.05) * 1.5;
+            float swayZ = cos(uTime * 1.0 + worldPos.z * 0.02 - worldPos.y * 0.05) * 1.5;
             transformed.x += swayX;
             transformed.z += swayZ;
+
+            // Micro-animation: Leaf flutter (fast, based on local vertex positions)
+            float flutter = sin(uTime * 6.5 + position.x * 4.5 + position.y * 3.5) * 0.08;
+            transformed.x += flutter * 0.4;
+            transformed.y += flutter;
+            transformed.z += flutter * 0.3;
             `
           );
         };
 
         const mesh = new THREE.InstancedMesh(geo, mat, total);
         mesh.castShadow = false;
+        
+        const baseColor = new THREE.Color(colorHex);
+        const tempColor = new THREE.Color();
+
         let k = 0;
         pts.forEach(p => {
           for (let j = 0; j < perPt; j++) {
-            // Tighter jitter to ensure leaves cluster around the twigs instead of floating in space
+            // Cluster the leaf branchlets tightly around twigs
             dummy.position.set(
-              p.x + (this.rand() - 0.5) * 15,
-              p.y + (this.rand() - 0.5) * 10 + yOff,
-              p.z + (this.rand() - 0.5) * 12
+              p.x + (this.rand() - 0.5) * 13,
+              p.y + (this.rand() - 0.5) * 9 + yOff,
+              p.z + (this.rand() - 0.5) * 11
             );
-            const s = sx * (0.55 + this.rand() * 1.0);
-            const h = sy * (0.55 + this.rand() * 1.0);
-            dummy.scale.set(s, h, s);
-            dummy.rotation.set(this.rand() * Math.PI, this.rand() * Math.PI, this.rand() * Math.PI);
+            // Leaf cluster size scaling
+            const s = sx * (0.45 + this.rand() * 0.7);
+            const h = sy * (0.45 + this.rand() * 0.7);
+            dummy.scale.set(s, s, s); // uniform scale for natural leaf proportions
+            
+            // Random orientation for each leaf cluster instance
+            dummy.rotation.set(
+              this.rand() * Math.PI,
+              this.rand() * Math.PI * 2,
+              this.rand() * Math.PI * 0.25
+            );
             dummy.updateMatrix();
-            mesh.setMatrixAt(k++, dummy.matrix);
+            mesh.setMatrixAt(k, dummy.matrix);
+
+            // Jitter colors dynamically for realistic multi-toned foliage
+            const hueShift = (this.rand() - 0.5) * 0.04;
+            const satShift = (this.rand() - 0.5) * 0.15;
+            const lightShift = (this.rand() - 0.5) * 0.14;
+            
+            tempColor.copy(baseColor);
+            const hsl = {};
+            tempColor.getHSL(hsl);
+            tempColor.setHSL(
+              THREE.MathUtils.clamp(hsl.h + hueShift, 0, 1),
+              THREE.MathUtils.clamp(hsl.s + satShift, 0, 1),
+              THREE.MathUtils.clamp(hsl.l + lightShift, 0.12, 0.88)
+            );
+            mesh.setColorAt(k, tempColor);
+            
+            k++;
           }
         });
         mesh.instanceMatrix.needsUpdate = true;
+        if (mesh.instanceColor) {
+          mesh.instanceColor.needsUpdate = true;
+        }
+        
         this.scene.add(mesh);
         return { mesh, mat };
       };
 
-      // Tapered leaf clusters scaled down to look like foliage instead of massive balloons
-      const back  = makeLayer(C.leaf0, 0.70, -1, 5.5, 4.0);
-      const mid   = makeLayer(C.leaf1, 0.80,  0, 7.0, 5.0);
-      const front = makeLayer(C.leaf3, 0.88,  1, 5.5, 3.5);
+      // Three layered clusters for deep volumetric canopy structure
+      // Adjust scales so they match the size of custom leaf clusters
+      const back  = makeLayer(C.leaf0, 0.72, -1, 3.8, 3.0);
+      const mid   = makeLayer(C.leaf1, 0.82,  0, 4.8, 3.8);
+      const front = makeLayer(C.leaf3, 0.90,  1, 3.8, 2.8);
       this.leafGroups[catIdx] = { back, mid, front };
     }
 
@@ -1100,6 +1217,9 @@ import { BanyanData } from './data.js';
       window.removeEventListener('resize', this._onResize);
       window.removeEventListener('mousemove', this._onMouseMove);
       window.removeEventListener('scroll', this._onScroll);
+      if (this.tree && this.tree.leafGeo) {
+        this.tree.leafGeo.dispose();
+      }
       this.renderer.dispose();
       const ext = this.renderer.getContext().getExtension('WEBGL_lose_context');
       if (ext) ext.loseContext();
