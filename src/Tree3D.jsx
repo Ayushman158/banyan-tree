@@ -877,6 +877,9 @@ import { BanyanData } from './data.js';
       this._scrollOffset = 0;
       this._phase = 'canopy';
 
+      this._mouseOffset = new THREE.Vector3();
+      this._projV = new THREE.Vector3();
+
       this._onMouseMove = (e) => {
         this._mouseX = (e.clientX / window.innerWidth) * 2 - 1;
         this._mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
@@ -1050,13 +1053,13 @@ import { BanyanData } from './data.js';
       this.camera.lookAt(this._camTarget);
 
       // 1. Mouse Parallax (Drift) relative to camera's orientation
-      const mouseOffset = new THREE.Vector3(
+      this._mouseOffset.set(
         this._mouseX * 60,
         this._mouseY * 30,
         0
       );
-      mouseOffset.applyQuaternion(this.camera.quaternion);
-      this.camera.position.add(mouseOffset);
+      this._mouseOffset.applyQuaternion(this.camera.quaternion);
+      this.camera.position.add(this._mouseOffset);
 
       // 2. Scroll Parallax - camera sinks down and pulls back on scroll (canopy & category only)
       if (this._phase === 'canopy' || this._phase === 'category') {
@@ -1070,8 +1073,12 @@ import { BanyanData } from './data.js';
     }
 
     _project(v3) {
-      const v = v3.clone().project(this.camera);
-      return { x: (v.x * 0.5 + 0.5) * this.w, y: (-v.y * 0.5 + 0.5) * this.h, vis: v.z < 1.0 };
+      this._projV.copy(v3).project(this.camera);
+      return {
+        x: (this._projV.x * 0.5 + 0.5) * this.w,
+        y: (-this._projV.y * 0.5 + 0.5) * this.h,
+        vis: this._projV.z < 1.0
+      };
     }
 
     _projectCats() {

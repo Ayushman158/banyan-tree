@@ -32,10 +32,21 @@ function Parallax({ speed = 0.05, className = "", children, ...props }) {
     if (!el) return;
 
     let isVisible = false;
+    let elementTop = 0;
+    let elementHeight = 0;
+
+    const measure = () => {
+      const rect = el.getBoundingClientRect();
+      elementTop = rect.top + window.scrollY;
+      elementHeight = rect.height;
+    };
 
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(e => {
         isVisible = e.isIntersecting;
+        if (isVisible) {
+          measure();
+        }
       });
     }, { threshold: 0 });
 
@@ -43,21 +54,24 @@ function Parallax({ speed = 0.05, className = "", children, ...props }) {
 
     const onScroll = () => {
       if (!isVisible) return;
-      const rect = el.getBoundingClientRect();
-      const viewHeight = window.innerHeight;
-      const elementCenter = rect.top + rect.height / 2;
-      const viewportCenter = viewHeight / 2;
-      const diff = elementCenter - viewportCenter;
-      const translateVal = diff * speed;
+      const scrolled = window.scrollY;
+      const viewportHeight = window.innerHeight;
+      
+      const relativeY = (elementTop - scrolled) + elementHeight / 2 - viewportHeight / 2;
+      const translateVal = relativeY * speed;
       el.style.setProperty('--parallax-y', `${translateVal}px`);
     };
 
     window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
+    window.addEventListener("resize", measure);
+
+    const t = setTimeout(measure, 100);
 
     return () => {
       observer.disconnect();
+      clearTimeout(t);
       window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", measure);
     };
   }, [speed]);
 

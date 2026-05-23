@@ -31,6 +31,21 @@ function TreeScene3D({
   const condRefs = useRef(Array.from({ length: MAX_CONDS }, () => React.createRef()));
   const rootRefs = useRef(Array.from({ length: 7 },  () => React.createRef()));
 
+  // WeakMap dimension cache to prevent layout thrashing (offsetWidth/offsetHeight calls inside tick)
+  const dimCache = useRef(new WeakMap());
+
+  const getDim = (el, defaultW = 140, defaultH = 38) => {
+    if (!el) return { w: defaultW, h: defaultH };
+    let cached = dimCache.current.get(el);
+    if (!cached) {
+      cached = { w: el.offsetWidth || defaultW, h: el.offsetHeight || defaultH };
+      if (cached.w > 0 && cached.h > 0) {
+        dimCache.current.set(el, cached);
+      }
+    }
+    return cached;
+  };
+
   /* ── Init Three.js once ─────────────────────────────────────────────────── */
   useEffect(() => {
     const app = new ThreeApp(containerRef.current);
@@ -47,8 +62,7 @@ function TreeScene3D({
         const p = catPts[i];
         if (p && p.vis) {
           const el = ref.current;
-          const w = el ? (el.offsetWidth || 140) : 140;
-          const h = el ? (el.offsetHeight || 38) : 38;
+          const { w, h } = getDim(el, 140, 38);
           activeCats.push({ el, p: { ...p }, w, h, i });
         } else if (ref.current) {
           ref.current.style.visibility = 'hidden';
@@ -116,14 +130,22 @@ function TreeScene3D({
         }
         const p = tipPts[i];
         if (p && p.vis) {
-          const labelEl = el.querySelector('.ol-cond__label');
-          const w = labelEl ? (labelEl.offsetWidth || 100) : 100;
-          const h = labelEl ? (labelEl.offsetHeight || 24) : 24;
+          let cached = dimCache.current.get(el);
+          if (!cached) {
+            const labelEl = el.querySelector('.ol-cond__label');
+            cached = {
+              w: labelEl ? (labelEl.offsetWidth || 100) : 100,
+              h: labelEl ? (labelEl.offsetHeight || 24) : 24
+            };
+            if (cached.w > 0 && cached.h > 0) {
+              dimCache.current.set(el, cached);
+            }
+          }
           activeConds.push({
             el,
             p,
-            w,
-            h,
+            w: cached.w,
+            h: cached.h,
             index: i,
             drop: (i % 4) * 20
           });
