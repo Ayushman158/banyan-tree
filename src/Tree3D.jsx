@@ -1399,8 +1399,10 @@ import { BanyanData } from './data.js';
         
         // Keep category exploration as an atlas view: close enough to read the
         // system, far enough that foliage stays as a calm mass rather than a mesh.
-        this._tPos.set(tx * 0.4, Math.max(ty, 100) + 150, 980);
-        this._tTarget.set(tx * 0.5, Math.max(ty, 80), tz * 0.2);
+        // We point the camera target lower (ty - 40) so the branch sits higher on screen,
+        // leaving plenty of room below for long lists of conditions (like Gut Health).
+        this._tPos.set(tx * 0.4, Math.max(ty, 80) + 100, 960);
+        this._tTarget.set(tx * 0.5, Math.max(ty, 60) - 40, tz * 0.2);
         this.tree.setLitCategory(selectedCategory);
         this.tree.setLitRoot(-1);
 

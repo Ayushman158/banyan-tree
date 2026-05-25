@@ -262,14 +262,15 @@ function TreeScene3D({
         {BanyanData.rootOrder.map((id, i) => {
           const rc      = BanyanData.rootCauses[id];
           const isActive = selectedRoot === id;
-          const isDim    = selectedRoot && !isActive;
-          // rootsReady gates visibility so nodes don't appear during the camera descent
-          const vis      = (phase === 'roots' || phase === 'detail') && rootsReady;
+          // Only show the root label if it is the root cause for the selected condition
+          const vis      = (phase === 'roots' || phase === 'detail') && rootsReady && isActive;
+          if (!vis) return null; // dynamically hide non-relevant roots
+
           return (
             <button
               key={`root-${id}`}
               ref={rootRefs.current[i]}
-              className={`ol-root ${vis ? 'is-visible' : ''} ${isActive ? 'is-active' : ''} ${isDim ? 'is-dim' : ''}`}
+              className={`ol-root ${vis ? 'is-visible' : ''} ${isActive ? 'is-active' : ''}`}
               onClick={() => vis && onRootClick(id)}
               onMouseEnter={() => vis && appRef.current?.tree.setLitRoot(i)}
               onMouseLeave={() => vis && appRef.current?.tree.setLitRoot(selectedRoot != null ? BanyanData.rootOrder.indexOf(selectedRoot) : -1)}
