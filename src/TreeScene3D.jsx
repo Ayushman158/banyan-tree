@@ -149,8 +149,8 @@ function TreeScene3D({
             w: cached.w,
             h: cached.h,
             index: i,
-            drop: 10 + Math.floor(i / 4) * 8,
-            xOffset: (i % 4 === 0 ? -260 : i % 4 === 1 ? -90 : i % 4 === 2 ? 90 : 260)
+            drop: 0,
+            xOffset: (i % 2 === 0 ? -160 : 160)
           });
         } else {
           el.style.visibility = 'hidden';
@@ -165,14 +165,16 @@ function TreeScene3D({
         const curr = activeConds[j];
         for (let k = 0; k < j; k++) {
           const prev = activeConds[k];
-          const dx = Math.abs(curr.p.x - prev.p.x);
+          const currX = curr.p.x + curr.xOffset;
+          const prevX = prev.p.x + prev.xOffset;
+          const dx = Math.abs(currX - prevX);
           const combinedHalfWidths = (curr.w + prev.w) / 2;
-          const minHorizontalGap = 12;
+          const minHorizontalGap = 16;
 
           if (dx < combinedHalfWidths + minHorizontalGap) {
             const currY = curr.p.y + curr.drop;
             const prevY = prev.p.y + prev.drop;
-            const minVerticalDistance = prev.h + 4; // prev label height + 4px gap
+            const minVerticalDistance = prev.h + 2; 
             if (currY < prevY + minVerticalDistance) {
               curr.drop = Math.max(curr.drop, prevY + minVerticalDistance - curr.p.y);
             }
@@ -181,7 +183,7 @@ function TreeScene3D({
       }
 
       activeConds.forEach(({ el, p, drop, xOffset }) => {
-        el.style.transform = `translate(${(p.x + xOffset).toFixed(1)}px,${p.y.toFixed(1)}px) translate(-50%,0%)`;
+        el.style.transform = `translate(${(p.x + xOffset).toFixed(1)}px,${(p.y + drop).toFixed(1)}px) translate(-50%,0%)`;
         el.style.setProperty('--drop', `${drop.toFixed(1)}px`);
         el.style.setProperty('--thread-x', `${(-xOffset).toFixed(1)}px`);
         el.style.visibility = '';

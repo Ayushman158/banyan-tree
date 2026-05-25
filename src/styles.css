@@ -748,6 +748,12 @@ body {
   text-transform: uppercase; color: rgba(255, 249, 232, 0.68); margin-top: 4px;
 }
 
+/* ── Stage Headers (Title + subtitle) ────────────────────────────────────── */
+.stage-headers {
+  position: absolute; top: 90px; left: 0; width: 100%;
+  text-align: center; z-index: 20; pointer-events: none;
+}
+
 /* ── Back button ─────────────────────────────────────────────────────────── */
 .stage-back {
   position: absolute; top: 50%; left: 4vw; transform: translateY(-50%);
