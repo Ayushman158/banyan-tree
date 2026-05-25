@@ -334,7 +334,14 @@ function App() {
         onJump={onCrumbJump}
       />
 
-      <section className="stage" data-screen-label="01 Hero">
+      <section className={`stage${(phase === 'roots' || phase === 'detail') ? ' is-underground' : ''}`} data-screen-label="01 Hero">
+        {/* Atmospheric depth layers — sit behind the 3D canvas */}
+        <div className="atmo-sun-glow"     aria-hidden="true" />
+        <div className="atmo-cloud-drift atmo-cloud-drift--one" aria-hidden="true" />
+        <div className="atmo-cloud-drift atmo-cloud-drift--two" aria-hidden="true" />
+        <div className="atmo-horizon-mist" aria-hidden="true" />
+        <div className="atmo-water"        aria-hidden="true" />
+        <div className="atmo-fore-dark"    aria-hidden="true" />
         <TreeScene3D
           phase={phase}
           selectedCategory={selectedCategory}
@@ -362,13 +369,13 @@ function App() {
           opacity: phase === "canopy" ? 1 : 0,
         }}>
           <p className="text">
-            Twelve domains of the modern body, one hundred forty conditions,
+            Twelve domains of the modern body, one hundred twenty-one conditions,
             traced back to the patterns that quietly shape them.
           </p>
           <div className="meta">
             <span><strong>12</strong> domains</span>
             <span className="sep"></span>
-            <span><strong>140</strong> conditions</span>
+            <span><strong>121</strong> conditions</span>
             <span className="sep"></span>
             <span><strong>7</strong> roots</span>
           </div>
@@ -405,6 +412,49 @@ function App() {
             <span>{backLabel}</span>
           </button>
         )}
+
+        {/* Underground: bottom-left insight card */}
+        <div className={`underground-insight ${(phase === 'roots' || phase === 'detail') && rootsReady ? 'is-visible' : ''}`}>
+          <span className="underground-insight__icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeOpacity="0.6" />
+              <path d="M5.5 9.5C6 7 8 6 8 4" stroke="currentColor" strokeLinecap="round" />
+              <circle cx="8" cy="11.5" r="0.75" fill="currentColor" />
+            </svg>
+          </span>
+          <span>Each root is connected.<br/>Healing one nourishes all.</span>
+        </div>
+
+        <div className={`soil-story ${(phase === 'roots' || phase === 'detail') && rootsReady ? 'is-visible' : ''}`} aria-hidden="true">
+          <span className="soil-story__layer soil-story__layer--top" />
+          <span className="soil-story__layer soil-story__layer--mid" />
+          <span className="soil-story__layer soil-story__layer--deep" />
+          <span className="soil-story__path soil-story__path--one" />
+          <span className="soil-story__path soil-story__path--two" />
+          <span className="soil-story__path soil-story__path--three" />
+        </div>
+
+        {/* Underground: scroll hint */}
+        <div className={`underground-scroll ${(phase === 'roots' || phase === 'detail') && rootsReady ? 'is-visible' : ''}`}>
+          <span className="underground-scroll__icon">
+            <svg width="18" height="28" viewBox="0 0 18 28" fill="none">
+              <rect x="1" y="1" width="16" height="26" rx="8" stroke="currentColor" strokeOpacity="0.45" />
+              <rect x="7.5" y="5" width="3" height="6" rx="1.5" fill="currentColor" fillOpacity="0.6">
+                <animate attributeName="y" values="5;12;5" dur="2s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.8;0.2;0.8" dur="2s" repeatCount="indefinite" />
+              </rect>
+            </svg>
+          </span>
+          <span>Scroll to explore deeper</span>
+        </div>
+
+        {/* Underground: bottom-right healing pathways */}
+        <div className={`underground-cta ${(phase === 'roots' || phase === 'detail') && rootsReady ? 'is-visible' : ''}`}>
+          <button className="btn btn--ghost underground-cta__btn" onClick={() => setShowJournal(true)} data-hoverable="true">
+            View Healing Pathways
+            <span className="underground-cta__arrow">→</span>
+          </button>
+        </div>
       </section>
 
       <RootPanel data={rootData} trace={trace} onClose={onPanelClose} />

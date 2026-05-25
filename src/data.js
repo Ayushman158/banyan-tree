@@ -5,6 +5,7 @@
 export const rootCauses = {
     "chronic-stress": {
       name: "Chronic Stress",
+      subtitle: "CORTISOL DYSREGULATION",
       number: "01",
       insight: "Stress is not the storm — it is the soil where storms keep growing.",
       body: "Prolonged activation of the body's stress response erodes the systems that keep mind and body steady. Cortisol stays elevated, sleep architecture shallow, digestion suppressed. Over months, the body forgets what calm feels like. The work is not avoiding stress — it is teaching the system to return.",
@@ -12,6 +13,7 @@ export const rootCauses = {
     },
     "nervous-system": {
       name: "Nervous System Dysregulation",
+      subtitle: "STRESS RESPONSE LOOP",
       number: "02",
       insight: "A regulated nervous system is the quiet ground beneath every other practice.",
       body: "When the autonomic nervous system loses its capacity to shift between activation and rest, symptoms travel everywhere — racing thoughts, shallow sleep, unsteady mood, unreliable digestion. Regulation is rebuilt slowly: through breath, rhythm, co-regulation, and time spent in places where the body can finally exhale.",
@@ -19,6 +21,7 @@ export const rootCauses = {
     },
     "emotional": {
       name: "Emotional Suppression",
+      subtitle: "UNEXPRESSED TENSION",
       number: "03",
       insight: "Emotions that are unfelt do not disappear — they take residence in the body.",
       body: "What gets pushed away does not leave; it settles into muscle, gut, and breath. Years of carefully managed composure can present as fatigue, tightness, hypervigilance, or a quiet dimming of joy. Reconnection is not catharsis — it is the patient practice of allowing feeling to move again.",
@@ -26,6 +29,7 @@ export const rootCauses = {
     },
     "sleep": {
       name: "Sleep Disruption",
+      subtitle: "CIRCADIAN IMBALANCE",
       number: "04",
       insight: "Sleep is the body's deepest medicine — and the first to be sacrificed.",
       body: "Without restorative sleep the body cannot clear, repair, or regulate. Energy thins, mood narrows, immunity falters, hormonal rhythms drift. Healing sleep is rarely about more hours; it is about returning depth — through light, temperature, nervous-system tone, and the slow unlearning of urgency before bed.",
@@ -33,6 +37,7 @@ export const rootCauses = {
     },
     "trauma": {
       name: "Unprocessed Trauma",
+      subtitle: "BODY HOLDS THE SCORE",
       number: "05",
       insight: "The body keeps a record the mind chose not to read.",
       body: "Trauma is not the event — it is what the nervous system could not metabolize at the time. Years later it can echo as anxiety, autoimmunity, chronic tension, or a sense of not quite arriving in one's own life. Resolution is gentle and embodied, not heroic: the system learns, slowly, that the moment has passed.",
@@ -40,6 +45,7 @@ export const rootCauses = {
     },
     "lifestyle": {
       name: "Lifestyle Imbalance",
+      subtitle: "SEDENTARY PATTERNS",
       number: "06",
       insight: "A life out of rhythm produces a body out of rhythm.",
       body: "Modern days are engineered to override our biology — light when there should be dark, urgency where there should be pause, stimulation in place of stillness. The result is a body that never quite finds its register. Restoration begins by re-introducing rhythm: of light, of meals, of movement, of rest.",
@@ -47,6 +53,7 @@ export const rootCauses = {
     },
     "nutrition": {
       name: "Nutritional Imbalance",
+      subtitle: "METABOLIC DEPLETION",
       number: "07",
       insight: "We do not eat to feed ourselves — we eat to feed the systems that make us.",
       body: "The gut is an internal ecosystem in conversation with mood, immunity, hormones, and thought. Deficiencies and inflammation rarely arrive announced; they show up as fatigue, mental fog, sensitivity, skin disruption. Nourishment is not optimization — it is the patient repair of an interior soil that has been depleted.",
@@ -64,11 +71,13 @@ const rootOrder = [
   "nutrition",
 ];
 
+// icon: SVG path string rendered at 20×20 viewBox
 const categories = [
   {
     id: "mental",
     name: "Mental Health",
     tag: "Mind",
+    icon: `<path d="M10 3a4 4 0 0 1 4 4c0 1.5-.8 2.8-2 3.5V12h-4v-1.5A4 4 0 0 1 6 7a4 4 0 0 1 4-4z" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/><circle cx="10" cy="15.5" r="1" fill="currentColor"/>`,
     defaultRoot: "nervous-system",
     conditions: [
       { name: "Depression", root: "emotional" },
@@ -87,6 +96,7 @@ const categories = [
     id: "metabolic",
     name: "Lifestyle / Metabolic",
     tag: "Metabolism",
+    icon: `<circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M7 10h6M10 7v6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>`,
     defaultRoot: "lifestyle",
     conditions: [
       { name: "Obesity", root: "lifestyle" },
@@ -104,6 +114,7 @@ const categories = [
     id: "musculoskeletal",
     name: "Musculoskeletal",
     tag: "Frame",
+    icon: `<path d="M10 3v14M6 6l4-3 4 3M6 14l4 3 4-3" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`,
     defaultRoot: "chronic-stress",
     conditions: [
       { name: "Osteoarthritis", root: "lifestyle" },
@@ -120,6 +131,7 @@ const categories = [
   {
     id: "cardiovascular",
     name: "Cardiovascular",
+    icon: `<path d="M10 16s-7-4.5-7-8a4 4 0 0 1 7-2.6A4 4 0 0 1 17 8c0 3.5-7 8-7 8z" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linejoin="round"/>`,
     tag: "Circulation",
     defaultRoot: "lifestyle",
     conditions: [
@@ -136,6 +148,7 @@ const categories = [
   {
     id: "autoimmune",
     name: "Autoimmune & Inflammatory",
+    icon: `<path d="M10 3l1.8 5.5H17l-4.6 3.3 1.8 5.5L10 14l-4.2 3.3 1.8-5.5L3 8.5h5.2z" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linejoin="round"/>`,
     tag: "Inflammation",
     defaultRoot: "trauma",
     conditions: [
@@ -153,6 +166,7 @@ const categories = [
   {
     id: "hormonal",
     name: "Hormonal & Endocrine",
+    icon: `<circle cx="10" cy="6" r="3" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M10 9v8M7 14h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>`,
     tag: "Hormones",
     defaultRoot: "chronic-stress",
     conditions: [
@@ -173,6 +187,7 @@ const categories = [
   {
     id: "neurological",
     name: "Neurological",
+    icon: `<path d="M5 10c0-2.8 2.2-5 5-5s5 2.2 5 5-2.2 5-5 5" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M10 10l3-2M10 10l-2 3M10 10l2 2" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity=".7"/>`,
     tag: "Nervous",
     defaultRoot: "nervous-system",
     conditions: [
@@ -189,6 +204,7 @@ const categories = [
   {
     id: "gut",
     name: "Gut & Digestive Health",
+    icon: `<path d="M7 4c-2 0-3 1.5-3 3s1.5 3 3 3h6c2 0 3 1.5 3 3s-1 3-3 3H8" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/>`,
     tag: "Gut",
     defaultRoot: "nutrition",
     conditions: [
@@ -214,6 +230,7 @@ const categories = [
   {
     id: "respiratory",
     name: "Respiratory & ENT",
+    icon: `<path d="M10 4v6M7 7c-2.5 1-4 3-4 5.5 0 1.4 1 2.5 2.5 2.5S8 14 8 12.5V10m4 0v2.5c0 1.4 1 2.5 2.5 2.5S17 13.9 17 12.5C17 10 15.5 8 13 7" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/>`,
     tag: "Breath",
     defaultRoot: "emotional",
     conditions: [
@@ -237,6 +254,7 @@ const categories = [
   {
     id: "skin",
     name: "Skin & Hair",
+    icon: `<ellipse cx="10" cy="10" rx="6" ry="7.5" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M7.5 7.5c1.5-1 3.5-1 5 0" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity=".6"/>`,
     tag: "Skin",
     defaultRoot: "nutrition",
     conditions: [
@@ -261,6 +279,7 @@ const categories = [
   {
     id: "oral",
     name: "Oral & Dental Health",
+    icon: `<path d="M6 4h8l1 5c0 3.3-2.2 6-5 6s-5-2.7-5-6z" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linejoin="round"/><path d="M10 9v4" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity=".6"/>`,
     tag: "Mouth",
     defaultRoot: "nutrition",
     conditions: [
@@ -272,6 +291,7 @@ const categories = [
   {
     id: "renal",
     name: "Renal & Urinary",
+    icon: `<path d="M8 4C5.5 4 4 6 4 8.5c0 3 2 5.5 4 6.5h4c2-1 4-3.5 4-6.5C16 6 14.5 4 12 4c-1 0-1.5.5-2 1-.5-.5-1-1-2-1z" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linejoin="round"/>`,
     tag: "Filter",
     defaultRoot: "lifestyle",
     conditions: [

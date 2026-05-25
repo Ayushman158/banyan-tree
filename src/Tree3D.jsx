@@ -43,22 +43,27 @@ import { BanyanData } from './data.js';
 
   /* ─── Palette ────────────────────────────────────────────────────────────── */
   const C = {
-    bark:          0x3e2610,
-    barkLight:     0x6a4420,
-    barkHighlight: 0x8c5e2c,
-    barkShade:     0x1c0e06,
-    barkMid:       0x4e3018,
-    leaf0:         0x253a18,
-    leaf1:         0x355424,
-    leaf2:         0x4a6e30,
-    leaf3:         0x618040,
-    leafLit:       0x8aaa28,
-    rootDark:      0x100804,
-    rootMid:       0x28180a,
-    rootAmbient:   0x3c2610,
-    rootLit:       0xb88c18,
-    ground:        0xddd0b8,
-    groundFar:     0xcabfa8,
+    // Wood & Bark
+    bark:          0x3a2e24, 
+    barkLight:     0x4e4034,
+    barkMid:       0x433428,
+    barkShade:     0x2a2119,
+
+    // Vibrant green foliage matching reference
+    leaf0:         0x1a3300, 
+    leaf1:         0x274e13,
+    leaf2:         0x38761d,
+    leaf3:         0x6aa84f,
+    leafLit:       0x93c47d,
+
+    // Roots — warm earthy ochre tones
+    rootDark:      0x3b2918,
+    rootMid:       0x6f4828,
+    rootAmbient:   0x8a633e,
+    rootLit:       0xe4b86a,
+    // Ground — warm grass/earth
+    ground:        0xcdd8a9,
+    groundFar:     0xbac797,
   };
 
   function applyBarkShader(mat) {
@@ -76,47 +81,16 @@ import { BanyanData } from './data.js';
 
       shader.fragmentShader = `
         varying vec3 vWorldPos;
-        
-        float hash(vec3 p) {
-          p = fract(p * 0.3183099 + .1);
-          p *= 17.0;
-          return fract(p.x * p.y * p.z * (p.x + p.y + p.z));
-        }
-        
-        float noise(vec3 x) {
-          vec3 p = floor(x);
-          vec3 f = fract(x);
-          f = f * f * (3.0 - 2.0 * f);
-          return mix(
-            mix(mix(hash(p + vec3(0,0,0)), hash(p + vec3(1,0,0)), f.x),
-                mix(hash(p + vec3(0,1,0)), hash(p + vec3(1,1,0)), f.x), f.y),
-            mix(mix(hash(p + vec3(0,0,1)), hash(p + vec3(1,0,1)), f.x),
-                mix(hash(p + vec3(0,1,1)), hash(p + vec3(1,1,1)), f.x), f.y), f.z);
-        }
-        
-        float fbm(vec3 p) {
-          float v = 0.0;
-          float a = 0.5;
-          vec3 shift = vec3(100.0);
-          for (int i = 0; i < 3; ++i) {
-            v += a * noise(p);
-            p = p * 2.0 + shift;
-            a *= 0.5;
-          }
-          return v;
-        }
-        
         ${shader.fragmentShader}
       `.replace(
         `#include <map_fragment>`,
         `
         #include <map_fragment>
-        float n = fbm(vWorldPos * vec3(0.08, 0.015, 0.08));
+        // Fast procedural noise for subtle color variation
+        float n = fract(sin(dot(vWorldPos.xyz, vec3(12.9898, 78.233, 45.164))) * 43758.5453);
         vec3 barkBase = vec3(0.65, 0.55, 0.45);
-        vec3 barkHighlights = vec3(1.2, 1.1, 0.95);
-        vec3 textureMod = mix(barkBase, barkHighlights, n);
-        float cracks = smoothstep(0.4, 0.18, n);
-        textureMod -= vec3(0.25, 0.20, 0.15) * cracks;
+        vec3 barkHighlights = vec3(0.9, 0.8, 0.7);
+        vec3 textureMod = mix(barkBase, barkHighlights, n * 0.4);
         diffuseColor.rgb *= textureMod;
         `
       );
@@ -202,11 +176,23 @@ import { BanyanData } from './data.js';
     }
 
     _build() {
+      // Atmospheric fog matching the sunset horizon to create massive depth
+      this.scene.fog = new THREE.FogExp2(0xe6d0ac, 0.0004);
+
+      // Create gradient map for stylized hand-painted toon shading
+      const format = (THREE.RedFormat !== undefined) ? THREE.RedFormat : THREE.LuminanceFormat;
+      const colors = new Uint8Array([80, 160, 255]);
+      this.toonGradient = new THREE.DataTexture(colors, 3, 1, format);
+      this.toonGradient.needsUpdate = true;
+      this.toonGradient.minFilter = THREE.NearestFilter;
+      this.toonGradient.magFilter = THREE.NearestFilter;
+
       this._sky();
       this._ground();
       this._trunk();
       this._canopy();
       this._aerials();
+      this._backgroundAerials();
       this._roots();
     }
 
@@ -231,8 +217,8 @@ import { BanyanData } from './data.js';
         }
       `;
       const uniforms = {
-        topColor: { value: new THREE.Color(0x1A4C8B) }, // Deep majestic celestial blue
-        bottomColor: { value: new THREE.Color(0x8DA9C4) } // Crisp atmospheric dawn blue
+        topColor: { value: new THREE.Color(0xbfd8e8) },
+        bottomColor: { value: new THREE.Color(0xf2e3bf) }
       };
       const skyGeo = new THREE.SphereGeometry(4000, 32, 16);
       const skyMat = new THREE.ShaderMaterial({
@@ -257,7 +243,7 @@ import { BanyanData } from './data.js';
       }
       geo.computeVertexNormals();
 
-      const mat = new THREE.MeshLambertMaterial({ color: 0x2C4C3B, side: THREE.DoubleSide }); // Rich forest green
+      const mat = new THREE.MeshStandardMaterial({ color: C.ground, roughness: 0.9, metalness: 0.0, side: THREE.DoubleSide });
       const m = new THREE.Mesh(geo, mat);
       m.rotation.x = -Math.PI / 2;
       m.position.y = -5; // Meet the trunk base perfectly
@@ -269,133 +255,62 @@ import { BanyanData } from './data.js';
 
     /* ── Trunk — multi-layered realistic bark ────────────────────────────── */
     _trunk() {
-      this.trunkMats = [];
-      const H = 155;
-
-      // Core trunk shape — wider at base, strong taper
-      // High polygon count to support detailed vertex displacement, optimized slightly
-      const geo = new THREE.CylinderGeometry(15, 38, H, 48, 24);
+      const H = 240, W_base = 35;
+      const tGeo = new THREE.CylinderGeometry(W_base * 0.65, W_base, H, 24, 60);
+      tGeo.translate(0, H / 2, 0);
       
-      const posArr = geo.attributes.position.array;
-      for (let i = 0; i < posArr.length; i += 3) {
-        let vx = posArr[i], vy = posArr[i + 1], vz = posArr[i + 2];
-        const y = vy + H / 2; // 0 at bottom, H at top
-        const t = y / H;      // 0.0 to 1.0
-
+      const pos = tGeo.attributes.position;
+      for (let i = 0; i < pos.count; i++) {
+        const vx = pos.getX(i), vy = pos.getY(i), vz = pos.getZ(i);
+        const y = vy + H / 2;
+        const t = y / H;
         const angle = Math.atan2(vz, vx);
-        
-        // Organic twist: the buttresses twist slightly as they go up
-        const a = angle + Math.sin(y * 0.03) * 0.4;
-
-        // Create 7 main buttress ridges
-        let ridge1 = Math.cos(a * 7);
-        ridge1 = Math.pow((ridge1 + 1) / 2, 2.0);
-
-        // Break symmetry with 3 secondary ridges
-        let ridge2 = Math.cos(a * 3 + 2.0);
-        ridge2 = Math.pow((ridge2 + 1) / 2, 1.5);
-
-        // Mix ridges
-        const totalRidge = (ridge1 * 0.75 + ridge2 * 0.25);
-
-        // Calculate expansion based on height. 
-        // Huge expansion at bottom (t=0) fading sharply as it goes up
-        const buttressExpansion = totalRidge * 55 * Math.pow(1 - t, 2.2);
-        
-        // Additional organic base flare (uniform)
-        const baseFlare = 15 * Math.pow(1 - t, 4.0);
-        
-        // Bark texture noise
-        const noise = Math.sin(y * 0.5) * Math.sin(angle * 15) * 0.8;
-
+        const flare = 22 * Math.pow(1 - t, 3.5);
+        // Soft, classic procedural noise for the bark
+        const noise = Math.sin(y * 0.4) * Math.sin(angle * 8) * 0.5;
         const r = Math.sqrt(vx * vx + vz * vz);
         if (r > 0) {
-          const newR = r + buttressExpansion + baseFlare + noise;
-          const scale = newR / r;
-          posArr[i]     *= scale;
-          posArr[i + 2] *= scale;
+          const nr = r + flare + noise;
+          pos.setX(i, (vx / r) * nr);
+          pos.setZ(i, (vz / r) * nr);
         }
       }
-      geo.computeVertexNormals();
-      geo.translate(0, H / 2, 0);
-      
-      const mat = new THREE.MeshLambertMaterial({ color: C.bark });
-      applyBarkShader(mat);
-      this.trunkMats.push({ mat, color: C.bark });
-      const mesh = new THREE.Mesh(geo, mat);
-      mesh.castShadow = true;
-      this.scene.add(mesh);
+      tGeo.computeVertexNormals();
 
-      // Add a smooth dome cap at the top of the trunk (at H = 155)
-      const capGeo = new THREE.SphereGeometry(15.2, 48, 24);
-      capGeo.translate(0, H, 0);
-      const capMesh = new THREE.Mesh(capGeo, mat);
-      capMesh.castShadow = true;
-      this.scene.add(capMesh);
+      // Revert to Standard material for bright, realistic lighting
+      const tMat = new THREE.MeshStandardMaterial({ color: C.bark, roughness: 0.95, metalness: 0.0 });
+      applyBarkShader(tMat);
+      if (!this.trunkMats) this.trunkMats = [];
+      this.trunkMats.push({ mat: tMat, color: C.bark });
 
-      // Add 3 small organic crown branches at the top of the trunk to complete the tree crown
-      const crownGeos = [];
-      const crownLeafPts = [];
-      
-      const crownLimbs = [
-        { dir: new THREE.Vector3(-6, 32, 4),  w: 6 },
-        { dir: new THREE.Vector3(8, 28, -6),  w: 5.5 },
-        { dir: new THREE.Vector3(-2, 35, -8), w: 5 }
-      ];
+      const trunkMesh = new THREE.Mesh(tGeo, tMat);
+      trunkMesh.castShadow = true; trunkMesh.receiveShadow = true;
+      this.scene.add(trunkMesh);
 
-      crownLimbs.forEach((cl) => {
-        // Curve from top of trunk
-        const p0 = new THREE.Vector3(0, H - 2, 0);
-        const p1 = new THREE.Vector3(cl.dir.x * 0.4, H + cl.dir.y * 0.4, cl.dir.z * 0.4);
-        const p2 = new THREE.Vector3(cl.dir.x, H + cl.dir.y, cl.dir.z);
-        const curve = new THREE.CatmullRomCurve3([p0, p1, p2]);
-        
-        // Tube geometry for the crown branch (tapered)
-        crownGeos.push(new THREE.TubeGeometry(curve, 8, cl.w / 2, 8, false));
-        
-        // Add a sphere at the end
-        const tipGeo = new THREE.SphereGeometry(cl.w / 3, 6, 6);
-        tipGeo.translate(cl.dir.x, H + cl.dir.y, cl.dir.z);
-        crownGeos.push(tipGeo);
-
-        // Save tip point for leaves
-        crownLeafPts.push(p2);
-
-        // Grow a tiny sub-twig
-        const twigDir = new THREE.Vector3(cl.dir.x * 1.3, H + cl.dir.y + 12, cl.dir.z * 1.3);
-        const twigCurve = new THREE.CatmullRomCurve3([p2, twigDir]);
-        crownGeos.push(new THREE.TubeGeometry(twigCurve, 4, cl.w / 4, 6, false));
-        crownLeafPts.push(twigDir);
-      });
-
-      if (crownGeos.length) {
-        const crownMesh = new THREE.Mesh(mergeGeos(crownGeos), mat);
-        crownMesh.castShadow = true;
-        this.scene.add(crownMesh);
-      }
-
-      // Add leafy canopy on top of the crown branches
-      const leafGeos = [];
-      crownLeafPts.forEach(pt => {
-        for (let j = 0; j < 8; j++) {
-          const size = 3 + this.rand() * 5;
-          const leafGeo = new THREE.SphereGeometry(size, 8, 6);
-          const ox = (this.rand() - 0.5) * 12;
-          const oy = (this.rand() - 0.5) * 10;
-          const oz = (this.rand() - 0.5) * 12;
-          leafGeo.translate(pt.x + ox, pt.y + oy, pt.z + oz);
-          leafGeos.push(leafGeo);
+      // Major structural columns merging into trunk (Strangler roots)
+      for (let i = 0; i < 5; i++) {
+        const theta0 = (i / 5) * Math.PI * 2 + this.rand();
+        const pts = [];
+        for (let k = 0; k <= 6; k++) {
+          const yVal = -5 + (H + 5) * (k / 6);
+          const tVal = (yVal + 5) / (H + 5);
+          // Winding path
+          const theta = theta0 + Math.sin(tVal * Math.PI * 1.5) * 0.6 + tVal * 0.25;
+          const trunkR = 26 - 15 * tVal + 22 * Math.pow(1 - tVal, 3.5);
+          const colW = Math.max(3.0, W_base * (1.0 - tVal * 0.60));
+          const R = trunkR + colW * 0.25;
+          
+          pts.push(new THREE.Vector3(
+            Math.cos(theta) * R,
+            yVal,
+            Math.sin(theta) * R
+          ));
         }
-      });
-
-      if (leafGeos.length) {
-        const leafMat = new THREE.MeshLambertMaterial({
-          color: C.leaf1,
-          transparent: true,
-          opacity: 0.85
-        });
-        const leafMesh = new THREE.Mesh(mergeGeos(leafGeos), leafMat);
-        this.scene.add(leafMesh);
+        const colCurve = new THREE.CatmullRomCurve3(pts);
+        const colGeo = new THREE.TubeGeometry(colCurve, 16, W_base * 0.4, 8, false);
+        const colMesh = new THREE.Mesh(colGeo, tMat);
+        colMesh.castShadow = true; colMesh.receiveShadow = true;
+        this.scene.add(colMesh);
       }
     }
 
@@ -421,19 +336,20 @@ import { BanyanData } from './data.js';
            droop   — droop per recursion level for outer sub-branches
            z       — primary Z-direction multiplier (alternates for 3D depth)
            W       — primary tube radius — thick like a real scaffold limb */
+      // Lower the canopy so it doesn't clip the top, keep organic spread
       const LIMBS = [
-        { angle: -0.88, startY:  52, len: 310, droop: 0.30, z:  0.60, W: 18 },
-        { angle: -0.68, startY:  72, len: 330, droop: 0.23, z: -0.42, W: 20 },
-        { angle: -0.50, startY:  90, len: 315, droop: 0.16, z:  0.52, W: 21 },
-        { angle: -0.32, startY: 105, len: 295, droop: 0.09, z: -0.32, W: 20 },
-        { angle: -0.14, startY: 118, len: 275, droop: 0.03, z:  0.38, W: 18 },
-        { angle: -0.02, startY: 130, len: 255, droop: 0.00, z: -0.22, W: 17 },
-        { angle:  0.02, startY: 130, len: 255, droop: 0.00, z:  0.22, W: 17 },
-        { angle:  0.14, startY: 118, len: 275, droop: 0.03, z: -0.38, W: 18 },
-        { angle:  0.32, startY: 105, len: 295, droop: 0.09, z:  0.32, W: 20 },
-        { angle:  0.50, startY:  90, len: 315, droop: 0.16, z: -0.52, W: 21 },
-        { angle:  0.68, startY:  72, len: 330, droop: 0.23, z:  0.42, W: 20 },
-        { angle:  0.88, startY:  52, len: 310, droop: 0.30, z: -0.60, W: 18 },
+        { angle: -0.65 + this.rand()*0.1, startY:  50 + this.rand()*20, len: 160 + this.rand()*30, droop: 0.15 + this.rand()*0.05, z:  0.75, W: 20 },
+        { angle: -0.55 + this.rand()*0.1, startY:  70 + this.rand()*30, len: 200 + this.rand()*30, droop: 0.12 + this.rand()*0.05, z: -0.55, W: 22 },
+        { angle: -0.40 + this.rand()*0.1, startY:  90 + this.rand()*20, len: 250 + this.rand()*40, droop: 0.10 + this.rand()*0.05, z:  0.65, W: 21 },
+        { angle: -0.25 + this.rand()*0.1, startY: 120 + this.rand()*30, len: 280 + this.rand()*30, droop: 0.05 + this.rand()*0.02, z: -0.35, W: 20 },
+        { angle: -0.10 + this.rand()*0.1, startY: 140 + this.rand()*30, len: 320 + this.rand()*30, droop: 0.02 + this.rand()*0.02, z:  0.45, W: 18 },
+        { angle: -0.02 + this.rand()*0.1, startY: 150 + this.rand()*20, len: 340 + this.rand()*40, droop: 0.00 + this.rand()*0.02, z: -0.25, W: 17 },
+        { angle:  0.02 + this.rand()*0.1, startY: 150 + this.rand()*20, len: 340 + this.rand()*40, droop: 0.00 + this.rand()*0.02, z:  0.25, W: 17 },
+        { angle:  0.10 + this.rand()*0.1, startY: 140 + this.rand()*30, len: 320 + this.rand()*30, droop: 0.02 + this.rand()*0.02, z: -0.45, W: 18 },
+        { angle:  0.25 + this.rand()*0.1, startY: 120 + this.rand()*30, len: 280 + this.rand()*40, droop: 0.05 + this.rand()*0.05, z:  0.35, W: 20 },
+        { angle:  0.40 + this.rand()*0.1, startY:  90 + this.rand()*20, len: 250 + this.rand()*30, droop: 0.08 + this.rand()*0.05, z: -0.65, W: 21 },
+        { angle:  0.55 + this.rand()*0.1, startY:  70 + this.rand()*40, len: 200 + this.rand()*30, droop: 0.12 + this.rand()*0.05, z:  0.55, W: 22 },
+        { angle:  0.65 + this.rand()*0.1, startY:  50 + this.rand()*30, len: 160 + this.rand()*30, droop: 0.15 + this.rand()*0.05, z: -0.75, W: 20 },
       ];
 
       for (let i = 0; i < 12; i++) {
@@ -573,7 +489,7 @@ import { BanyanData } from './data.js';
         }
 
         if (geos.length) {
-          const mat  = new THREE.MeshLambertMaterial({ color: C.bark });
+          const mat  = new THREE.MeshStandardMaterial({ color: C.bark, roughness: 0.9, metalness: 0.0 });
           applyBarkShader(mat);
           const mesh = new THREE.Mesh(mergeGeos(geos), mat);
           mesh.castShadow = true;
@@ -588,8 +504,8 @@ import { BanyanData } from './data.js';
        This is the signature shape of a real banyan scaffold limb. */
     _makeLimbCurve(start, angle, zMult, len, droop) {
       const sign = angle < 0 ? -1 : 1;
-      // Scaffold arm droop: capped at 2× so tip stays near ground, not underground
-      const fullDroop = sign * droop * 2.2;
+      // Scaffold arm droop: capped to prevent hitting the ground
+      const fullDroop = sign * droop * 1.2;
 
       // p0: trunk attachment
       const p0 = start.clone();
@@ -620,7 +536,7 @@ import { BanyanData } from './data.js';
     _growBranch(start, angle, zAngle, len, width, depth, droopAccum, droopRate,
                 geos, tips, leafPts) {
       const sign      = angle < 0 ? -1 : 1;
-      const effAngle  = angle + sign * droopAccum;
+      const effAngle  = angle + sign * droopAccum * 0.7;
 
       const wob = len * 0.12;
       const end = new THREE.Vector3(
@@ -657,12 +573,12 @@ import { BanyanData } from './data.js';
       }
 
       const splits = this.rand() < 0.50 ? 2 : 3;
-      const spread = 0.46 + (4 - depth) * 0.22;
+      const spread = 0.52 + (4 - depth) * 0.24;
       for (let i = 0; i < splits; i++) {
         const t    = splits === 1 ? 0 : (i / (splits - 1)) - 0.5;
         const aOff = t * spread + (this.rand() - 0.5) * 0.24;
         const zOff = (this.rand() - 0.5) * 0.28;
-        const nLen = len   * (0.53 + this.rand() * 0.24);
+        const nLen = len   * (0.56 + this.rand() * 0.24);
         // Aggressive taper — deep branches become hair-thin twigs
         const nW   = Math.max(0.55, width * (0.46 + this.rand() * 0.10));
         this._growBranch(
@@ -673,18 +589,19 @@ import { BanyanData } from './data.js';
       }
     }
 
-    /* ── Leaves — Realistic instanced leaf clusters with high-end micro-animations ── */
+    /* ── Leaves — soft canopy masses plus restrained leaf detail ─────────── */
     _makeLeaves(catIdx, pts) {
       if (!pts.length) return;
-      const perPt = 5, total = pts.length * perPt, dummy = new THREE.Object3D();
+      const mass = this._makeCanopyMass(catIdx, pts);
+      const perPt = 4, total = pts.length * perPt, dummy = new THREE.Object3D();
 
       const makeLayer = (colorHex, opacity, yOff, sx, sy) => {
         const geo = this.leafGeo;
         // Use MeshStandardMaterial with double-sided rendering for natural shading & glossy specular highlights
         const mat = new THREE.MeshStandardMaterial({
           color: colorHex,
-          roughness: 0.38,
-          metalness: 0.1,
+          roughness: 0.72,
+          metalness: 0.0,
           transparent: opacity < 1,
           opacity: opacity,
           side: THREE.DoubleSide,
@@ -703,16 +620,16 @@ import { BanyanData } from './data.js';
             vec3 worldPos = vec3(instanceMatrix[3][0], instanceMatrix[3][1], instanceMatrix[3][2]);
             
             // Slow organic branch sway
-            float swayX = sin(uTime * 1.4 + worldPos.x * 0.02 + worldPos.y * 0.05) * 1.5;
-            float swayZ = cos(uTime * 1.0 + worldPos.z * 0.02 - worldPos.y * 0.05) * 1.5;
+            float swayX = sin(uTime * 0.54 + worldPos.x * 0.010 + worldPos.y * 0.026) * 0.55;
+            float swayZ = cos(uTime * 0.42 + worldPos.z * 0.010 - worldPos.y * 0.026) * 0.55;
             transformed.x += swayX;
             transformed.z += swayZ;
 
-            // Micro-animation: Leaf flutter (fast, based on local vertex positions)
-            float flutter = sin(uTime * 6.5 + position.x * 4.5 + position.y * 3.5) * 0.08;
-            transformed.x += flutter * 0.4;
+            // Quiet leaf breathing instead of busy flutter.
+            float flutter = sin(uTime * 1.35 + position.x * 2.2 + position.y * 1.8) * 0.020;
+            transformed.x += flutter * 0.25;
             transformed.y += flutter;
-            transformed.z += flutter * 0.3;
+            transformed.z += flutter * 0.2;
             `
           );
         };
@@ -728,12 +645,12 @@ import { BanyanData } from './data.js';
           for (let j = 0; j < perPt; j++) {
             // Cluster the leaf branchlets tightly around twigs
             dummy.position.set(
-              p.x + (this.rand() - 0.5) * 13,
-              p.y + (this.rand() - 0.5) * 9 + yOff,
-              p.z + (this.rand() - 0.5) * 11
+              p.x + (this.rand() - 0.5) * 18,
+              p.y + (this.rand() - 0.5) * 12 + yOff,
+              p.z + (this.rand() - 0.5) * 16
             );
             // Leaf cluster size scaling
-            const s = sx * (0.45 + this.rand() * 0.7);
+            const s = sx * (0.55 + this.rand() * 0.48);
             const h = sy * (0.45 + this.rand() * 0.7);
             dummy.scale.set(s, s, s); // uniform scale for natural leaf proportions
             
@@ -747,9 +664,9 @@ import { BanyanData } from './data.js';
             mesh.setMatrixAt(k, dummy.matrix);
 
             // Jitter colors dynamically for realistic multi-toned foliage
-            const hueShift = (this.rand() - 0.5) * 0.04;
-            const satShift = (this.rand() - 0.5) * 0.15;
-            const lightShift = (this.rand() - 0.5) * 0.14;
+            const hueShift = (this.rand() - 0.5) * 0.018;
+            const satShift = (this.rand() - 0.5) * 0.07;
+            const lightShift = (this.rand() - 0.5) * 0.08;
             
             tempColor.copy(baseColor);
             const hsl = {};
@@ -775,10 +692,83 @@ import { BanyanData } from './data.js';
 
       // Three layered clusters for deep volumetric canopy structure
       // Adjust scales so they match the size of custom leaf clusters
-      const back  = makeLayer(C.leaf0, 0.72, -1, 3.8, 3.0);
-      const mid   = makeLayer(C.leaf1, 0.82,  0, 4.8, 3.8);
-      const front = makeLayer(C.leaf3, 0.90,  1, 3.8, 2.8);
-      this.leafGroups[catIdx] = { back, mid, front };
+      const back  = makeLayer(C.leaf0, 0.44, -1, 3.8, 3.0);
+      const mid   = makeLayer(C.leaf1, 0.56,  0, 4.6, 3.7);
+      const front = makeLayer(C.leaf3, 0.62,  1, 3.8, 2.9);
+      this.leafGroups[catIdx] = { mass, back, mid, front };
+    }
+
+    _makeCanopyMass(catIdx, pts) {
+      // Create detailed, multi-layered foliage using thousands of flat leaf planes
+      // This eliminates the 'blob' and 'crystal' look, returning to a classic, realistic tree
+
+      // A simple diamond-like leaf plane
+      const pGeo = new THREE.PlaneGeometry(16, 16);
+      pGeo.rotateZ(Math.PI / 4); // Rotate 45deg to make it diamond shaped
+      pGeo.scale(0.8, 1.4, 1.0); // Stretch to look like a leaf
+
+      const makeLayer = (colorHex, opacity, yOffset, isMass = false) => {
+        const geos = [];
+        // Scatter many distinct leaves.
+        // pts contains around 100-200 points per branch. We multiply to get a lush but airy canopy.
+        const numLeaves = Math.floor(pts.length * (isMass ? 2.5 : 4.5)); 
+
+        for (let i = 0; i < numLeaves; i++) {
+          const p = pts[Math.floor(this.rand() * pts.length)];
+          const g = pGeo.clone();
+          
+          // Smaller leaves for less jagged edges
+          const s = 0.4 + this.rand() * 0.5;
+          g.scale(s, s, s);
+          
+          // Random organic rotation
+          g.rotateX(this.rand() * Math.PI);
+          g.rotateY(this.rand() * Math.PI);
+          g.rotateZ(this.rand() * Math.PI);
+          
+          // Tighter spread to prevent scattered shards
+          const spread = isMass ? 20 : 12;
+          g.translate(
+            p.x + (this.rand() - 0.5) * spread,
+            p.y + yOffset * 8 + (this.rand() - 0.5) * spread,
+            p.z + (this.rand() - 0.5) * spread
+          );
+
+          geos.push(g);
+        }
+
+        if (!geos.length) return null;
+        
+        // Revert to bright Standard Material
+        const mat = new THREE.MeshStandardMaterial({
+          color: colorHex,
+          roughness: 0.8,
+          metalness: 0.0,
+          side: THREE.DoubleSide,
+          transparent: true,
+          opacity: opacity,
+          depthWrite: false,
+        });
+        const mesh = new THREE.Mesh(mergeGeos(geos), mat);
+        // Do not cast shadows so the canopy remains light and clean
+        mesh.castShadow = false;
+        mesh.receiveShadow = false;
+        mesh.renderOrder = isMass ? -2 : -1;
+        this.scene.add(mesh);
+        geos.forEach(g => g.dispose());
+        return { mesh, mat };
+      };
+
+      // Soft ambient mass holding the branch together - disabled to remove the hazy background
+      const massColor = catIdx % 3 === 0 ? C.leaf2 : C.leaf1;
+      const mass = null; // makeLayer(massColor, 0.35, 0, true);
+
+      // Three layered distinct leaf clusters for realistic depth
+      const back  = makeLayer(C.leaf0, 0.60, -1);
+      const mid   = makeLayer(C.leaf1, 0.85,  0);
+      const front = makeLayer(C.leaf3, 1.00,  1);
+      
+      this.leafGroups[catIdx] = { mass, back, mid, front };
     }
 
     /* ── Aerial roots ────────────────────────────────────────────────────── */
@@ -841,8 +831,8 @@ import { BanyanData } from './data.js';
         }
 
         if (geos.length) {
-          const mat  = new THREE.MeshLambertMaterial({
-            color: C.barkLight, transparent: true, opacity: 0.40
+          const mat  = new THREE.MeshStandardMaterial({
+            color: C.barkLight, roughness: 0.9, metalness: 0.02, transparent: true, opacity: 0.50
           });
           const mesh = new THREE.Mesh(mergeGeos(geos), mat);
           this.scene.add(mesh);
@@ -852,27 +842,107 @@ import { BanyanData } from './data.js';
       }
     }
 
+    _backgroundAerials() {
+      const clustersPerBranch = 6;
+      const rootsPerCluster = 12;
+      const totalRoots = 12 * clustersPerBranch * rootsPerCluster;
+      const cylGeo = new THREE.CylinderGeometry(1, 1, 1, 4, 1);
+      cylGeo.translate(0, -0.5, 0); // Origin at top
+
+      const mat = new THREE.MeshStandardMaterial({
+        color: 0x4a321a, // warm earth tone
+        roughness: 0.95,
+        metalness: 0.0,
+        transparent: true,
+        opacity: 0.85,
+        side: THREE.DoubleSide
+      });
+
+      mat.onBeforeCompile = (shader) => {
+        shader.uniforms.uTime = this.scene.userData.uniforms.uTime;
+        shader.vertexShader = `
+          uniform float uTime;
+          ${shader.vertexShader}
+        `.replace(
+          `#include <begin_vertex>`,
+          `
+          #include <begin_vertex>
+          vec3 worldPos = vec3(instanceMatrix[3][0], instanceMatrix[3][1], instanceMatrix[3][2]);
+          // Very subtle sway for the dense curtain
+          float heightFactor = -position.y;
+          float sway = sin(uTime * 0.4 + worldPos.x * 0.05) * 1.5 * heightFactor;
+          float swayZ = cos(uTime * 0.3 + worldPos.z * 0.05) * 1.5 * heightFactor;
+          transformed.x += sway;
+          transformed.z += swayZ;
+          `
+        );
+      };
+
+      const mesh = new THREE.InstancedMesh(cylGeo, mat, totalRoots);
+      mesh.castShadow = false; // Disable shadow casting for performance
+      const dummy = new THREE.Object3D();
+      let idx = 0;
+
+      for (let catIdx = 0; catIdx < 12; catIdx++) {
+        const bg = this.branchGroups[catIdx];
+        if (!bg || !bg.primCurve) continue;
+
+        for (let j = 0; j < clustersPerBranch; j++) {
+          // Pick a random spot along the branch for the cluster
+          const t = 0.15 + 0.80 * this.rand();
+          const clusterCenter = bg.primCurve.getPoint(t);
+          clusterCenter.y -= 2.0;
+          
+          for (let k = 0; k < rootsPerCluster; k++) {
+            // Group roots tightly around this center
+            const startPt = clusterCenter.clone();
+            startPt.x += (this.rand() - 0.5) * 22;
+            startPt.z += (this.rand() - 0.5) * 22;
+
+            // Hanging length: reaching all the way to ground for most
+            let rootLength = startPt.y + 15 + this.rand() * 10;
+            if (this.rand() < 0.25) {
+              rootLength *= (0.4 + this.rand() * 0.4); // 25% are short broken roots
+            }
+            
+            // Varied thicknesses for organic look
+            const thickness = 0.15 + this.rand() * 0.40;
+
+            dummy.position.copy(startPt);
+            dummy.scale.set(thickness, rootLength, thickness);
+            // Slight angle so they aren't perfectly straight wires
+            dummy.rotation.set(
+              (this.rand() - 0.5) * 0.05, 
+              this.rand() * Math.PI, 
+              (this.rand() - 0.5) * 0.05
+            );
+            dummy.updateMatrix();
+
+            if (idx < totalRoots) {
+              mesh.setMatrixAt(idx++, dummy.matrix);
+            }
+          }
+        }
+      }
+      mesh.instanceMatrix.needsUpdate = true;
+      this.scene.add(mesh);
+      this.bgAerialsMesh = mesh;
+    }
+
     /* ── Underground root system ─────────────────────────────────────────── */
     _roots() {
-      // Root trunk (mirror of above trunk)
-      const rGeo = new THREE.CylinderGeometry(52, 14, 138, 16, 1);
-      rGeo.translate(0, -69, 0);
-      const rMat = new THREE.MeshLambertMaterial({ color: C.barkShade });
-      if (this.trunkMats) this.trunkMats.push({ mat: rMat, color: C.barkShade });
-      this.scene.add(new THREE.Mesh(rGeo, rMat));
-
       // Lateral root spread at base
-      const sMat = new THREE.MeshLambertMaterial({ color: C.rootMid });
+      const sMat = new THREE.MeshStandardMaterial({ color: C.rootMid, roughness: 0.9, metalness: 0.05 });
       if (this.trunkMats) this.trunkMats.push({ mat: sMat, color: C.rootMid });
       for (let i = 0; i < 6; i++) {
         const a = (i / 6) * Math.PI * 2;
         const pts = [
-          new THREE.Vector3(Math.cos(a)*10, -2, Math.sin(a)*10),
-          new THREE.Vector3(Math.cos(a) * 52, -22, Math.sin(a) * 52),
-          new THREE.Vector3(Math.cos(a) * 88, -14, Math.sin(a) * 88),
+          new THREE.Vector3(Math.cos(a)*12, -2, Math.sin(a)*12),
+          new THREE.Vector3(Math.cos(a) * 60, -22, Math.sin(a) * 60),
+          new THREE.Vector3(Math.cos(a) * 100, -14, Math.sin(a) * 100),
         ];
         this.scene.add(new THREE.Mesh(
-          new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 6, 5.5, 6),
+          new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 6, 7.5, 6),
           sMat
         ));
       }
@@ -881,9 +951,11 @@ import { BanyanData } from './data.js';
       ANGLES.forEach((a, i) => {
         const geos = [], tipH = { v: new THREE.Vector3(0, -220, 0) };
         const start = new THREE.Vector3(Math.cos(a)*10 + (this.rand()-0.5)*4, -5, Math.sin(a)*10 + (this.rand()-0.5)*4);
-        this._growRoot(start, a, 128 + this.rand() * 28, 9.5, 4, geos, tipH);
+        // Make the roots thicker so they are more visible
+        this._growRoot(start, a, 128 + this.rand() * 28, 14.0, 4, geos, tipH);
         if (geos.length) {
-          const mat  = new THREE.MeshLambertMaterial({ color: C.rootDark });
+          // Use a brighter mid-tone color so they stand out in the dark
+          const mat  = new THREE.MeshStandardMaterial({ color: C.rootMid, roughness: 0.9, metalness: 0.05 });
           
           mat.onBeforeCompile = (shader) => {
             shader.uniforms.uTime = this.scene.userData.uniforms.uTime;
@@ -911,9 +983,9 @@ import { BanyanData } from './data.js';
               `
               #include <dithering_fragment>
               if (uIsLit > 0.5) {
-                 float pulse = sin(vWorldPos.y * 0.05 + uTime * 3.0);
+                 float pulse = sin(vWorldPos.y * 0.055 + uTime * 1.8);
                  pulse = smoothstep(0.85, 1.0, pulse);
-                 gl_FragColor.rgb += vec3(1.0, 0.8, 0.2) * pulse * 0.8;
+                 gl_FragColor.rgb += vec3(1.0, 0.72, 0.32) * pulse * 0.45;
               }
               `
             );
@@ -967,16 +1039,16 @@ import { BanyanData } from './data.js';
         const isLit = catIdx === i, isDim = catIdx != null && !isLit;
 
         // Branches
-        bg.mat.color.setHex(isDim ? 0x160c04 : C.bark);
-        bg.mat.transparent = isDim; bg.mat.opacity = isDim ? 0.16 : 1.0; bg.mat.needsUpdate = true;
+        bg.mat.color.setHex(isDim ? 0x7a664c : C.bark);
+        bg.mat.transparent = isDim; bg.mat.opacity = isDim ? 0.34 : 1.0; bg.mat.needsUpdate = true;
 
         // Leaves
         if (lg) {
-          [lg.back, lg.mid, lg.front].filter(Boolean).forEach(l => {
-            l.mat.color.setHex(isLit ? C.leafLit : isDim ? 0x141c0c :
-              l === lg.front ? C.leaf3 : l === lg.mid ? C.leaf1 : C.leaf0);
+          [lg.mass, lg.back, lg.mid, lg.front].filter(Boolean).forEach(l => {
+            l.mat.color.setHex(isLit ? C.leafLit : isDim ? 0x6f7652 :
+              l === lg.front ? C.leaf3 : l === lg.mid || l === lg.mass ? C.leaf1 : C.leaf0);
             l.mat.transparent = isDim || l.mat.opacity < 1;
-            l.mat.opacity     = isDim ? 0.14 : l === lg.front ? 0.88 : l === lg.mid ? 0.80 : 0.70;
+            l.mat.opacity     = isDim ? (l === lg.mass ? 0.04 : 0.22) : l === lg.mass ? 0.08 : l === lg.front ? 0.62 : l === lg.mid ? 0.56 : 0.44;
             l.mat.needsUpdate = true;
           });
         }
@@ -987,7 +1059,7 @@ import { BanyanData } from './data.js';
             // Canopy: show all dimly
             am.mesh.visible = true;
             am.mat.color.setHex(C.barkLight);
-            am.mat.opacity = 0.40;
+            am.mat.opacity = 0.42;
           } else if (isLit) {
             // Category selected: highlight its roots
             am.mesh.visible = true;
@@ -1000,14 +1072,19 @@ import { BanyanData } from './data.js';
           am.mat.needsUpdate = true;
         }
       }
+      if (this.bgAerialsMesh && this.bgAerialsMesh.material) {
+        const isDim = catIdx !== null;
+        this.bgAerialsMesh.material.opacity = isDim ? 0.22 : 0.65;
+        this.bgAerialsMesh.material.needsUpdate = true;
+      }
     }
 
     setLitRoot(rootIdx) {
       for (let i = 0; i < 7; i++) {
         const rg = this.rootGroups[i]; if (!rg) continue;
         const isLit = rootIdx === i, isAmb = rootIdx < 0, isDim = rootIdx >= 0 && !isLit;
-        rg.mat.color.setHex(isLit ? C.rootLit : isAmb ? C.rootAmbient : isDim ? 0x0a0604 : C.rootDark);
-        rg.mat.transparent = isDim; rg.mat.opacity = isDim ? 0.22 : 1.0; 
+        rg.mat.color.setHex(isLit ? C.rootLit : isAmb ? C.rootAmbient : isDim ? 0x5a412a : C.rootDark);
+        rg.mat.transparent = isDim; rg.mat.opacity = isDim ? 0.38 : 1.0; 
         if (rg.mat.userData.shader) {
           rg.mat.userData.shader.uniforms.uIsLit.value = isLit ? 1.0 : 0.0;
         }
@@ -1042,12 +1119,14 @@ import { BanyanData } from './data.js';
       this._initTree();
       this._initResize();
 
-      // Wide-angle canopy view — slightly below canopy mid-point so the full
-      // tree arc is framed with comfortable margin on all sides.
-      this._camPos    = new THREE.Vector3(0, 150, 950);
-      this._camTarget = new THREE.Vector3(0, 175, 0);
-      this._tPos      = this._camPos.clone();
-      this._tTarget   = this._camTarget.clone();
+      // Entry animation: camera starts far back and low, looking up
+      this._camPos    = new THREE.Vector3(0, -250, 1800);
+      this._camTarget = new THREE.Vector3(0, 250, 0);
+      
+      // Target resting positions for the canopy view
+      this._tPos      = new THREE.Vector3(0, 260, 1050);
+      this._tTarget   = new THREE.Vector3(0, 290, 0);
+      
       this.camera.position.copy(this._camPos);
       this.camera.lookAt(this._camTarget);
 
@@ -1083,7 +1162,7 @@ import { BanyanData } from './data.js';
       r.shadowMap.enabled   = true;
       r.shadowMap.type      = THREE.PCFSoftShadowMap;
       r.toneMapping         = THREE.ACESFilmicToneMapping;
-      r.toneMappingExposure = 1.18;
+      r.toneMappingExposure = 1.22;
       r.outputColorSpace    = THREE.SRGBColorSpace;
       r.setClearColor(0x000000, 0);
       this.container.appendChild(r.domElement);
@@ -1092,7 +1171,8 @@ import { BanyanData } from './data.js';
 
     _initScene() {
       this.scene = new THREE.Scene();
-      this.scene.fog = new THREE.FogExp2(0x8DA9C4, 0.00048); // Match fog to new horizon color
+      // Very light warm mist — only affects distant geometry, not the tree itself
+      this.scene.fog = new THREE.FogExp2(0xf1e6d2, 0.00024);
       this.scene.background = null;
       this.scene.userData.uniforms = { uTime: { value: 0 } };
     }
@@ -1105,31 +1185,36 @@ import { BanyanData } from './data.js';
     }
 
     _initLights() {
-      this.scene.add(new THREE.AmbientLight(0xfff8f0, 0.65));
+      // Soft warm ambient — morning light fill
+      this.scene.add(new THREE.AmbientLight(0xfff4e1, 0.86));
 
-      const sun = new THREE.DirectionalLight(0xffeedd, 1.35); // Boosted sun intensity for contrast
-      sun.position.set(360, 640, 240);
+      // Main sun — warm golden morning angle, slightly lower for long shadows
+      const sun = new THREE.DirectionalLight(0xffd089, 1.68);
+      sun.position.set(380, 460, 420);
       sun.castShadow = true;
-      // Lower shadow map size from 1024 to 512 for significantly better performance
-      sun.shadow.mapSize.set(512, 512);
+      sun.shadow.mapSize.set(1024, 1024);
       sun.shadow.camera.near = 10; sun.shadow.camera.far = 2800;
       sun.shadow.camera.left = sun.shadow.camera.bottom = -1000;
       sun.shadow.camera.right = sun.shadow.camera.top   =  1000;
       sun.shadow.bias = -0.001;
       this.scene.add(sun);
 
-      this.scene.add(new THREE.HemisphereLight(0xfff0e4, 0x2C4C3B, 0.55)); // Tie hemisphere to new ground color
+      // Hemisphere — sky blue top, warm grass bottom — ties to CSS sky palette
+      this.scene.add(new THREE.HemisphereLight(0xc8e3f2, 0xb7a06a, 0.82));
 
-      const fill = new THREE.PointLight(0xd89830, 0.35, 1900);
-      fill.position.set(0, -40, 500);
+      // Warm fill from front — lifts shadowed faces without washing out
+      const fill = new THREE.PointLight(0xf2cf92, 0.52, 2200);
+      fill.position.set(0, 85, 640);
       this.scene.add(fill);
 
-      const rim = new THREE.DirectionalLight(0x8DA9C4, 0.90); // Cinematic rim
-      rim.position.set(-480, 360, -540);
+      // Cool atmospheric rim from left-back — separates tree from sky
+      const rim = new THREE.DirectionalLight(0xc1d9df, 0.48);
+      rim.position.set(-520, 380, -480);
       this.scene.add(rim);
 
-      const under = new THREE.PointLight(0x502010, 0.32, 1300);
-      under.position.set(0, -270, 180);
+      // Subtle warm bounce from ground
+      const under = new THREE.PointLight(0xd29a53, 0.48, 1500);
+      under.position.set(0, -230, 220);
       this.scene.add(under);
     }
 
@@ -1142,7 +1227,7 @@ import { BanyanData } from './data.js';
     }
 
     _initSpores() {
-      const pCount = 600;
+      const pCount = 260;
       const geo = new THREE.BufferGeometry();
       const pos = new Float32Array(pCount * 3);
       const phases = new Float32Array(pCount);
@@ -1158,7 +1243,7 @@ import { BanyanData } from './data.js';
       const mat = new THREE.ShaderMaterial({
         uniforms: {
           uTime: this.scene.userData.uniforms.uTime,
-          color: { value: new THREE.Color(0xfff5c2) }
+          color: { value: new THREE.Color(0xffe8b8) }
         },
         vertexShader: `
           uniform float uTime;
@@ -1166,13 +1251,13 @@ import { BanyanData } from './data.js';
           varying float vAlpha;
           void main() {
             vec3 p = position;
-            p.x += sin(uTime * 0.2 + phase) * 80.0;
-            p.y += cos(uTime * 0.15 + phase) * 40.0;
-            p.z += sin(uTime * 0.1 + phase) * 80.0;
+            p.x += sin(uTime * 0.10 + phase) * 46.0;
+            p.y += cos(uTime * 0.08 + phase) * 26.0;
+            p.z += sin(uTime * 0.06 + phase) * 46.0;
             vec4 mvPosition = modelViewMatrix * vec4(p, 1.0);
             gl_Position = projectionMatrix * mvPosition;
-            gl_PointSize = clamp(2000.0 / -mvPosition.z, 0.5, 8.0);
-            vAlpha = 0.2 + 0.5 * sin(uTime * 0.8 + phase * 2.0);
+            gl_PointSize = clamp(1400.0 / -mvPosition.z, 0.4, 4.5);
+            vAlpha = 0.08 + 0.22 * sin(uTime * 0.36 + phase * 2.0);
           }
         `,
         fragmentShader: `
@@ -1217,8 +1302,12 @@ import { BanyanData } from './data.js';
       window.removeEventListener('resize', this._onResize);
       window.removeEventListener('mousemove', this._onMouseMove);
       window.removeEventListener('scroll', this._onScroll);
-      if (this.tree && this.tree.leafGeo) {
-        this.tree.leafGeo.dispose();
+      if (this.tree) {
+        if (this.tree.leafGeo) this.tree.leafGeo.dispose();
+        if (this.tree.bgAerialsMesh) {
+          if (this.tree.bgAerialsMesh.geometry) this.tree.bgAerialsMesh.geometry.dispose();
+          if (this.tree.bgAerialsMesh.material) this.tree.bgAerialsMesh.material.dispose();
+        }
       }
       this.renderer.dispose();
       const ext = this.renderer.getContext().getExtension('WEBGL_lose_context');
@@ -1231,15 +1320,15 @@ import { BanyanData } from './data.js';
       if (!this._running) return;
       this._raf = requestAnimationFrame(() => this._tick());
       this.scene.userData.uniforms.uTime.value = performance.now() / 1000;
-      this._camPos.lerp(this._tPos, 0.040);
-      this._camTarget.lerp(this._tTarget, 0.040);
+      this._camPos.lerp(this._tPos, 0.030);
+      this._camTarget.lerp(this._tTarget, 0.030);
       this.camera.position.copy(this._camPos);
       this.camera.lookAt(this._camTarget);
 
       // 1. Mouse Parallax (Drift) relative to camera's orientation
       this._mouseOffset.set(
-        this._mouseX * 60,
-        this._mouseY * 30,
+        this._mouseX * 34,
+        this._mouseY * 18,
         0
       );
       this._mouseOffset.applyQuaternion(this.camera.quaternion);
@@ -1294,8 +1383,8 @@ import { BanyanData } from './data.js';
     setPhase(phase, selectedCategory, selectedRoot) {
       this._phase = phase;
       if (phase === 'canopy') {
-        this._tPos.set(0, 150, 950);
-        this._tTarget.set(0, 175, 0);
+        this._tPos.set(0, 260, 1050);
+        this._tTarget.set(0, 290, 0);
         this.tree.setLitCategory(null);
         this.tree.setLitRoot(-99);
 
@@ -1308,20 +1397,16 @@ import { BanyanData } from './data.js';
         const ty      = pts.reduce((a, t) => a + t.y, 0) / n;
         const tz      = pts.reduce((a, t) => a + t.z, 0) / n;
         
-        // Shift camera to the side of the branch rather than looking down the barrel, so labels spread horizontally
-        const dir = new THREE.Vector3(tx, 0, tz).normalize();
-        const perp = new THREE.Vector3(-dir.z, 0, dir.x);
-        
-        const camPos = new THREE.Vector3(tx, Math.max(ty, 60) + 120, tz).add(dir.multiplyScalar(150)).add(perp.multiplyScalar(320));
-
-        this._tPos.copy(camPos);
-        this._tTarget.set(tx, Math.max(ty, 30), tz);
+        // Keep category exploration as an atlas view: close enough to read the
+        // system, far enough that foliage stays as a calm mass rather than a mesh.
+        this._tPos.set(tx * 0.4, Math.max(ty, 100) + 150, 980);
+        this._tTarget.set(tx * 0.5, Math.max(ty, 80), tz * 0.2);
         this.tree.setLitCategory(selectedCategory);
         this.tree.setLitRoot(-1);
 
       } else if (phase === 'roots' || phase === 'detail') {
-        this._tPos.set(0, -120, 600);
-        this._tTarget.set(0, -280, 0);
+        this._tPos.set(0, -94, 640);
+        this._tTarget.set(0, -235, 0);
         this.tree.setLitCategory(null);
         const rootIdx = selectedRoot != null ? BanyanData.rootOrder.indexOf(selectedRoot) : -1;
         this.tree.setLitRoot(rootIdx);

@@ -6,7 +6,7 @@
        — no setState, no re-render per frame
      - React re-renders only when the set of visible elements changes (phase / selection) */
 
-import React, { useEffect, useRef, useMemo, useCallback } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { BanyanData } from './data.js';
 import ThreeApp from './Tree3D.jsx';
 
@@ -97,7 +97,9 @@ function TreeScene3D({
         if (!el) return;
         const p = rootPts[i];
         if (p && p.vis) {
-          el.style.transform = `translate(${p.x.toFixed(1)}px,${p.y.toFixed(1)}px) translate(-50%,-50%)`;
+          // Stagger vertically to prevent overlap, but keep them attached to their 3D root tips horizontally
+          const yOffset = (i % 2 === 0 ? 0 : 70);
+          el.style.transform = `translate(${p.x.toFixed(1)}px,${(p.y + yOffset).toFixed(1)}px) translate(-50%,-50%)`;
           el.style.visibility = '';
         } else {
           el.style.visibility = 'hidden';
@@ -147,7 +149,8 @@ function TreeScene3D({
             w: cached.w,
             h: cached.h,
             index: i,
-            drop: (i % 4) * 20
+            drop: 10 + Math.floor(i / 4) * 8,
+            xOffset: (i % 4 === 0 ? -260 : i % 4 === 1 ? -90 : i % 4 === 2 ? 90 : 260)
           });
         } else {
           el.style.visibility = 'hidden';
@@ -169,7 +172,7 @@ function TreeScene3D({
           if (dx < combinedHalfWidths + minHorizontalGap) {
             const currY = curr.p.y + curr.drop;
             const prevY = prev.p.y + prev.drop;
-            const minVerticalDistance = prev.h + 8; // prev label height + 8px gap
+            const minVerticalDistance = prev.h + 4; // prev label height + 4px gap
             if (currY < prevY + minVerticalDistance) {
               curr.drop = Math.max(curr.drop, prevY + minVerticalDistance - curr.p.y);
             }
@@ -177,9 +180,10 @@ function TreeScene3D({
         }
       }
 
-      activeConds.forEach(({ el, p, drop }) => {
-        el.style.transform = `translate(${p.x.toFixed(1)}px,${p.y.toFixed(1)}px) translate(-50%,0%)`;
+      activeConds.forEach(({ el, p, drop, xOffset }) => {
+        el.style.transform = `translate(${(p.x + xOffset).toFixed(1)}px,${p.y.toFixed(1)}px) translate(-50%,0%)`;
         el.style.setProperty('--drop', `${drop.toFixed(1)}px`);
+        el.style.setProperty('--thread-x', `${(-xOffset).toFixed(1)}px`);
         el.style.visibility = '';
       });
     };
@@ -203,10 +207,14 @@ function TreeScene3D({
   const currentCat  = selectedCategory != null ? BanyanData.categories[selectedCategory] : null;
   const conditions  = currentCat?.conditions ?? [];
 
+  const isUnderground = phase === 'roots' || phase === 'detail';
+
   return (
     <div className="stage-frame">
       {/* Three.js canvas lives here */}
       <div ref={containerRef} className="three-container" />
+      {/* Underground veil overlay */}
+      <div className={`underground-veil ${isUnderground ? 'is-active' : ''}`} aria-hidden="true" />
 
       {/* HTML overlays — positioned by the tick loop */}
       <div className="scene-overlay" aria-hidden="false">
@@ -263,15 +271,14 @@ function TreeScene3D({
               ref={rootRefs.current[i]}
               className={`ol-root ${vis ? 'is-visible' : ''} ${isActive ? 'is-active' : ''} ${isDim ? 'is-dim' : ''}`}
               onClick={() => vis && onRootClick(id)}
+              onMouseEnter={() => vis && appRef.current?.tree.setLitRoot(i)}
+              onMouseLeave={() => vis && appRef.current?.tree.setLitRoot(selectedRoot != null ? BanyanData.rootOrder.indexOf(selectedRoot) : -1)}
               data-hoverable="true"
               tabIndex={vis ? 0 : -1}
             >
-              <span className="ol-root__ring" />
-              <span className="ol-root__connector" />
-              <span className="ol-root__halo" />
-              <span className="ol-root__core" />
               <div className="ol-root__label-box">
-                <span className="ol-root__label">{rc.name}</span>
+                <span className="ol-root__name">{rc.name}</span>
+                <span className="ol-root__subtitle">{rc.subtitle}</span>
               </div>
             </button>
           );
