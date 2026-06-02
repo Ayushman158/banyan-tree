@@ -196,7 +196,7 @@ import { BanyanData } from './data.js';
 
     _build() {
       // Atmospheric fog matching the sunset horizon to create massive depth
-      this.scene.fog = new THREE.FogExp2(0xe6d0ac, 0.0004);
+      this.scene.fog = new THREE.FogExp2(0xf5edd6, 0.00018);
 
       // Create gradient map for stylized hand-painted toon shading
       const format = (THREE.RedFormat !== undefined) ? THREE.RedFormat : 1021; // fallback to old LuminanceFormat constant
@@ -273,9 +273,8 @@ import { BanyanData } from './data.js';
       // Fake shadow disk removed for better realism and to rely on actual shadow map
     }
 
-    /* ── Trunk — multi-layered realistic bark ────────────────────────────── */
     _trunk() {
-      const H = 240, W_base = 35;
+      const H = 240, W_base = 48;
       const tGeo = new THREE.CylinderGeometry(W_base * 0.65, W_base, H, 24, 60);
       tGeo.translate(0, H / 2, 0);
       
@@ -285,7 +284,7 @@ import { BanyanData } from './data.js';
         const y = vy + H / 2;
         const t = y / H;
         const angle = Math.atan2(vz, vx);
-        const flare = 22 * Math.pow(1 - t, 3.5);
+        const flare = 32 * Math.pow(1 - t, 3.5); // increased base flare
         // Soft, classic procedural noise for the bark
         const noise = Math.sin(y * 0.4) * Math.sin(angle * 8) * 0.5;
         const r = Math.sqrt(vx * vx + vz * vz);
@@ -307,18 +306,22 @@ import { BanyanData } from './data.js';
       trunkMesh.castShadow = true; trunkMesh.receiveShadow = true;
       this.scene.add(trunkMesh);
 
-      // Major structural columns merging into trunk (Strangler roots)
-      for (let i = 0; i < 5; i++) {
-        const theta0 = (i / 5) * Math.PI * 2 + this.rand();
+      // Major structural columns merging into trunk (Strangler roots) - 8 columns winding tightly
+      for (let i = 0; i < 8; i++) {
+        const theta0 = (i / 8) * Math.PI * 2 + this.rand() * 0.2;
         const pts = [];
-        for (let k = 0; k <= 6; k++) {
-          const yVal = -5 + (H + 5) * (k / 6);
+        for (let k = 0; k <= 8; k++) {
+          const yVal = -5 + (H + 5) * (k / 8);
           const tVal = (yVal + 5) / (H + 5);
-          // Winding path
-          const theta = theta0 + Math.sin(tVal * Math.PI * 1.5) * 0.6 + tVal * 0.25;
-          const trunkR = 26 - 15 * tVal + 22 * Math.pow(1 - tVal, 3.5);
-          const colW = Math.max(3.0, W_base * (1.0 - tVal * 0.60));
-          const R = trunkR + colW * 0.25;
+          // Twist them tightly around the trunk
+          const theta = theta0 + tVal * Math.PI * 0.8 + Math.sin(tVal * Math.PI * 1.5) * 0.15;
+          
+          // Calculate the trunk radius at this height yVal
+          const flare = 32 * Math.pow(1 - tVal, 3.5);
+          const trunkR = W_base * (0.65 + (1.0 - 0.65) * (1.0 - tVal)) + flare;
+          
+          // Place columns slightly outside the trunk surface (seamless blend)
+          const R = trunkR - 1.5;
           
           pts.push(new THREE.Vector3(
             Math.cos(theta) * R,
@@ -327,10 +330,16 @@ import { BanyanData } from './data.js';
           ));
         }
         const colCurve = new THREE.CatmullRomCurve3(pts);
-        const colGeo = new THREE.TubeGeometry(colCurve, 16, W_base * 0.4, 8, false);
+        // Tube radius is much thinner to look like realistic wrapping strands
+        const tubeRad = Math.max(2.2, W_base * 0.10 * (1.0 - tValFallback(i) * 0.40));
+        const colGeo = new THREE.TubeGeometry(colCurve, 24, tubeRad, 8, false);
         const colMesh = new THREE.Mesh(colGeo, tMat);
         colMesh.castShadow = true; colMesh.receiveShadow = true;
         this.scene.add(colMesh);
+      }
+      
+      function tValFallback(i) {
+        return (i % 3 === 0 ? 0.3 : 0.0);
       }
     }
 
@@ -358,18 +367,18 @@ import { BanyanData } from './data.js';
            W       — primary tube radius — thick like a real scaffold limb */
       // Lower the canopy so it doesn't clip the top, keep organic spread
       const LIMBS = [
-        { angle: -0.65 + this.rand()*0.1, startY:  50 + this.rand()*20, len: 160 + this.rand()*30, droop: 0.15 + this.rand()*0.05, z:  0.75, W: 20 },
-        { angle: -0.55 + this.rand()*0.1, startY:  70 + this.rand()*30, len: 200 + this.rand()*30, droop: 0.12 + this.rand()*0.05, z: -0.55, W: 22 },
-        { angle: -0.40 + this.rand()*0.1, startY:  90 + this.rand()*20, len: 250 + this.rand()*40, droop: 0.10 + this.rand()*0.05, z:  0.65, W: 21 },
-        { angle: -0.25 + this.rand()*0.1, startY: 120 + this.rand()*30, len: 280 + this.rand()*30, droop: 0.05 + this.rand()*0.02, z: -0.35, W: 20 },
-        { angle: -0.10 + this.rand()*0.1, startY: 140 + this.rand()*30, len: 320 + this.rand()*30, droop: 0.02 + this.rand()*0.02, z:  0.45, W: 18 },
-        { angle: -0.02 + this.rand()*0.1, startY: 150 + this.rand()*20, len: 340 + this.rand()*40, droop: 0.00 + this.rand()*0.02, z: -0.25, W: 17 },
-        { angle:  0.02 + this.rand()*0.1, startY: 150 + this.rand()*20, len: 340 + this.rand()*40, droop: 0.00 + this.rand()*0.02, z:  0.25, W: 17 },
-        { angle:  0.10 + this.rand()*0.1, startY: 140 + this.rand()*30, len: 320 + this.rand()*30, droop: 0.02 + this.rand()*0.02, z: -0.45, W: 18 },
-        { angle:  0.25 + this.rand()*0.1, startY: 120 + this.rand()*30, len: 280 + this.rand()*40, droop: 0.05 + this.rand()*0.05, z:  0.35, W: 20 },
-        { angle:  0.40 + this.rand()*0.1, startY:  90 + this.rand()*20, len: 250 + this.rand()*30, droop: 0.08 + this.rand()*0.05, z: -0.65, W: 21 },
-        { angle:  0.55 + this.rand()*0.1, startY:  70 + this.rand()*40, len: 200 + this.rand()*30, droop: 0.12 + this.rand()*0.05, z:  0.55, W: 22 },
-        { angle:  0.65 + this.rand()*0.1, startY:  50 + this.rand()*30, len: 160 + this.rand()*30, droop: 0.15 + this.rand()*0.05, z: -0.75, W: 20 },
+        { angle: -1.30 + this.rand()*0.1, startY: 100 + this.rand()*10, len: 380 + this.rand()*40, droop: 0.08 + this.rand()*0.02, z:  0.85, W: 26 },
+        { angle: -1.10 + this.rand()*0.1, startY: 110 + this.rand()*10, len: 360 + this.rand()*30, droop: 0.06 + this.rand()*0.02, z: -0.65, W: 25 },
+        { angle: -0.85 + this.rand()*0.1, startY: 120 + this.rand()*15, len: 340 + this.rand()*40, droop: 0.05 + this.rand()*0.02, z:  0.75, W: 24 },
+        { angle: -0.60 + this.rand()*0.1, startY: 130 + this.rand()*15, len: 320 + this.rand()*30, droop: 0.03 + this.rand()*0.01, z: -0.45, W: 23 },
+        { angle: -0.35 + this.rand()*0.1, startY: 140 + this.rand()*20, len: 290 + this.rand()*30, droop: 0.02 + this.rand()*0.01, z:  0.55, W: 22 },
+        { angle: -0.12 + this.rand()*0.05, startY: 150 + this.rand()*20, len: 260 + this.rand()*30, droop: 0.01 + this.rand()*0.01, z: -0.25, W: 20 },
+        { angle:  0.12 + this.rand()*0.05, startY: 150 + this.rand()*20, len: 260 + this.rand()*30, droop: 0.01 + this.rand()*0.01, z:  0.25, W: 20 },
+        { angle:  0.35 + this.rand()*0.1, startY: 140 + this.rand()*20, len: 290 + this.rand()*30, droop: 0.02 + this.rand()*0.01, z: -0.55, W: 22 },
+        { angle:  0.60 + this.rand()*0.1, startY: 130 + this.rand()*15, len: 320 + this.rand()*30, droop: 0.03 + this.rand()*0.01, z:  0.45, W: 23 },
+        { angle:  0.85 + this.rand()*0.1, startY: 120 + this.rand()*15, len: 340 + this.rand()*40, droop: 0.05 + this.rand()*0.02, z: -0.75, W: 24 },
+        { angle:  1.10 + this.rand()*0.1, startY: 110 + this.rand()*10, len: 360 + this.rand()*30, droop: 0.06 + this.rand()*0.02, z:  0.65, W: 25 },
+        { angle:  1.30 + this.rand()*0.1, startY: 100 + this.rand()*10, len: 380 + this.rand()*40, droop: 0.08 + this.rand()*0.02, z: -0.85, W: 26 },
       ];
 
       for (let i = 0; i < 12; i++) {
@@ -613,7 +622,7 @@ import { BanyanData } from './data.js';
     _makeLeaves(catIdx, pts) {
       if (!pts.length) return;
       const mass = this._makeCanopyMass(catIdx, pts);
-      const perPt = 4, total = pts.length * perPt, dummy = new THREE.Object3D();
+      const perPt = 6, total = pts.length * perPt, dummy = new THREE.Object3D();
 
       const makeLayer = (colorHex, opacity, yOff, sx, sy) => {
         const geo = this.leafGeo;
@@ -725,9 +734,9 @@ import { BanyanData } from './data.js';
 
       // Three layered clusters for deep volumetric canopy structure
       // Adjust scales so they match the size of custom leaf clusters
-      const back  = makeLayer(C.leaf0, 0.44, -1, 3.8, 3.0);
-      const mid   = makeLayer(C.leaf1, 0.56,  0, 4.6, 3.7);
-      const front = makeLayer(C.leaf3, 0.62,  1, 3.8, 2.9);
+      const back  = makeLayer(C.leaf0, 0.44, -1, 4.6, 3.8);
+      const mid   = makeLayer(C.leaf1, 0.56,  0, 5.5, 4.6);
+      const front = makeLayer(C.leaf3, 0.62,  1, 4.6, 3.8);
       this.leafGroups[catIdx] = { mass, back, mid, front };
     }
 
@@ -744,14 +753,14 @@ import { BanyanData } from './data.js';
         const geos = [];
         // Scatter many distinct leaves.
         // pts contains around 100-200 points per branch. We multiply to get a lush but airy canopy.
-        const numLeaves = Math.floor(pts.length * (isMass ? 2.5 : 4.5)); 
+        const numLeaves = Math.floor(pts.length * (isMass ? 4.5 : 8.5)); 
 
         for (let i = 0; i < numLeaves; i++) {
           const p = pts[Math.floor(this.rand() * pts.length)];
           const g = pGeo.clone();
           
-          // Smaller leaves for less jagged edges
-          const s = 0.4 + this.rand() * 0.5;
+          // Larger leaves for lush volume
+          const s = 0.75 + this.rand() * 0.8;
           g.scale(s, s, s);
           
           // Random organic rotation
@@ -1479,8 +1488,8 @@ import { BanyanData } from './data.js';
 
       this.bokehPass = new BokehPass(this.scene, this.camera, {
         focus: 400.0,
-        aperture: 0.00003,
-        maxblur: 0.006,
+        aperture: 0.000005,
+        maxblur: 0.0015,
         width: this.w * pr,
         height: this.h * pr
       });
@@ -1634,8 +1643,8 @@ import { BanyanData } from './data.js';
         // Calculate true focus distance to the current target
         const dist = this.camera.position.distanceTo(this._tTarget);
         this.bokehPass.uniforms['focus'].value = dist;
-        this.bokehPass.uniforms['aperture'].value = 0.00003; 
-        this.bokehPass.uniforms['maxblur'].value = 0.006; 
+        this.bokehPass.uniforms['aperture'].value = 0.000005; 
+        this.bokehPass.uniforms['maxblur'].value = 0.0015; 
       }
 
       if (this.composer) {

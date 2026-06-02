@@ -234,7 +234,6 @@ function TreeScene3D({
             data-hoverable="true"
             tabIndex={phase === 'canopy' ? 0 : -1}
           >
-            <span className="ol-cat__dot" />
             <span className="ol-cat__name">{cat.name}</span>
           </button>
         ))}
@@ -251,8 +250,6 @@ function TreeScene3D({
               data-hoverable="true"
               tabIndex={phase === 'category' ? 0 : -1}
             >
-              <span className="ol-cond__halo" />
-              <span className="ol-cond__core" />
               <span className="ol-cond__label">{cond.name}</span>
             </button>
           );
