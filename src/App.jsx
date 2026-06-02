@@ -56,7 +56,40 @@ function Cursor() {
     let rx = mx, ry = my;
     let dx = mx, dy = my;
     let raf;
-    const onMove = (e) => { mx = e.clientX; my = e.clientY; };
+    let hoveredEl = null;
+    const onMove = (e) => { 
+      mx = e.clientX; 
+      my = e.clientY; 
+      
+      const t = e.target.closest("[data-hoverable]");
+      if (t !== hoveredEl) {
+        if (hoveredEl) {
+          hoveredEl.style.removeProperty('--mag-x');
+          hoveredEl.style.removeProperty('--mag-y');
+          hoveredEl.style.removeProperty('--mag-rx');
+          hoveredEl.style.removeProperty('--mag-ry');
+          hoveredEl.classList.remove('is-magnetized');
+        }
+        hoveredEl = t;
+        if (hoveredEl) {
+          hoveredEl.classList.add('is-magnetized');
+          // Dispatch a custom event so sounds can play
+          window.dispatchEvent(new CustomEvent('magnetHover'));
+        }
+      }
+
+      if (hoveredEl) {
+        const rect = hoveredEl.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const distX = mx - centerX;
+        const distY = my - centerY;
+        hoveredEl.style.setProperty('--mag-x', distX + "px");
+        hoveredEl.style.setProperty('--mag-y', distY + "px");
+        hoveredEl.style.setProperty('--mag-rx', (distY / (rect.height / 2) * -12) + "deg");
+        hoveredEl.style.setProperty('--mag-ry', (distX / (rect.width / 2) * 12) + "deg");
+      }
+    };
     const tick = () => {
       rx += (mx - rx) * 0.18;
       ry += (my - ry) * 0.18;

@@ -49,3 +49,25 @@ export function initSoundscape() {
 
   window.addEventListener('click', startAudio);
 }
+
+export function playHoverSound() {
+  if (!audioCtx) return;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  
+  // Create a soft, organic wooden/chime click
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(600 + Math.random() * 100, audioCtx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.1);
+  
+  gain.gain.setValueAtTime(0, audioCtx.currentTime);
+  gain.gain.linearRampToValueAtTime(0.15, audioCtx.currentTime + 0.01);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.12);
+  
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.start();
+  osc.stop(audioCtx.currentTime + 0.15);
+}
+
+window.addEventListener('magnetHover', playHoverSound);

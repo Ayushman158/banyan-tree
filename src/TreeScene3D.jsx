@@ -87,7 +87,8 @@ function TreeScene3D({
         }
       }
       activeCats.forEach(({ el, p }) => {
-        el.style.transform = `translate(${p.x.toFixed(1)}px,${p.y.toFixed(1)}px) translate(-50%,-50%)`;
+        el.style.setProperty('--pos-x', `${p.x.toFixed(1)}px`);
+        el.style.setProperty('--pos-y', `${p.y.toFixed(1)}px`);
         el.style.visibility = '';
       });
 
@@ -99,7 +100,8 @@ function TreeScene3D({
         if (p && p.vis) {
           // Stagger vertically to prevent overlap, but keep them attached to their 3D root tips horizontally
           const yOffset = (i % 2 === 0 ? 0 : 70);
-          el.style.transform = `translate(${p.x.toFixed(1)}px,${(p.y + yOffset).toFixed(1)}px) translate(-50%,-50%)`;
+          el.style.setProperty('--pos-x', `${p.x.toFixed(1)}px`);
+          el.style.setProperty('--pos-y', `${(p.y + yOffset).toFixed(1)}px`);
           el.style.visibility = '';
         } else {
           el.style.visibility = 'hidden';
@@ -183,7 +185,8 @@ function TreeScene3D({
       }
 
       activeConds.forEach(({ el, p, drop, xOffset }) => {
-        el.style.transform = `translate(${(p.x + xOffset).toFixed(1)}px,${(p.y + drop).toFixed(1)}px) translate(-50%,0%)`;
+        el.style.setProperty('--pos-x', `${(p.x + xOffset).toFixed(1)}px`);
+        el.style.setProperty('--pos-y', `${(p.y + drop).toFixed(1)}px`);
         el.style.setProperty('--drop', `${drop.toFixed(1)}px`);
         el.style.setProperty('--thread-x', `${(-xOffset).toFixed(1)}px`);
         el.style.visibility = '';
@@ -280,7 +283,12 @@ function TreeScene3D({
               tabIndex={vis ? 0 : -1}
             >
               <div className="ol-root__label-box">
-                <span className="ol-root__name">{rc.name}</span>
+                <div className="ol-root__row">
+                  <svg className="ol-root__sparkle" width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 0L14.6 9.4L24 12L14.6 14.6L12 24L9.4 14.6L0 12L9.4 9.4L12 0Z" fill="#ffdf9e" />
+                  </svg>
+                  <span className="ol-root__name">{rc.name}</span>
+                </div>
                 <span className="ol-root__subtitle">{rc.subtitle}</span>
               </div>
             </button>

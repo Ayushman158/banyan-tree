@@ -7,6 +7,10 @@
    - Aerial roots hang from outer limb tips only */
 
 import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { BokehPass } from 'three/addons/postprocessing/BokehPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { BanyanData } from './data.js';
 
   /* ─── Seeded PRNG ─────────────────────────────────────────────────────────── */
@@ -66,8 +70,9 @@ import { BanyanData } from './data.js';
     groundFar:     0xbac797,
   };
 
-  function applyBarkShader(mat) {
+  function applyBarkShader(mat, scene) {
     mat.onBeforeCompile = (shader) => {
+      shader.uniforms.uTime = scene.userData.uniforms.uTime;
       shader.vertexShader = `
         varying vec3 vWorldPos;
         ${shader.vertexShader}
@@ -80,6 +85,7 @@ import { BanyanData } from './data.js';
       );
 
       shader.fragmentShader = `
+        uniform float uTime;
         varying vec3 vWorldPos;
         ${shader.fragmentShader}
       `.replace(
@@ -92,6 +98,19 @@ import { BanyanData } from './data.js';
         vec3 barkHighlights = vec3(0.9, 0.8, 0.7);
         vec3 textureMod = mix(barkBase, barkHighlights, n * 0.4);
         diffuseColor.rgb *= textureMod;
+
+        // Glowing golden veins flowing along the bark
+        // Use world position to create winding vein lines
+        float veinNoise = sin(vWorldPos.x * 0.12 + vWorldPos.y * 0.08) * 
+                          cos(vWorldPos.z * 0.12 - vWorldPos.y * 0.06);
+        float veinWidth = 0.94; // Threshold to make veins narrow
+        float veinMask = smoothstep(veinWidth, 1.0, veinNoise);
+        
+        // Add time-based pulsing wave moving upwards
+        float wave = sin(vWorldPos.y * 0.04 - uTime * 2.0) * 0.5 + 0.5;
+        vec3 goldVeinColor = vec3(1.0, 0.72, 0.25) * veinMask * wave * 1.5;
+        
+        diffuseColor.rgb += goldVeinColor;
         `
       );
     };
@@ -180,7 +199,7 @@ import { BanyanData } from './data.js';
       this.scene.fog = new THREE.FogExp2(0xe6d0ac, 0.0004);
 
       // Create gradient map for stylized hand-painted toon shading
-      const format = (THREE.RedFormat !== undefined) ? THREE.RedFormat : THREE.LuminanceFormat;
+      const format = (THREE.RedFormat !== undefined) ? THREE.RedFormat : 1021; // fallback to old LuminanceFormat constant
       const colors = new Uint8Array([80, 160, 255]);
       this.toonGradient = new THREE.DataTexture(colors, 3, 1, format);
       this.toonGradient.needsUpdate = true;
@@ -193,6 +212,7 @@ import { BanyanData } from './data.js';
       this._canopy();
       this._aerials();
       this._backgroundAerials();
+      this._rocks();
       this._roots();
     }
 
@@ -279,7 +299,7 @@ import { BanyanData } from './data.js';
 
       // Revert to Standard material for bright, realistic lighting
       const tMat = new THREE.MeshStandardMaterial({ color: C.bark, roughness: 0.95, metalness: 0.0 });
-      applyBarkShader(tMat);
+      applyBarkShader(tMat, this.scene);
       if (!this.trunkMats) this.trunkMats = [];
       this.trunkMats.push({ mat: tMat, color: C.bark });
 
@@ -490,7 +510,7 @@ import { BanyanData } from './data.js';
 
         if (geos.length) {
           const mat  = new THREE.MeshStandardMaterial({ color: C.bark, roughness: 0.9, metalness: 0.0 });
-          applyBarkShader(mat);
+          applyBarkShader(mat, this.scene);
           const mesh = new THREE.Mesh(mergeGeos(geos), mat);
           mesh.castShadow = true;
           this.scene.add(mesh);
@@ -632,6 +652,19 @@ import { BanyanData } from './data.js';
             transformed.z += flutter * 0.2;
             `
           );
+          shader.fragmentShader = shader.fragmentShader.replace(
+            `#include <color_fragment>`,
+            `
+            #include <color_fragment>
+            // Golden edge/rim glow for leaves
+            vec3 viewDir = normalize(vViewPosition);
+            vec3 norm = normalize(vNormal);
+            float rim = 1.0 - max(dot(viewDir, norm), 0.0);
+            rim = pow(rim, 3.5);
+            vec3 rimColor = vec3(1.0, 0.88, 0.45);
+            diffuseColor.rgb += rimColor * rim * 0.45;
+            `
+          );
         };
 
         const mesh = new THREE.InstancedMesh(geo, mat, total);
@@ -739,7 +772,6 @@ import { BanyanData } from './data.js';
 
         if (!geos.length) return null;
         
-        // Revert to bright Standard Material
         const mat = new THREE.MeshStandardMaterial({
           color: colorHex,
           roughness: 0.8,
@@ -749,6 +781,21 @@ import { BanyanData } from './data.js';
           opacity: opacity,
           depthWrite: false,
         });
+        mat.onBeforeCompile = (shader) => {
+          shader.fragmentShader = shader.fragmentShader.replace(
+            `#include <color_fragment>`,
+            `
+            #include <color_fragment>
+            // Golden edge/rim glow for leaves
+            vec3 viewDir = normalize(vViewPosition);
+            vec3 norm = normalize(vNormal);
+            float rim = 1.0 - max(dot(viewDir, norm), 0.0);
+            rim = pow(rim, 3.5);
+            vec3 rimColor = vec3(1.0, 0.88, 0.45);
+            diffuseColor.rgb += rimColor * rim * 0.45;
+            `
+          );
+        };
         const mesh = new THREE.Mesh(mergeGeos(geos), mat);
         // Do not cast shadows so the canopy remains light and clean
         mesh.castShadow = false;
@@ -929,32 +976,107 @@ import { BanyanData } from './data.js';
       this.bgAerialsMesh = mesh;
     }
 
-    /* ── Underground root system ─────────────────────────────────────────── */
+    _rocks() {
+      const rockMat = new THREE.MeshStandardMaterial({
+        color: 0x484d3d, // mossy grey-green
+        roughness: 0.95,
+        metalness: 0.05,
+      });
+
+      // Perturb sphere vertices to create organic boulders
+      const createRockGeometry = (radius, widthSeg, heightSeg) => {
+        const geo = new THREE.SphereGeometry(radius, widthSeg, heightSeg);
+        const pos = geo.attributes.position;
+        const v = new THREE.Vector3();
+        for (let i = 0; i < pos.count; i++) {
+          v.fromBufferAttribute(pos, i);
+          const noise = Math.sin(v.x * 0.15) * Math.cos(v.y * 0.15) * Math.sin(v.z * 0.15) * (radius * 0.22) +
+                        Math.sin(v.x * 0.4) * Math.cos(v.z * 0.4) * (radius * 0.08);
+          v.addScaledVector(v.clone().normalize(), noise);
+          pos.setXYZ(i, v.x, v.y, v.z);
+        }
+        geo.computeVertexNormals();
+        return geo;
+      };
+
+      this.rocksData = [
+        { radius: 28, pos: [-70, -2, 40], scale: [1.2, 0.9, 1.1] },
+        { radius: 22, pos: [-45, -12, -40], scale: [1.0, 1.0, 1.0] },
+        { radius: 25, pos: [65, -8, 15], scale: [1.1, 0.9, 1.0] },
+        { radius: 16, pos: [-35, -14, 55], scale: [1.2, 0.8, 1.0] },
+        { radius: 20, pos: [-90, -8, 10], scale: [1.0, 1.2, 0.9] },
+        { radius: 18, pos: [40, -12, 45], scale: [1.1, 0.8, 1.1] },
+      ];
+
+      this.rocksData.forEach(data => {
+        const geo = createRockGeometry(data.radius, 12, 12);
+        const mesh = new THREE.Mesh(geo, rockMat);
+        mesh.position.set(data.pos[0], data.pos[1], data.pos[2]);
+        mesh.scale.set(data.scale[0], data.scale[1], data.scale[2]);
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+        this.scene.add(mesh);
+      });
+    }
+
     _roots() {
-      // Lateral root spread at base
+      // Lateral root spread at base (wrapping over rocks)
       const sMat = new THREE.MeshStandardMaterial({ color: C.rootMid, roughness: 0.9, metalness: 0.05 });
       if (this.trunkMats) this.trunkMats.push({ mat: sMat, color: C.rootMid });
-      for (let i = 0; i < 6; i++) {
-        const a = (i / 6) * Math.PI * 2;
-        const pts = [
-          new THREE.Vector3(Math.cos(a)*12, -2, Math.sin(a)*12),
-          new THREE.Vector3(Math.cos(a) * 60, -22, Math.sin(a) * 60),
-          new THREE.Vector3(Math.cos(a) * 100, -14, Math.sin(a) * 100),
-        ];
-        this.scene.add(new THREE.Mesh(
-          new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 6, 7.5, 6),
-          sMat
-        ));
+
+      const getRootPt = (angle, dist) => {
+        const x = Math.cos(angle) * dist;
+        const z = Math.sin(angle) * dist;
+        let y = -5; // default base level
+        
+        if (this.rocksData) {
+          this.rocksData.forEach(rock => {
+            const rx = rock.pos[0];
+            const rz = rock.pos[2];
+            const rRad = rock.radius;
+            const dx = x - rx;
+            const dz = z - rz;
+            const d2 = dx*dx + dz*dz;
+            if (d2 < rRad * rRad * 1.4) {
+              const hFactor = 1.0 - Math.sqrt(d2) / (rRad * 1.2);
+              y = Math.max(y, rock.pos[1] + rRad * 0.8 * hFactor);
+            }
+          });
+        }
+        return new THREE.Vector3(x, y, z);
+      };
+
+      for (let i = 0; i < 8; i++) {
+        const a = (i / 8) * Math.PI * 2 + 0.2;
+        const pts = [];
+        const steps = 6;
+        for (let s = 0; s <= steps; s++) {
+          const dist = 10 + (s / steps) * 110;
+          pts.push(getRootPt(a, dist));
+        }
+        
+        // Add horizontal wiggle to make them twist sideways
+        for (let s = 1; s < steps; s++) {
+          const wiggle = (this.rand() - 0.5) * 12;
+          const tang = new THREE.Vector3().subVectors(pts[s+1], pts[s-1]).normalize();
+          const perp = new THREE.Vector3(-tang.z, 0, tang.x);
+          pts[s].addScaledVector(perp, wiggle);
+        }
+
+        const curve = new THREE.CatmullRomCurve3(pts);
+        const tubeGeo = new THREE.TubeGeometry(curve, 16, 7.5 * (1.0 - (i/8)*0.2), 8, false);
+        const mesh = new THREE.Mesh(tubeGeo, sMat);
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+        this.scene.add(mesh);
       }
 
       const ANGLES = [-1.28, -0.84, -0.44, 0, 0.44, 0.84, 1.28];
       ANGLES.forEach((a, i) => {
         const geos = [], tipH = { v: new THREE.Vector3(0, -220, 0) };
         const start = new THREE.Vector3(Math.cos(a)*10 + (this.rand()-0.5)*4, -5, Math.sin(a)*10 + (this.rand()-0.5)*4);
-        // Make the roots thicker so they are more visible
         this._growRoot(start, a, 128 + this.rand() * 28, 14.0, 4, geos, tipH);
         if (geos.length) {
-          // Use a brighter mid-tone color so they stand out in the dark
           const mat  = new THREE.MeshStandardMaterial({ color: C.rootMid, roughness: 0.9, metalness: 0.05 });
           
           mat.onBeforeCompile = (shader) => {
@@ -982,10 +1104,20 @@ import { BanyanData } from './data.js';
               `#include <dithering_fragment>`,
               `
               #include <dithering_fragment>
+              // Root veins
+              float veinNoise = sin(vWorldPos.x * 0.1 + vWorldPos.y * 0.06) * 
+                                cos(vWorldPos.z * 0.1 - vWorldPos.y * 0.04);
+              float veinMask = smoothstep(0.92, 1.0, veinNoise);
+              float wave = sin(vWorldPos.y * 0.03 - uTime * 1.5) * 0.5 + 0.5;
+              vec3 goldVeinColor = vec3(1.0, 0.72, 0.25) * veinMask * wave;
+              
               if (uIsLit > 0.5) {
                  float pulse = sin(vWorldPos.y * 0.055 + uTime * 1.8);
                  pulse = smoothstep(0.85, 1.0, pulse);
-                 gl_FragColor.rgb += vec3(1.0, 0.72, 0.32) * pulse * 0.45;
+                 gl_FragColor.rgb += vec3(1.0, 0.72, 0.32) * pulse * 0.45 + goldVeinColor * 1.2;
+              } else {
+                 // Subtle background root veins
+                 gl_FragColor.rgb += goldVeinColor * 0.25;
               }
               `
             );
@@ -1105,6 +1237,104 @@ import { BanyanData } from './data.js';
   }
 
   /* ═══════════════════════════════════════════════════════════════════════════
+     ImageParallaxTree (2.5D Engine)
+   ═══════════════════════════════════════════════════════════════════════════ */
+  class ImageParallaxTree {
+    constructor(scene) {
+      this.scene = scene;
+      this.group = new THREE.Group();
+      this.scene.add(this.group);
+
+      // Generate placeholder textures for the 2.5D layers
+      const bgTex = this._createCanvasTex('Background (Mist)', '#cdd8a9', '#f1e6d2');
+      const midTex = this._createCanvasTex('Midground (Trunk & Main Roots)', '#5a412a', '#3b2918', true);
+      const fgTex = this._createCanvasTex('Foreground (Front Leaves)', '#6aa84f', 'transparent');
+
+      // Add planes at different Z-depths for parallax
+      this.bgPlane = this._createPlane(bgTex, 0, 0, -800, 3600, 2400);
+      this.midPlane = this._createPlane(midTex, 0, -50, 0, 1600, 1200);
+      this.fgPlane = this._createPlane(fgTex, 0, 150, 400, 2400, 1600);
+
+      // Mock coordinates for UI labels
+      this.catTips = this._generateCatTips();
+      this.rootTips = this._generateRootTips();
+    }
+
+    _createCanvasTex(text, c1, c2, isTrunk = false) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 1024; canvas.height = 1024;
+      const ctx = canvas.getContext('2d');
+      
+      if (c2 !== 'transparent') {
+        const grad = ctx.createLinearGradient(0, 0, 0, 1024);
+        grad.addColorStop(0, c1);
+        grad.addColorStop(1, c2);
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, 1024, 1024);
+      } else {
+        ctx.clearRect(0, 0, 1024, 1024);
+        ctx.fillStyle = c1;
+        ctx.beginPath();
+        ctx.arc(512, 512, 400, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '40px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(text, 512, 512);
+
+      if (isTrunk) {
+        ctx.fillText('Replace with illustration.png', 512, 580);
+      }
+
+      const tex = new THREE.CanvasTexture(canvas);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      return tex;
+    }
+
+    _createPlane(tex, x, y, z, w, h) {
+      const geo = new THREE.PlaneGeometry(w, h);
+      const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false });
+      const mesh = new THREE.Mesh(geo, mat);
+      mesh.position.set(x, y, z);
+      this.group.add(mesh);
+      return mesh;
+    }
+
+    _generateCatTips() {
+      const tips = {};
+      const radius = 400;
+      for (let i = 0; i < 12; i++) {
+        const a = (i / 12) * Math.PI * 2;
+        // Map to midPlane coordinates
+        tips[i] = [new THREE.Vector3(Math.cos(a) * radius, 300 + Math.sin(a) * 150, 0)];
+      }
+      return tips;
+    }
+
+    _generateRootTips() {
+      const tips = {};
+      for (let i = 0; i < 7; i++) {
+        const x = -300 + (i * 100);
+        tips[i] = new THREE.Vector3(x, -250 - Math.random() * 50, 0);
+      }
+      return tips;
+    }
+
+    setPhase(phase, catIdx) {
+      const isDim = catIdx !== null;
+      this.midPlane.material.opacity = isDim ? 0.3 : 1.0;
+      this.fgPlane.material.opacity = isDim ? 0.1 : 1.0;
+      this.midPlane.material.needsUpdate = true;
+      this.fgPlane.material.needsUpdate = true;
+    }
+
+    setLitCategory(catIdx) {}
+    setLitRoot(rootIdx) {}
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════════
      ThreeApp
    ═══════════════════════════════════════════════════════════════════════════ */
   class ThreeApp {
@@ -1117,6 +1347,7 @@ import { BanyanData } from './data.js';
       this._initCamera();
       this._initLights();
       this._initTree();
+      this._initPostProcessing();
       this._initResize();
 
       // Entry animation: camera starts far back and low, looking up
@@ -1186,11 +1417,11 @@ import { BanyanData } from './data.js';
 
     _initLights() {
       // Soft warm ambient — morning light fill
-      this.scene.add(new THREE.AmbientLight(0xfff4e1, 0.86));
+      this.scene.add(new THREE.AmbientLight(0xfff4e1, 0.75));
 
-      // Main sun — warm golden morning angle, slightly lower for long shadows
-      const sun = new THREE.DirectionalLight(0xffd089, 1.68);
-      sun.position.set(380, 460, 420);
+      // Main sun — warm golden back-right angle for beautiful highlights
+      const sun = new THREE.DirectionalLight(0xffd089, 2.2);
+      sun.position.set(200, 400, -300); // Behind the tree, slightly right
       sun.castShadow = true;
       sun.shadow.mapSize.set(1024, 1024);
       sun.shadow.camera.near = 10; sun.shadow.camera.far = 2800;
@@ -1199,21 +1430,26 @@ import { BanyanData } from './data.js';
       sun.shadow.bias = -0.001;
       this.scene.add(sun);
 
-      // Hemisphere — sky blue top, warm grass bottom — ties to CSS sky palette
-      this.scene.add(new THREE.HemisphereLight(0xc8e3f2, 0xb7a06a, 0.82));
+      // Hemisphere — warm golden-sky top, earthy bottom
+      this.scene.add(new THREE.HemisphereLight(0xffe2b3, 0x6e5233, 0.9));
 
-      // Warm fill from front — lifts shadowed faces without washing out
-      const fill = new THREE.PointLight(0xf2cf92, 0.52, 2200);
-      fill.position.set(0, 85, 640);
+      // Warm fill from front-left — lifts shadowed faces gently
+      const fill = new THREE.PointLight(0xf2cf92, 0.65, 2200);
+      fill.position.set(-200, 100, 600);
       this.scene.add(fill);
 
-      // Cool atmospheric rim from left-back — separates tree from sky
-      const rim = new THREE.DirectionalLight(0xc1d9df, 0.48);
-      rim.position.set(-520, 380, -480);
+      // Strong Golden Backlight for the majestic silhouette rim halo
+      const rim = new THREE.DirectionalLight(0xffb84d, 3.5);
+      rim.position.set(-300, 250, -500); // Back-left
       this.scene.add(rim);
 
+      // Magical inner canopy glow PointLight
+      const innerGlow = new THREE.PointLight(0xffd580, 2.0, 600, 1.2);
+      innerGlow.position.set(0, 180, 0); // Inside the branch fork area
+      this.scene.add(innerGlow);
+
       // Subtle warm bounce from ground
-      const under = new THREE.PointLight(0xd29a53, 0.48, 1500);
+      const under = new THREE.PointLight(0xd29a53, 0.58, 1500);
       under.position.set(0, -230, 220);
       this.scene.add(under);
     }
@@ -1226,15 +1462,56 @@ import { BanyanData } from './data.js';
       this._initSpores();
     }
 
+    _initPostProcessing() {
+      const pr = this.renderer.getPixelRatio();
+      const size = this.renderer.getDrawingBufferSize(new THREE.Vector2());
+      
+      const renderTarget = new THREE.WebGLRenderTarget(size.width, size.height, {
+        samples: 4, 
+        type: THREE.HalfFloatType
+      });
+
+      this.composer = new EffectComposer(this.renderer, renderTarget);
+      this.composer.setPixelRatio(pr);
+      
+      const renderPass = new RenderPass(this.scene, this.camera);
+      this.composer.addPass(renderPass);
+
+      this.bokehPass = new BokehPass(this.scene, this.camera, {
+        focus: 400.0,
+        aperture: 0.00003,
+        maxblur: 0.006,
+        width: this.w * pr,
+        height: this.h * pr
+      });
+      this.composer.addPass(this.bokehPass);
+      
+      const outputPass = new OutputPass();
+      this.composer.addPass(outputPass);
+    }
+
     _initSpores() {
-      const pCount = 260;
+      const pCount = 450;
       const geo = new THREE.BufferGeometry();
       const pos = new Float32Array(pCount * 3);
       const phases = new Float32Array(pCount);
       for (let i = 0; i < pCount; i++) {
-        pos[i * 3 + 0] = (Math.random() - 0.5) * 1600; // x
-        pos[i * 3 + 1] = Math.random() * 600 - 200;    // y
-        pos[i * 3 + 2] = (Math.random() - 0.5) * 1600; // z
+        if (i < 250) {
+          // Canopy cluster
+          pos[i * 3 + 0] = (Math.random() - 0.5) * 800;
+          pos[i * 3 + 1] = 120 + Math.random() * 220;
+          pos[i * 3 + 2] = (Math.random() - 0.5) * 600;
+        } else if (i < 400) {
+          // Lower trunk / rocks cluster
+          pos[i * 3 + 0] = (Math.random() - 0.5) * 350;
+          pos[i * 3 + 1] = -40 + Math.random() * 140;
+          pos[i * 3 + 2] = (Math.random() - 0.5) * 300;
+        } else {
+          // General ambient
+          pos[i * 3 + 0] = (Math.random() - 0.5) * 1600;
+          pos[i * 3 + 1] = -200 + Math.random() * 600;
+          pos[i * 3 + 2] = (Math.random() - 0.5) * 1600;
+        }
         phases[i] = Math.random() * Math.PI * 2;
       }
       geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
@@ -1243,7 +1520,7 @@ import { BanyanData } from './data.js';
       const mat = new THREE.ShaderMaterial({
         uniforms: {
           uTime: this.scene.userData.uniforms.uTime,
-          color: { value: new THREE.Color(0xffe8b8) }
+          color: { value: new THREE.Color(0xffd089) } // warm gold color
         },
         vertexShader: `
           uniform float uTime;
@@ -1251,13 +1528,16 @@ import { BanyanData } from './data.js';
           varying float vAlpha;
           void main() {
             vec3 p = position;
-            p.x += sin(uTime * 0.10 + phase) * 46.0;
-            p.y += cos(uTime * 0.08 + phase) * 26.0;
-            p.z += sin(uTime * 0.06 + phase) * 46.0;
+            // Drifting motion
+            p.x += sin(uTime * 0.15 + phase) * 32.0;
+            p.y += cos(uTime * 0.12 + phase) * 20.0 + sin(uTime * 0.05 + phase * 0.5) * 10.0;
+            p.z += sin(uTime * 0.08 + phase) * 24.0;
+            
             vec4 mvPosition = modelViewMatrix * vec4(p, 1.0);
             gl_Position = projectionMatrix * mvPosition;
-            gl_PointSize = clamp(1400.0 / -mvPosition.z, 0.4, 4.5);
-            vAlpha = 0.08 + 0.22 * sin(uTime * 0.36 + phase * 2.0);
+            // Larger point size for high quality blur look
+            gl_PointSize = clamp(2600.0 / -mvPosition.z, 1.5, 9.0);
+            vAlpha = 0.12 + 0.38 * sin(uTime * 0.45 + phase * 2.0);
           }
         `,
         fragmentShader: `
@@ -1266,7 +1546,8 @@ import { BanyanData } from './data.js';
           void main() {
             float dist = length(gl_PointCoord - vec2(0.5));
             if (dist > 0.5) discard;
-            float a = (0.5 - dist) * 2.0 * vAlpha;
+            // Smooth Gaussian-like decay
+            float a = smoothstep(0.5, 0.0, dist) * vAlpha;
             gl_FragColor = vec4(color, a);
           }
         `,
@@ -1290,6 +1571,14 @@ import { BanyanData } from './data.js';
         
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(this.w, this.h);
+        if (this.composer) {
+          this.composer.setSize(this.w, this.h);
+          if (this.bokehPass) {
+            const pr = this.renderer.getPixelRatio();
+            this.bokehPass.renderTargetColor.setSize(this.w * pr, this.h * pr);
+            this.bokehPass.renderTargetDepth.setSize(this.w * pr, this.h * pr);
+          }
+        }
       };
       window.addEventListener('resize', this._onResize);
     }
@@ -1341,7 +1630,19 @@ import { BanyanData } from './data.js';
         this.camera.position.z += scrollFactor * 60;
       }
 
-      this.renderer.render(this.scene, this.camera);
+      if (this.bokehPass) {
+        // Calculate true focus distance to the current target
+        const dist = this.camera.position.distanceTo(this._tTarget);
+        this.bokehPass.uniforms['focus'].value = dist;
+        this.bokehPass.uniforms['aperture'].value = 0.00003; 
+        this.bokehPass.uniforms['maxblur'].value = 0.006; 
+      }
+
+      if (this.composer) {
+        this.composer.render();
+      } else {
+        this.renderer.render(this.scene, this.camera);
+      }
       if (this.onTick) this.onTick(this._projectCats(), this._projectRoots());
     }
 
