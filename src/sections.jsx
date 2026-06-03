@@ -202,10 +202,16 @@ function FinalCTA() {
   const ref = useReveal();
   return (
     <section className="spread final" id="begin" ref={ref}>
+      <div className="final-bg-mark" aria-hidden="true">b.</div>
       <Parallax speed={0.03} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 36, width: "100%" }}>
         <div className="section-tag reveal" style={{ marginBottom: 24 }}>
           <span>IV — Begin</span>
         </div>
+        <p className="final-prelude reveal">
+          Healing is not the suppression of symptoms.<br/>
+          It is the restoration of the conditions in which<br/>
+          the body remembers how to be well.
+        </p>
         <h2 className="reveal delay-1">
           <span className="line">Begin at the</span>
           <em className="line">root.</em>

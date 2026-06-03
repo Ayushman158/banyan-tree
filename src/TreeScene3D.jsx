@@ -1,19 +1,80 @@
-/* scene3d.jsx — React wrapper for the Three.js tree scene.
-   Strategy:
-     - Three.js canvas fills the stage (full hero height)
-     - HTML overlay elements (labels, nodes) sit on top
-     - Overlay POSITIONS are updated every frame via direct DOM ref manipulation
-       — no setState, no re-render per frame
-     - React re-renders only when the set of visible elements changes (phase / selection) */
-
-import React, { useEffect, useRef } from 'react';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { BanyanData } from './data.js';
-import ThreeApp from './Tree3D.jsx';
+import { playHoverSound } from './sound.js';
+import canopyImg from './assets/cinematic-canopy.jpg';
+import rootsImg from './assets/cinematic-roots.png';
 
-/* Maximum conditions in any category (Digestive = 17) */
-const MAX_CONDS = 18;
+// Coordinate configuration for the 12 categories on the canopy image
+const CATEGORIES = [
+  { id: "neurological", name: "Neurological", x: 70.5, y: 16, labelX: 64, labelY: 16, align: "right" },
+  { id: "hormonal", name: "Hormonal & Endocrine", x: 77.5, y: 22, labelX: 79.5, labelY: 22, align: "left" },
+  { id: "gut", name: "Gut & Digestive Health", x: 84.5, y: 31, labelX: 86.5, labelY: 31, align: "left" },
+  { id: "respiratory", name: "Respiratory & ENT", x: 79.5, y: 43, labelX: 81.5, labelY: 43, align: "left" },
+  { id: "skin", name: "Skin & Hair", x: 78.5, y: 55, labelX: 80.5, labelY: 55, align: "left" },
+  { id: "oral", name: "Oral & Dental Health", x: 78.5, y: 67, labelX: 80.5, labelY: 67, align: "left" },
+  { id: "renal", name: "Renal & Urinary", x: 73.5, y: 76, labelX: 75.5, labelY: 76, align: "left" },
+  { id: "mental", name: "Mental Health", x: 47.5, y: 38, labelX: 39.5, labelY: 38, align: "right" },
+  { id: "autoimmune", name: "Autoimmune & Inflammatory", x: 49.5, y: 51, labelX: 39.5, labelY: 51, align: "right" },
+  { id: "cardiovascular", name: "Cardiovascular", x: 49.5, y: 58, labelX: 41.5, labelY: 58, align: "right" },
+  { id: "musculoskeletal", name: "Musculoskeletal", x: 52.5, y: 65, labelX: 43.5, labelY: 65, align: "right" },
+  { id: "metabolic", name: "Lifestyle / Metabolic", x: 53.5, y: 73, labelX: 47.5, labelY: 73, align: "right" }
+];
 
-function TreeScene3D({
+// Coordinate configuration for the roots cause nodes
+const ROOT_LAYOUTS = {
+  "chronic-stress": { x: 19, y: 78, labelX: 19, labelY: 82, align: "center", side: "bottom" },
+  "nervous-system": { x: 33, y: 81, labelX: 33, labelY: 85, align: "center", side: "bottom" },
+  "emotional": { x: 49, y: 83, labelX: 49, labelY: 87, align: "center", side: "bottom" },
+  "sleep": { x: 63, y: 80, labelX: 63, labelY: 84, align: "center", side: "bottom" },
+  "trauma": { x: 77, y: 79, labelX: 77, labelY: 83, align: "center", side: "bottom" },
+  "nutrition": { x: 72, y: 48, labelX: 75, labelY: 48, align: "left", side: "right" },
+  "lifestyle": { x: 72, y: 60, labelX: 75, labelY: 60, align: "left", side: "right" }
+};
+
+// Return contributing bottom roots for a given biochemical/lifestyle root to create interconnected path active states
+const getActiveRootsForCondition = (condId) => {
+  if (!condId) return [];
+  const cond = BanyanData.conditionsById[condId];
+  if (!cond) return [];
+  
+  const directRoot = cond.root;
+  const cat = BanyanData.categories.find(c => c.id === cond.categoryId);
+  const defaultRoot = cat ? cat.defaultRoot : null;
+  
+  const active = new Set([directRoot]);
+  if (defaultRoot) active.add(defaultRoot);
+  
+  if (directRoot === 'nutrition' || directRoot === 'lifestyle') {
+    active.add('chronic-stress');
+    active.add('sleep');
+    active.add('nervous-system');
+  } else {
+    active.add('nervous-system');
+    active.add('sleep');
+  }
+  
+  return Array.from(active);
+};
+
+// Generates the SVG dog-leg path for the category lines
+const getCategoryPath = (cat) => {
+  const breakX = cat.align === 'left' ? cat.labelX - 1.5 : cat.labelX + 1.5;
+  return `M ${cat.x} ${cat.y} L ${breakX} ${cat.labelY} L ${cat.labelX} ${cat.labelY}`;
+};
+
+// Generates the curved SVG path for the roots lines converging at the center (50, 30)
+const getRootPath = (id, layout) => {
+  const jx = 50;
+  const jy = 30;
+  if (layout.side === 'bottom') {
+    return `M ${layout.x} ${layout.y} C ${layout.x} ${layout.y - 12}, ${jx} ${jy + 15}, ${jx} ${jy}`;
+  } else {
+    return `M ${jx} ${jy} C ${jx + 12} ${jy}, ${layout.x - 10} ${layout.y}, ${layout.x} ${layout.y}`;
+  }
+};
+
+export default function TreeScene3D({
   phase,
   selectedCategory,
   selectedCondition,
@@ -22,279 +83,333 @@ function TreeScene3D({
   onCategoryClick,
   onConditionClick,
   onRootClick,
+  onCrumbJump
 }) {
-  const containerRef  = useRef(null);
-  const appRef        = useRef(null);
-
-  /* Refs for every possible overlay element (no re-create on selection change) */
-  const catRefs  = useRef(Array.from({ length: 12 }, () => React.createRef()));
-  const condRefs = useRef(Array.from({ length: MAX_CONDS }, () => React.createRef()));
-  const rootRefs = useRef(Array.from({ length: 7 },  () => React.createRef()));
-
-  // WeakMap dimension cache to prevent layout thrashing (offsetWidth/offsetHeight calls inside tick)
-  const dimCache = useRef(new WeakMap());
-
-  const getDim = (el, defaultW = 140, defaultH = 38) => {
-    if (!el) return { w: defaultW, h: defaultH };
-    let cached = dimCache.current.get(el);
-    if (!cached) {
-      cached = { w: el.offsetWidth || defaultW, h: el.offsetHeight || defaultH };
-      if (cached.w > 0 && cached.h > 0) {
-        dimCache.current.set(el, cached);
-      }
-    }
-    return cached;
-  };
-
-  /* ── Init Three.js once ─────────────────────────────────────────────────── */
-  useEffect(() => {
-    const app = new ThreeApp(containerRef.current);
-    appRef.current = app;
-
-    /* Per-frame overlay sync — direct DOM mutation, zero React overhead */
-    app.onTick = (catPts, rootPts) => {
-      const container = containerRef.current;
-      if (!container) return;
-
-      // Category label positions (with dynamic offsetWidth-based anti-overlap)
-      const activeCats = [];
-      catRefs.current.forEach((ref, i) => {
-        const p = catPts[i];
-        if (p && p.vis) {
-          const el = ref.current;
-          const { w, h } = getDim(el, 140, 38);
-          activeCats.push({ el, p: { ...p }, w, h, i });
-        } else if (ref.current) {
-          ref.current.style.visibility = 'hidden';
-        }
-      });
-      // Sort top to bottom
-      activeCats.sort((a, b) => a.p.y - b.p.y);
-      for (let j = 0; j < activeCats.length; j++) {
-        const curr = activeCats[j];
-        for (let k = 0; k < j; k++) {
-          const prev = activeCats[k];
-          const dx = Math.abs(curr.p.x - prev.p.x);
-          const combinedHalfWidths = (curr.w + prev.w) / 2;
-          const minHorizontalGap = 16;
-          if (dx < combinedHalfWidths + minHorizontalGap) {
-            const dy = curr.p.y - prev.p.y;
-            const minVerticalDistance = (curr.h + prev.h) / 2 + 10;
-            if (dy < minVerticalDistance) {
-              curr.p.y = prev.p.y + minVerticalDistance;
-            }
-          }
-        }
-      }
-      activeCats.forEach(({ el, p }) => {
-        el.style.setProperty('--pos-x', `${p.x.toFixed(1)}px`);
-        el.style.setProperty('--pos-y', `${p.y.toFixed(1)}px`);
-        el.style.visibility = '';
-      });
-
-      // Root node positions
-      rootRefs.current.forEach((ref, i) => {
-        const el = ref.current;
-        if (!el) return;
-        const p = rootPts[i];
-        if (p && p.vis) {
-          // Stagger vertically to prevent overlap, but keep them attached to their 3D root tips horizontally
-          const yOffset = (i % 2 === 0 ? 0 : 70);
-          el.style.setProperty('--pos-x', `${p.x.toFixed(1)}px`);
-          el.style.setProperty('--pos-y', `${(p.y + yOffset).toFixed(1)}px`);
-          el.style.visibility = '';
-        } else {
-          el.style.visibility = 'hidden';
-        }
-      });
-    };
-
-    app.start();
-    return () => { app.stop(); appRef.current = null; };
-  }, []);
-
-  /* ── Sync condition node positions each time selectedCategory changes ────── */
-  useEffect(() => {
-    if (!appRef.current || selectedCategory == null) return;
-    const container = containerRef.current;
-
-    const syncConds = (catPts, _rootPts) => {
-      if (!container) return;
-      const tipPts = appRef.current.getAerialPositions(selectedCategory);
-      const cat    = BanyanData.categories[selectedCategory];
-      if (!cat) return;
-
-      const activeConds = [];
-      condRefs.current.forEach((ref, i) => {
-        const el = ref.current;
-        if (!el) return;
-        if (i >= cat.conditions.length) {
-          el.style.visibility = 'hidden';
-          return;
-        }
-        const p = tipPts[i];
-        if (p && p.vis) {
-          let cached = dimCache.current.get(el);
-          if (!cached) {
-            const labelEl = el.querySelector('.ol-cond__label');
-            cached = {
-              w: labelEl ? (labelEl.offsetWidth || 100) : 100,
-              h: labelEl ? (labelEl.offsetHeight || 24) : 24
-            };
-            if (cached.w > 0 && cached.h > 0) {
-              dimCache.current.set(el, cached);
-            }
-          }
-          activeConds.push({
-            el,
-            p,
-            w: cached.w,
-            h: cached.h,
-            index: i,
-            drop: 0,
-            xOffset: (i % 2 === 0 ? -160 : 160)
-          });
-        } else {
-          el.style.visibility = 'hidden';
-        }
-      });
-
-      // Sort by Y position (p.y + initial drop) top-to-bottom
-      activeConds.sort((a, b) => (a.p.y + a.drop) - (b.p.y + b.drop));
-
-      // Resolve overlaps cascading top-to-bottom
-      for (let j = 0; j < activeConds.length; j++) {
-        const curr = activeConds[j];
-        for (let k = 0; k < j; k++) {
-          const prev = activeConds[k];
-          const currX = curr.p.x + curr.xOffset;
-          const prevX = prev.p.x + prev.xOffset;
-          const dx = Math.abs(currX - prevX);
-          const combinedHalfWidths = (curr.w + prev.w) / 2;
-          const minHorizontalGap = 16;
-
-          if (dx < combinedHalfWidths + minHorizontalGap) {
-            const currY = curr.p.y + curr.drop;
-            const prevY = prev.p.y + prev.drop;
-            const minVerticalDistance = prev.h + 2; 
-            if (currY < prevY + minVerticalDistance) {
-              curr.drop = Math.max(curr.drop, prevY + minVerticalDistance - curr.p.y);
-            }
-          }
-        }
-      }
-
-      activeConds.forEach(({ el, p, drop, xOffset }) => {
-        el.style.setProperty('--pos-x', `${(p.x + xOffset).toFixed(1)}px`);
-        el.style.setProperty('--pos-y', `${(p.y + drop).toFixed(1)}px`);
-        el.style.setProperty('--drop', `${drop.toFixed(1)}px`);
-        el.style.setProperty('--thread-x', `${(-xOffset).toFixed(1)}px`);
-        el.style.visibility = '';
-      });
-    };
-
-    const prev = appRef.current.onTick;
-    appRef.current.onTick = (catPts, rootPts) => {
-      prev && prev(catPts, rootPts);
-      syncConds(catPts, rootPts);
-    };
-    return () => {
-      if (appRef.current) appRef.current.onTick = prev;
-    };
-  }, [selectedCategory]);
-
-  /* ── Propagate phase + selection to Three.js ────────────────────────────── */
-  useEffect(() => {
-    appRef.current?.setPhase(phase, selectedCategory, selectedRoot);
-  }, [phase, selectedCategory, selectedRoot]);
-
-  /* ── Current conditions for the selected category ─────────────────────── */
-  const currentCat  = selectedCategory != null ? BanyanData.categories[selectedCategory] : null;
-  const conditions  = currentCat?.conditions ?? [];
+  const [hoverCategory, setHoverCategory] = useState(null);
+  const [hoverRoot, setHoverRoot] = useState(null);
+  const [connectionsGlowing, setConnectionsGlowing] = useState(false);
 
   const isUnderground = phase === 'roots' || phase === 'detail';
+  
+  // Calculate active categories, conditions, and roots
+  const activeCatObj = selectedCategory !== null ? BanyanData.categories[selectedCategory] : null;
+  const activeCondObj = selectedCondition ? BanyanData.conditionsById[selectedCondition] : null;
+  
+  const activeRootIds = getActiveRootsForCondition(selectedCondition);
+
+  // Text content for roots page left column
+  const conditionDescription = activeCondObj 
+    ? `${activeCondObj.name} is not an isolated condition. It emerges from a network of imbalances that influence and reinforce each other.`
+    : '';
 
   return (
     <div className="stage-frame">
-      {/* Three.js canvas lives here */}
-      <div ref={containerRef} className="three-container" />
-      {/* Underground veil overlay */}
-      <div className={`underground-veil ${isUnderground ? 'is-active' : ''}`} aria-hidden="true" />
-
-      {/* HTML overlays — positioned by the tick loop */}
-      <div className="scene-overlay" aria-hidden="false">
-
-        {/* ── Category labels (canopy phase) ─────────────────────────────── */}
-        {BanyanData.categories.map((cat, i) => (
-          <button
-            key={`cat-${i}`}
-            ref={catRefs.current[i]}
-            className={`ol-cat ${phase === 'canopy' ? 'is-visible' : ''} ${selectedCategory === i ? 'is-lit' : ''}`}
-            onClick={() => onCategoryClick(i)}
-            data-hoverable="true"
-            tabIndex={phase === 'canopy' ? 0 : -1}
-          >
-            <span className="ol-cat__name">{cat.name}</span>
-          </button>
-        ))}
-
-        {/* ── Condition nodes (category phase) ───────────────────────────── */}
-        {conditions.map((cond, i) => {
-          const isActive = selectedCondition === cond.id;
-          return (
-            <button
-              key={`cond-${cond.id}`}
-              ref={condRefs.current[i]}
-              className={`ol-cond ${phase === 'category' ? 'is-visible' : ''} ${isActive ? 'is-active' : ''}`}
-              onClick={() => onConditionClick(cond.id)}
-              data-hoverable="true"
-              tabIndex={phase === 'category' ? 0 : -1}
-            >
-              <span className="ol-cond__label">{cond.name}</span>
-            </button>
-          );
-        })}
-        {/* Hide remaining cond slots */}
-        {Array.from({ length: MAX_CONDS - conditions.length }, (_, i) => (
-          <span key={`cond-empty-${i}`} ref={condRefs.current[conditions.length + i]}
-            style={{ visibility: 'hidden', position: 'absolute' }} />
-        ))}
-
-        {/* ── Root-cause nodes (roots / detail phase) ────────────────────── */}
-        {BanyanData.rootOrder.map((id, i) => {
-          const rc      = BanyanData.rootCauses[id];
-          const isActive = selectedRoot === id;
-          // Only show the root label if it is the root cause for the selected condition
-          const vis      = (phase === 'roots' || phase === 'detail') && rootsReady && isActive;
-          if (!vis) return null; // dynamically hide non-relevant roots
-
-          return (
-            <button
-              key={`root-${id}`}
-              ref={rootRefs.current[i]}
-              className={`ol-root ${vis ? 'is-visible' : ''} ${isActive ? 'is-active' : ''}`}
-              onClick={() => vis && onRootClick(id)}
-              onMouseEnter={() => vis && appRef.current?.tree.setLitRoot(i)}
-              onMouseLeave={() => vis && appRef.current?.tree.setLitRoot(selectedRoot != null ? BanyanData.rootOrder.indexOf(selectedRoot) : -1)}
-              data-hoverable="true"
-              tabIndex={vis ? 0 : -1}
-            >
-              <div className="ol-root__label-box">
-                <div className="ol-root__row">
-                  <svg className="ol-root__sparkle" width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 0L14.6 9.4L24 12L14.6 14.6L12 24L9.4 14.6L0 12L9.4 9.4L12 0Z" fill="#ffdf9e" />
-                  </svg>
-                  <span className="ol-root__name">{rc.name}</span>
-                </div>
-                <span className="ol-root__subtitle">{rc.subtitle}</span>
-              </div>
-            </button>
-          );
-        })}
-
+      {/* ── Background layers with descent transition ── */}
+      <div className={`cinematic-bg-container ${isUnderground ? 'is-underground' : ''}`}>
+        <div 
+          className="cinematic-bg canopy-bg" 
+          style={{ backgroundImage: `url(${canopyImg})` }} 
+        >
+          {/* Animated light rays overlay */}
+          <div className="sunbeams-overlay" />
+        </div>
+        <div 
+          className="cinematic-bg roots-bg" 
+          style={{ backgroundImage: `url(${rootsImg})` }} 
+        />
       </div>
+
+      {/* ── Canopy/Category View overlay ── */}
+      <AnimatePresence>
+        {!isUnderground && (
+          <motion.div
+            key="canopy-view"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8 }}
+            className="view-overlay canopy-view-container"
+          >
+            {/* SVG Connecting Lines */}
+            <svg 
+              viewBox="0 0 100 100" 
+              preserveAspectRatio="none" 
+              className="canopy-svg"
+            >
+              {CATEGORIES.map((cat) => {
+                const isHovered = hoverCategory === cat.id;
+                const isActive = activeCatObj && activeCatObj.id === cat.id;
+                const isDimmed = hoverCategory !== null && !isHovered;
+                
+                return (
+                  <path
+                    key={`line-${cat.id}`}
+                    d={getCategoryPath(cat)}
+                    stroke={isActive || isHovered ? "var(--gold)" : "rgba(25, 32, 29, 0.15)"}
+                    strokeWidth={isActive || isHovered ? 1.2 : 0.6}
+                    fill="none"
+                    vectorEffect="non-scaling-stroke"
+                    className="canopy-path"
+                    style={{ 
+                      opacity: isDimmed ? 0.3 : 1,
+                      transition: 'stroke 0.4s var(--ease), stroke-width 0.4s var(--ease), opacity 0.4s var(--ease)' 
+                    }}
+                  />
+                );
+              })}
+            </svg>
+
+            {/* Hotspots & Labels */}
+            {CATEGORIES.map((cat, idx) => {
+              const isHovered = hoverCategory === cat.id;
+              const isActive = activeCatObj && activeCatObj.id === cat.id;
+              const isDimmed = hoverCategory !== null && !isHovered;
+
+              return (
+                <div 
+                  key={cat.id}
+                  className={`category-interactive-group ${isDimmed ? 'is-dimmed' : ''}`}
+                  style={{ transition: 'opacity 0.4s var(--ease)' }}
+                >
+                  {/* Hotspot Dot */}
+                  <button
+                    type="button"
+                    className={`category-hotspot ${isActive ? 'is-active' : ''} ${isHovered ? 'is-hovered' : ''}`}
+                    style={{ left: `${cat.x}%`, top: `${cat.y}%` }}
+                    onClick={() => onCategoryClick(idx)}
+                    onMouseEnter={() => { setHoverCategory(cat.id); playHoverSound(); }}
+                    onMouseLeave={() => setHoverCategory(null)}
+                    data-hoverable="true"
+                    aria-label={`Select category ${cat.name}`}
+                  />
+
+                  {/* Text Label */}
+                  <button
+                    type="button"
+                    className={`category-label ${isActive ? 'is-active' : ''} ${isHovered ? 'is-hovered' : ''}`}
+                    style={{
+                      left: `${cat.labelX}%`,
+                      top: `${cat.labelY}%`,
+                      textAlign: cat.align === 'right' ? 'right' : 'left',
+                      transform: cat.align === 'right' ? 'translate(-100%, -50%)' : 'translate(0%, -50%)'
+                    }}
+                    onClick={() => onCategoryClick(idx)}
+                    onMouseEnter={() => { setHoverCategory(cat.id); playHoverSound(); }}
+                    onMouseLeave={() => setHoverCategory(null)}
+                    data-hoverable="true"
+                  >
+                    {cat.name}
+                  </button>
+                </div>
+              );
+            })}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Category Conditions List (Slides in from the right) ── */}
+      <AnimatePresence>
+        {phase === 'category' && activeCatObj && (
+          <motion.div
+            initial={{ x: 80, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: 80, opacity: 0 }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="conditions-sidebar"
+          >
+            <div className="sidebar-header">
+              <span className="sidebar-eyebrow">Domain Conditions</span>
+              <h3 className="sidebar-title">{activeCatObj.name}</h3>
+              <p className="sidebar-instructions is-pulsing">
+                👇 Select a condition below to descend and trace its roots:
+              </p>
+            </div>
+            <div className="sidebar-list">
+              {activeCatObj.conditions.map((cond) => (
+                <button
+                  key={cond.id}
+                  className="sidebar-item-btn"
+                  onClick={() => onConditionClick(cond.id)}
+                  onMouseEnter={playHoverSound}
+                  type="button"
+                  data-hoverable="true"
+                >
+                  <span className="sidebar-item-dot" />
+                  <div className="sidebar-item-content">
+                    <span className="sidebar-item-name">{cond.name}</span>
+                    <span className="sidebar-item-action-hint">Trace root causes →</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Roots / Below-Ground View ── */}
+      <AnimatePresence>
+        {isUnderground && rootsReady && (
+          <motion.div
+            key="roots-view"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8 }}
+            className="view-overlay roots-view-container"
+          >
+            {/* SVG Connecting Paths */}
+            <svg 
+              viewBox="0 0 100 100" 
+              preserveAspectRatio="none" 
+              className="roots-svg"
+            >
+              <defs>
+                <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="1" result="blur" />
+                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+              </defs>
+
+              {/* Draw paths for all roots */}
+              {Object.entries(ROOT_LAYOUTS).map(([id, layout]) => {
+                const isActive = activeRootIds.includes(id) || connectionsGlowing;
+                const pathD = getRootPath(id, layout);
+                
+                return (
+                  <g key={`group-${id}`}>
+                    {/* Background path (static or glowing) */}
+                    <path
+                      d={pathD}
+                      stroke={isActive ? "var(--gold)" : "rgba(255, 255, 255, 0.03)"}
+                      strokeWidth={isActive ? 1.5 : 0.6}
+                      fill="none"
+                      vectorEffect="non-scaling-stroke"
+                      style={{ 
+                        opacity: isActive ? 0.75 : 0.15,
+                        filter: isActive ? 'url(#glow)' : 'none',
+                        transition: 'stroke 0.5s ease, stroke-width 0.5s ease, opacity 0.5s ease' 
+                      }}
+                    />
+
+                    {/* Foreground pulsing animated path */}
+                    {isActive && (
+                      <path
+                        d={pathD}
+                        stroke="#fff8e7"
+                        strokeWidth={1.2}
+                        fill="none"
+                        vectorEffect="non-scaling-stroke"
+                        className="roots-pulse-path"
+                        style={{ 
+                          filter: 'url(#glow)',
+                          strokeDasharray: '4, 16',
+                          animation: 'rootsDash 4s linear infinite'
+                        }}
+                      />
+                    )}
+                  </g>
+                );
+              })}
+            </svg>
+
+            {/* Left Stack (Back, Title, Description, Connections button) */}
+            <div className="roots-left-panel">
+              <button 
+                type="button"
+                className="roots-back-link" 
+                onClick={() => onCrumbJump('category')}
+                onMouseEnter={playHoverSound}
+                data-hoverable="true"
+              >
+                <span>←</span> Back to {activeCatObj?.name || 'Tree'}
+              </button>
+              
+              <div className="roots-condition-detail">
+                <p className="roots-cond-desc">{conditionDescription}</p>
+                
+                <button 
+                  type="button"
+                  className={`roots-explore-btn ${connectionsGlowing ? 'is-active' : ''}`}
+                  onClick={() => {
+                    setConnectionsGlowing(prev => !prev);
+                    playHoverSound();
+                  }}
+                  onMouseEnter={playHoverSound}
+                  data-hoverable="true"
+                >
+                  <span className="btn-glow" />
+                  {connectionsGlowing ? 'Hide System Network' : 'Explore the Connections'}
+                </button>
+              </div>
+            </div>
+
+            {/* Root cause nodes overlay */}
+            {Object.entries(ROOT_LAYOUTS).map(([id, layout]) => {
+              const rc = BanyanData.rootCauses[id];
+              if (!rc) return null;
+              
+              const isDirect = activeCondObj?.root === id;
+              const isActive = activeRootIds.includes(id);
+              const isHovered = hoverRoot === id;
+              const isDimmed = hoverRoot !== null && !isHovered;
+              
+              // Stagger bottom labels vertically (odd index above, even index below) to prevent horizontal overlap clutter
+              const isRightSide = layout.side === 'right';
+              const systemicIndex = ["chronic-stress", "nervous-system", "emotional", "sleep", "trauma"].indexOf(id);
+              const isEven = systemicIndex % 2 === 0;
+              const labelTransform = isRightSide 
+                ? 'translate(0%, -50%)' 
+                : (isEven ? 'translate(-50%, 15px)' : 'translate(-50%, -48px)');
+              
+              return (
+                <div
+                  key={id}
+                  className={`root-node-group ${isActive ? 'is-active' : ''} ${isDimmed ? 'is-dimmed' : ''}`}
+                  style={{
+                    left: `${layout.x}%`,
+                    top: `${layout.y}%`,
+                    transform: 'translate(-50%, -50%)',
+                    transition: 'opacity 0.4s var(--ease)'
+                  }}
+                >
+                  {/* Node Circle */}
+                  <button
+                    type="button"
+                    className={`root-node-dot ${isDirect ? 'is-direct' : ''} ${isHovered ? 'is-hovered' : ''}`}
+                    onClick={() => onRootClick(id)}
+                    onMouseEnter={() => { setHoverRoot(id); playHoverSound(); }}
+                    onMouseLeave={() => setHoverRoot(null)}
+                    data-hoverable="true"
+                    aria-label={`Inspect root cause: ${rc.name}`}
+                  />
+
+                  {/* Node Label */}
+                  <div
+                    className={`root-node-label-box ${layout.side}`}
+                    style={{
+                      left: isRightSide ? '20px' : '0px',
+                      transform: labelTransform,
+                      textAlign: isRightSide ? 'left' : 'center',
+                    }}
+                  >
+                    <div className="root-node-title-row">
+                      {isDirect && (
+                        <svg className="root-sparkle" width="10" height="10" viewBox="0 0 24 24" fill="none">
+                          <path d="M12 0L14.6 9.4L24 12L14.6 14.6L12 24L9.4 14.6L0 12L9.4 9.4L12 0Z" fill="#ffdf9e" />
+                        </svg>
+                      )}
+                      <span className="root-node-name" onClick={() => onRootClick(id)}>
+                        {rc.name}
+                      </span>
+                    </div>
+                    <span className="root-node-subtitle">{rc.subtitle}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
-
-export default TreeScene3D;

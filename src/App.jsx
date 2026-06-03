@@ -2,26 +2,30 @@
    Phase machine: canopy → category → roots → detail. */
 
 import React, { useEffect as useE, useRef as useR, useState as useS, useMemo as useM } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { BanyanData } from './data.js';
 import TreeScene3D from './TreeScene3D.jsx';
 import { Philosophy, Methodology, Voices, FinalCTA, SiteFooter } from './sections.jsx';
 import { initSoundscape } from './sound.js';
 import SoilJournal from './SoilJournal.jsx';
 import SoilProfile from './SoilProfile.jsx';
+import splashVideo from './assets/kling_20260603_作品__4501_0.mp4';
 
 /* ---------- Subtle drifting dust motes ---------- */
 function Particles({ count = 28 }) {
   const items = useM(() => {
     const a = [];
     for (let i = 0; i < count; i++) {
+      const size = 1 + Math.random() * 2.5;
       a.push({
         left: Math.random() * 100,
         top: 90 + Math.random() * 30,
-        size: 1 + Math.random() * 2,
+        size,
         dx: (Math.random() - 0.5) * 80 + "px",
         dur: 24 + Math.random() * 26,
         delay: -Math.random() * 40,
         op: 0.12 + Math.random() * 0.18,
+        depth: size * 0.5 + Math.random() * 0.5, // Closer/larger particles shift faster
       });
     }
     return a;
@@ -31,17 +35,25 @@ function Particles({ count = 28 }) {
       {items.map((p, i) => (
         <span
           key={i}
+          className="particle-wrapper"
           style={{
             left: p.left + "%",
             top: p.top + "%",
-            width: p.size + "px",
-            height: p.size + "px",
-            animationDuration: p.dur + "s",
-            animationDelay: p.delay + "s",
-            opacity: p.op,
-            "--dx": p.dx,
+            transform: `translate(calc(var(--mouse-x, 0) * ${p.depth * 36}px), calc(var(--mouse-y, 0) * ${p.depth * 36}px))`
           }}
-        />
+        >
+          <span
+            className="particle-dot"
+            style={{
+              width: p.size + "px",
+              height: p.size + "px",
+              animationDuration: p.dur + "s",
+              animationDelay: p.delay + "s",
+              opacity: p.op,
+              "--dx": p.dx,
+            }}
+          />
+        </span>
       ))}
     </div>
   );
@@ -99,6 +111,12 @@ function Cursor() {
         `translate(${rx}px, ${ry}px) translate(-50%, -50%)`;
       if (dotRef.current) dotRef.current.style.transform =
         `translate(${dx}px, ${dy}px) translate(-50%, -50%)`;
+      
+      const normX = (rx / window.innerWidth) - 0.5;
+      const normY = (ry / window.innerHeight) - 0.5;
+      document.documentElement.style.setProperty('--mouse-x', normX.toFixed(4));
+      document.documentElement.style.setProperty('--mouse-y', normY.toFixed(4));
+
       raf = requestAnimationFrame(tick);
     };
     window.addEventListener("mousemove", onMove);
@@ -257,9 +275,35 @@ function RootPanel({ data, trace, onClose }) {
   );
 }
 
+/* ---------- Botanical divider ---------- */
+function BotanicalDivider() {
+  return (
+    <div className="botanical-divider" aria-hidden="true">
+      <div className="botanical-divider__rule" />
+      <svg className="botanical-divider__icon" width="52" height="52" viewBox="0 0 52 52" fill="none">
+        <circle cx="26" cy="26" r="2" fill="currentColor" opacity="0.7"/>
+        {/* branching stems */}
+        <path d="M26 24 Q22 16 14 17" stroke="currentColor" strokeWidth="0.9" fill="none" opacity="0.55"/>
+        <path d="M26 24 Q30 16 38 17" stroke="currentColor" strokeWidth="0.9" fill="none" opacity="0.55"/>
+        <path d="M26 24 Q19 22 13 26" stroke="currentColor" strokeWidth="0.7" fill="none" opacity="0.35"/>
+        <path d="M26 24 Q33 22 39 26" stroke="currentColor" strokeWidth="0.7" fill="none" opacity="0.35"/>
+        {/* upward stem */}
+        <path d="M26 24 Q25 14 26 6" stroke="currentColor" strokeWidth="0.7" fill="none" opacity="0.28"/>
+        {/* leaf tips */}
+        <circle cx="14" cy="17" r="1" fill="currentColor" opacity="0.38"/>
+        <circle cx="38" cy="17" r="1" fill="currentColor" opacity="0.38"/>
+        <circle cx="13" cy="26" r="0.7" fill="currentColor" opacity="0.28"/>
+        <circle cx="39" cy="26" r="0.7" fill="currentColor" opacity="0.28"/>
+      </svg>
+      <div className="botanical-divider__rule botanical-divider__rule--right" />
+    </div>
+  );
+}
+
 /* ---------- App ---------- */
 function App() {
   const [loaded, setLoaded] = useS(false);
+  const [heroEntered, setHeroEntered] = useS(false);
   const [phase, setPhase] = useS("canopy");
   const [selectedCategory, setSelectedCategory] = useS(null);
   const [selectedCondition, setSelectedCondition] = useS(null);
@@ -268,12 +312,20 @@ function App() {
   
   const [showJournal, setShowJournal] = useS(false);
   const [journalAnswers, setJournalAnswers] = useS(null);
+  const [showSplash, setShowSplash] = useS(true);
 
   useE(() => {
     initSoundscape();
     const t = setTimeout(() => setLoaded(true), 1400);
     return () => clearTimeout(t);
   }, []);
+
+  useE(() => {
+    if (!loaded) return;
+    // Fire entrance after the loader finishes fading (1.8s transition)
+    const t = setTimeout(() => setHeroEntered(true), 1800);
+    return () => clearTimeout(t);
+  }, [loaded]);
 
   const onCategoryClick = (catIdx) => {
     setSelectedCategory(catIdx);
@@ -357,15 +409,54 @@ function App() {
       <Cursor />
       <div className="paper-grain" aria-hidden="true"></div>
       <div className="paper-vignette" aria-hidden="true"></div>
+      <div className={`underground-page-tint${(phase === "roots" || phase === "detail") ? " is-active" : ""}`} aria-hidden="true"></div>
       <Particles count={24} />
       <Loader gone={loaded} />
-      <Nav onOpenJournal={() => setShowJournal(true)} />
-      <Crumb
-        category={selectedCategory}
-        condition={selectedCondition}
-        root={phase === "detail" ? selectedRoot : null}
-        onJump={onCrumbJump}
-      />
+      
+      <AnimatePresence>
+        {showSplash && (
+          <motion.div
+            key="splash"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0, scale: 1.05 }}
+            transition={{ duration: 1.2, ease: [0.76, 0, 0.24, 1] }}
+            className="splash-screen"
+          >
+            <video
+              className="splash-video"
+              src={splashVideo}
+              autoPlay
+              loop
+              muted
+              playsInline
+            />
+            <div className="splash-overlay" />
+            <div className="splash-content">
+              <span className="splash-eyebrow">An atlas of root-cause health</span>
+              <h1 className="splash-title">BANYAN</h1>
+              <p className="splash-tagline">Every symptom has a deeper root.</p>
+              <button
+                type="button"
+                className="splash-btn"
+                onClick={() => setShowSplash(false)}
+                data-hoverable="true"
+              >
+                Enter the Canopy
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {!showSplash && <Nav onOpenJournal={() => setShowJournal(true)} />}
+      {!showSplash && (
+        <Crumb
+          category={selectedCategory}
+          condition={selectedCondition}
+          root={phase === "detail" ? selectedRoot : null}
+          onJump={onCrumbJump}
+        />
+      )}
 
       <section className={`stage${(phase === 'roots' || phase === 'detail') ? ' is-underground' : ''}`} data-screen-label="01 Hero">
         {/* Atmospheric depth layers — sit behind the 3D canvas */}
@@ -384,12 +475,14 @@ function App() {
           onCategoryClick={onCategoryClick}
           onConditionClick={onConditionClick}
           onRootClick={onRootClick}
+          onCrumbJump={onCrumbJump}
         />
 
         {/* Bottom-left tagline (canopy phase only) */}
-        <div className="hero-tagline" style={{
-          opacity: phase === "canopy" ? 1 : 0,
-        }}>
+        <div
+          className={`hero-tagline${heroEntered ? " is-entered" : ""}`}
+          style={{ opacity: !showSplash && phase === "canopy" && heroEntered ? 1 : 0 }}
+        >
           <div className="label">An atlas of root-cause health</div>
           <h1>
             Every symptom<br/>
@@ -398,9 +491,10 @@ function App() {
         </div>
 
         {/* Bottom-right cue with counts */}
-        <div className="hero-cue" style={{
-          opacity: phase === "canopy" ? 1 : 0,
-        }}>
+        <div
+          className={`hero-cue${heroEntered ? " is-entered" : ""}`}
+          style={{ opacity: !showSplash && phase === "canopy" && heroEntered ? 1 : 0 }}
+        >
           <p className="text">
             Twelve domains of the modern body, one hundred twenty-one conditions,
             traced back to the patterns that quietly shape them.
@@ -492,6 +586,7 @@ function App() {
 
       <RootPanel data={rootData} trace={trace} onClose={onPanelClose} />
 
+      <BotanicalDivider />
       <Philosophy />
       <Methodology />
       <Voices />
