@@ -156,7 +156,7 @@ body {
 .nav > * { pointer-events: auto; }
 .nav-mark {
   font-family: var(--serif); font-style: italic; font-size: 20px;
-  display: flex; align-items: center; gap: 8px; color: rgba(255, 255, 255, 0.95);
+  display: flex; align-items: center; gap: 8px; color: var(--ink);
   text-decoration: none;
   background: transparent;
   border: 1px solid transparent;
@@ -186,7 +186,7 @@ body {
 .nav-links a,
 .nav-link-btn {
   display: inline-block;
-  color: rgba(255, 255, 255, 0.65); text-decoration: none;
+  color: var(--ink-soft); text-decoration: none;
   padding: 8px 16px; border-radius: 999px;
   background: transparent; border: none; outline: none;
   font-family: inherit; font-size: inherit; letter-spacing: inherit; text-transform: inherit;
@@ -196,17 +196,17 @@ body {
 }
 .nav-links a:hover,
 .nav-link-btn:hover {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.15);
+  color: var(--ink);
+  background: rgba(24, 32, 29, 0.06);
 }
 .nav-cta {
   padding: 8px 18px; border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.3); background: rgba(255, 255, 255, 0.08); color: #fff;
+  border: 1px solid rgba(24, 32, 29, 0.22); background: rgba(24, 32, 29, 0.04); color: var(--ink);
   font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase;
   font-family: var(--sans); transition: all 0.4s var(--ease); cursor: none;
 }
 .nav-cta:hover {
-  background: #fff; border-color: #fff; color: var(--ink);
+  background: var(--ink); border-color: var(--ink); color: #fff;
   transform: scale(1.04);
 }
 .nav.is-scrolled {
@@ -746,7 +746,7 @@ body {
 .hero-tagline.is-entered { transform: translateY(0); }
 .hero-tagline .label {
   font-family: var(--mono); font-size: 10px; letter-spacing: 0.34em;
-  text-transform: uppercase; color: rgba(67, 81, 74, 0.66);
+  text-transform: uppercase; color: var(--ink-soft);
   display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
 }
 .hero-tagline .label::before {
@@ -768,11 +768,11 @@ body {
   transition: opacity 0.9s var(--ease) 0.18s, transform 1.5s var(--ease) 0.18s;
 }
 .hero-cue.is-entered { transform: translateY(0); }
-.hero-cue .text { max-width: 38ch; font-size: 14px; line-height: 1.62; color: rgba(67, 81, 74, 0.72); }
+.hero-cue .text { max-width: 38ch; font-size: 14px; line-height: 1.62; color: var(--ink); }
 .hero-cue .meta {
   display: flex; gap: 14px; align-items: center;
   font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.36em;
-  text-transform: uppercase; color: rgba(67, 81, 74, 0.56);
+  text-transform: uppercase; color: var(--ink-soft);
 }
 .hero-cue .meta strong { color: var(--gold-deep); font-weight: 500; }
 .hero-cue .meta .sep { width: 18px; height: 1px; background: var(--line-strong); }
@@ -1317,12 +1317,12 @@ footer a:hover { color: var(--gold-deep); }
 .category-label {
   position: absolute;
   font-family: var(--sans);
-  font-weight: 500;
-  font-size: 11px;
+  font-weight: 600;
+  font-size: 12px;
   line-height: 1.2;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(255, 252, 239, 0.85);
+  color: #ffffff;
   background: transparent;
   border: none;
   cursor: pointer;

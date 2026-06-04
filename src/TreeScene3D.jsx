@@ -125,8 +125,8 @@ export default function TreeScene3D({
           <motion.div
             key="canopy-view"
             initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            animate={{ opacity: phase === 'canopy' ? 1 : 0 }}
+            style={{ pointerEvents: phase === 'canopy' ? 'auto' : 'none' }}
             transition={{ duration: 0.8 }}
             className="view-overlay canopy-view-container"
           >
