@@ -3113,34 +3113,40 @@ footer a:hover { color: var(--gold-deep); }
     letter-spacing: 0.28em;
   }
 
-  /* ── CANOPY LAYER: Make the background image fill properly on portrait ── */
-  /* On portrait: phone is narrower than image aspect ratio.
-     Force the image to fill the full viewport height, centered on the tree. */
+  /* ── CANOPY LAYER: Zoom out on mobile so the whole tree fits the frame ── */
   .canopy-bg-wrapper,
   .canopy-view-container {
-    width: calc(100vh * 2.36);
-    height: 100vh;
-    /* Tree is now centered in image — no offset needed */
+    height: 65svh;
+    width: calc(65svh * 2.36);
     left: 50%;
+    top: 60%; /* Push tree downwards to make room for text at the top */
     transform: translate(-50%, -50%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
   }
 
   /* Same treatment for aerial roots image */
   .aerial-bg-wrapper,
   .aerial-view-container {
-    width: calc(100vh * 2.36);
-    height: 100vh;
+    height: 65svh;
+    width: calc(65svh * 2.36);
     left: 50%;
+    top: 60%;
     transform: translate(-50%, -50%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
   }
 
   /* Same for roots underground image */
   .roots-bg-wrapper,
   .roots-view-container {
-    width: calc(100vh * 2.36);
-    height: 100vh;
+    height: 65svh;
+    width: calc(65svh * 2.36);
     left: 50%;
+    top: 60%;
     transform: translate(-50%, -50%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
   }
 
   /* Tree is centered in new image — background-position stays at center for all views */
@@ -3169,16 +3175,21 @@ footer a:hover { color: var(--gold-deep); }
     border-radius: 50%;
   }
 
-  /* ── HERO TAGLINE: Tighter layout on phone ── */
+  /* ── HERO TAGLINE: Top-centered above the tree for a clean look ── */
   .hero-tagline {
-    left: 5vw;
-    top: 16vh;
-    max-width: 68vw;
-    width: 68vw;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    top: 10vh;
+    max-width: 90vw;
+    width: 90vw;
+    align-items: center;
+    text-align: center;
   }
 
   .hero-title {
-    font-size: clamp(26px, 6.5vw, 40px);
+    font-size: clamp(28px, 8vw, 42px);
+    align-items: center;
   }
 
   .hero-eyebrow {
@@ -3189,11 +3200,12 @@ footer a:hover { color: var(--gold-deep); }
   .hero-description {
     font-size: 14px;
     line-height: 1.55;
+    text-align: center;
   }
 
   .hero-divider {
     width: 30px;
-    margin-bottom: 20px;
+    margin: 0 auto 20px;
   }
 
   /* ── CONDITIONS SIDEBAR (Stage 2): Full-width bottom drawer ── */
