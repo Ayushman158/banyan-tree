@@ -1314,38 +1314,35 @@ footer a:hover { color: var(--gold-deep); }
   }
   .hero-cue { display: none; } /* Hide complex cue on small screens */
   .hero-tagline {
-    position: relative;
     top: auto;
-    left: auto;
-    bottom: auto;
-    margin: 80px auto 40px auto;
-    padding: 0 24px;
-    align-items: center;
-    text-align: center;
-    max-width: 100%;
+    bottom: 24px;
+    left: 20px;
+    right: 20px;
+    width: auto;
+    max-width: none;
+    transform: translateY(20px);
   }
-  .hero-logo {
-    margin-bottom: 16px;
-  }
-  .hero-eyebrow {
-    margin-bottom: 16px;
+  .hero-tagline.is-entered {
+    transform: translateY(0);
   }
   .hero-title {
-    font-size: 34px !important;
-    align-items: center;
-    margin-bottom: 16px;
-  }
-  .hero-divider {
-    margin: 0 auto 20px auto;
+    font-size: clamp(28px, 8vw, 36px);
   }
   .hero-description {
-    margin: 0 auto 24px auto;
+    font-size: 14px;
+    max-width: 100%;
   }
-  .hero-btn {
-    margin: 0 auto;
+  .category-label, .condition-label {
+    padding: 12px 18px !important;
+    font-size: 11px !important;
+    border-radius: 24px !important;
   }
-  .hero-author {
-    margin-top: 12px;
+  .condition-hotspot::before,
+  .root-node-dot::before {
+    content: '';
+    position: absolute;
+    inset: -24px;
+    z-index: 1;
   }
   .cat-banner .name, .cond-banner .name { font-size: 28px; }
   footer { flex-direction: column; align-items: center; text-align: center; gap: 24px; padding: 40px 4vw 30px; }
@@ -2198,7 +2195,7 @@ footer a:hover { color: var(--gold-deep); }
   font-size: 10px;
   letter-spacing: 0.4em;
   text-transform: uppercase;
-  color: #ffffff; /* White for maximum visibility against video */
+  color: #9F957E; /* Soft khaki brand color */
   margin-bottom: 20px;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8), 0 1px 4px rgba(0, 0, 0, 0.6);
   opacity: 0;
@@ -2211,7 +2208,7 @@ footer a:hover { color: var(--gold-deep); }
   font-size: 46px; /* Reduced from 72px to bring onto a single line */
   font-weight: 300; /* Lighter, more premium weight */
   letter-spacing: 0.28em;
-  color: var(--gold); /* Only the main title gets the premium gold colour */
+  color: #FFFFCC; /* Premium light gold/cream for Himanshu Garg */
   text-indent: 0.28em; /* Centers letter-spaced text */
   margin: 0 0 24px 0;
   text-shadow: 0 4px 24px rgba(0, 0, 0, 0.85), 0 2px 8px rgba(0, 0, 0, 0.6);
