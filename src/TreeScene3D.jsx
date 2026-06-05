@@ -235,19 +235,34 @@ export default function TreeScene3D({
               const isDimmed = hoverCategory !== null && !isHovered;
               
               return (
-                <path
-                  key={`line-${cat.id}`}
-                  d={getCategoryPath(cat)}
-                  stroke={isActive || isHovered ? "var(--gold)" : "rgba(20, 35, 28, 0.38)"}
-                  strokeWidth={isActive || isHovered ? 1.5 : 0.9}
-                  fill="none"
-                  vectorEffect="non-scaling-stroke"
-                  className="canopy-path"
-                  style={{ 
-                    opacity: isDimmed ? 0.3 : 1,
-                    transition: 'stroke 0.4s var(--ease), stroke-width 0.4s var(--ease), opacity 0.4s var(--ease)' 
-                  }}
-                />
+                <React.Fragment key={cat.id}>
+                  {/* Desktop Path */}
+                  <path
+                    d={getCategoryPath(cat)}
+                    stroke={isActive || isHovered ? "var(--gold)" : "rgba(20, 35, 28, 0.38)"}
+                    strokeWidth={isActive || isHovered ? 1.5 : 0.9}
+                    fill="none"
+                    vectorEffect="non-scaling-stroke"
+                    className="canopy-path desktop-path"
+                    style={{ 
+                      opacity: isDimmed ? 0.3 : 1,
+                      transition: 'stroke 0.4s var(--ease), stroke-width 0.4s var(--ease), opacity 0.4s var(--ease)' 
+                    }}
+                  />
+                  {/* Mobile Path */}
+                  <path
+                    d={`M ${cat.x} ${cat.y} L ${cat.x} ${cat.y + 2}`}
+                    stroke={isActive || isHovered ? "var(--gold)" : "rgba(20, 35, 28, 0.38)"}
+                    strokeWidth={isActive || isHovered ? 1.5 : 0.9}
+                    fill="none"
+                    vectorEffect="non-scaling-stroke"
+                    className="canopy-path mobile-path"
+                    style={{ 
+                      opacity: isDimmed ? 0.3 : 1,
+                      transition: 'stroke 0.4s var(--ease), stroke-width 0.4s var(--ease), opacity 0.4s var(--ease)' 
+                    }}
+                  />
+                </React.Fragment>
               );
             })}
           </svg>
@@ -281,10 +296,16 @@ export default function TreeScene3D({
                   type="button"
                   className={`category-label ${isActive ? 'is-active' : ''} ${isHovered ? 'is-hovered' : ''}`}
                   style={{
-                    left: `${cat.labelX}%`,
-                    top: `${cat.labelY}%`,
-                    textAlign: cat.align === 'right' ? 'right' : 'left',
-                    transform: cat.align === 'right' ? 'translate(calc(-100% - 12px), -50%)' : 'translate(12px, -50%)'
+                    '--desktop-x': `${cat.labelX}%`,
+                    '--desktop-y': `${cat.labelY}%`,
+                    '--mobile-x': `${cat.x}%`,
+                    '--mobile-y': `calc(${cat.y}% + 14px)`,
+                    '--desktop-transform': cat.align === 'right' ? 'translate(calc(-100% - 12px), -50%)' : 'translate(12px, -50%)',
+                    '--desktop-text-align': cat.align === 'right' ? 'right' : 'left',
+                    left: 'var(--desktop-x)',
+                    top: 'var(--desktop-y)',
+                    textAlign: 'var(--desktop-text-align)',
+                    transform: 'var(--desktop-transform)'
                   }}
                   onClick={() => onCategoryClick(idx)}
                   onMouseEnter={() => { setHoverCategory(cat.id); playHoverSound(); }}

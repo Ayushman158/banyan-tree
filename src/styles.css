@@ -1514,6 +1514,17 @@ footer a:hover { color: var(--gold-deep); }
 
 /* ── Canopy View ── */
 
+/* Base path display rules */
+.mobile-path { display: none; }
+.desktop-path { display: block; }
+
+.category-line-svg {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 10;
+}
+
 .canopy-svg {
   position: absolute;
   inset: 0;
@@ -3116,10 +3127,10 @@ footer a:hover { color: var(--gold-deep); }
   /* ── CANOPY LAYER: Zoom out on mobile so the whole tree fits the frame ── */
   .canopy-bg-wrapper,
   .canopy-view-container {
-    height: 65svh;
-    width: calc(65svh * 2.36);
+    height: 52svh;
+    width: calc(52svh * 2.36);
     left: 50%;
-    top: 60%; /* Push tree downwards to make room for text at the top */
+    top: 68%; /* Push tree downwards to make room for text at the top */
     transform: translate(-50%, -50%);
     -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
     mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
@@ -3128,10 +3139,10 @@ footer a:hover { color: var(--gold-deep); }
   /* Same treatment for aerial roots image */
   .aerial-bg-wrapper,
   .aerial-view-container {
-    height: 65svh;
-    width: calc(65svh * 2.36);
+    height: 52svh;
+    width: calc(52svh * 2.36);
     left: 50%;
-    top: 60%;
+    top: 68%;
     transform: translate(-50%, -50%);
     -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
     mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
@@ -3140,10 +3151,10 @@ footer a:hover { color: var(--gold-deep); }
   /* Same for roots underground image */
   .roots-bg-wrapper,
   .roots-view-container {
-    height: 65svh;
-    width: calc(65svh * 2.36);
+    height: 52svh;
+    width: calc(52svh * 2.36);
     left: 50%;
-    top: 60%;
+    top: 68%;
     transform: translate(-50%, -50%);
     -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
     mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
@@ -3155,12 +3166,20 @@ footer a:hover { color: var(--gold-deep); }
   .roots-bg  { background-position: 40% center !important; }
 
   /* ── CATEGORY LABELS: Compact pill style on mobile ── */
+  .desktop-path { display: none !important; }
+  .mobile-path { display: block !important; }
+  
   .category-label {
     font-size: 8px !important;
     padding: 4px 9px !important;
     letter-spacing: 0.15em !important;
     border-radius: 12px !important;
-    /* Hide very far-right labels that fall off screen */
+    
+    /* Center the labels under the dots on mobile so they don't get cut off on the horizontal edges */
+    left: var(--mobile-x) !important;
+    top: var(--mobile-y) !important;
+    transform: translate(-50%, 0) !important;
+    text-align: center !important;
   }
 
   /* Hide labels that are positioned beyond 78% x — they fall off the right edge on phone */
@@ -3195,12 +3214,16 @@ footer a:hover { color: var(--gold-deep); }
   .hero-eyebrow {
     font-size: 9px;
     letter-spacing: 0.22em;
+    margin-bottom: 6px;
   }
 
   .hero-description {
-    font-size: 14px;
-    line-height: 1.55;
-    text-align: center;
+    /* Hide description on mobile to keep the space clean and avoid overlapping the tree */
+    display: none;
+  }
+
+  .hero-author {
+    display: none;
   }
 
   .hero-divider {
