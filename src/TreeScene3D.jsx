@@ -3,24 +3,28 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { BanyanData } from './data.js';
 import { playHoverSound } from './sound.js';
 import gsap from 'gsap';
-import canopyImg from './assets/New hero.jpg';
+import canopyImg from './assets/new new hero.jpg';
 import aerialImg from './assets/aerial roots close up 2.jpg';
 import rootsImg from './assets/roots hd.jpg';
 
-// Compressed coordinates to fit within the 16:10 / 4:3 safe area when cropped
+// Coordinates calibrated to 'new new hero.jpg' — tree is centered (~50% x).
+// Left branch: 20-45%x, Right branch: 55-80%x. Canopy top: ~10%y, trunk: ~70%y.
+// Labels on left-branch nodes point LEFT (align:'left'), right-branch nodes point RIGHT.
 const CATEGORIES = [
-  { id: "mental", name: "Mental Health", x: 72, y: 22, labelX: 67, labelY: 22, align: "right" },
-  { id: "metabolic", name: "Lifestyle / Metabolic", x: 70, y: 68, labelX: 65, labelY: 68, align: "right" },
-  { id: "musculoskeletal", name: "Musculoskeletal", x: 68, y: 56, labelX: 63, labelY: 56, align: "right" },
-  { id: "cardiovascular", name: "Cardiovascular", x: 67, y: 44, labelX: 62, labelY: 44, align: "right" },
-  { id: "autoimmune", name: "Autoimmune & Inflammatory", x: 69, y: 32, labelX: 64, labelY: 32, align: "right" },
-  { id: "hormonal", name: "Hormonal & Endocrine", x: 80, y: 17, labelX: 74, labelY: 17, align: "right" },
-  { id: "neurological", name: "Neurological", x: 76, y: 12, labelX: 70, labelY: 12, align: "right" },
-  { id: "gut", name: "Gut & Digestive Health", x: 84, y: 26, labelX: 78, labelY: 26, align: "right" },
-  { id: "respiratory", name: "Respiratory & ENT", x: 86, y: 35, labelX: 80, labelY: 35, align: "right" },
-  { id: "skin", name: "Skin & Hair", x: 87, y: 48, labelX: 81, labelY: 48, align: "right" },
-  { id: "oral", name: "Oral & Dental Health", x: 85, y: 60, labelX: 79, labelY: 60, align: "right" },
-  { id: "renal", name: "Renal & Urinary", x: 81, y: 70, labelX: 75, labelY: 70, align: "right" }
+  // Right side of canopy
+  { id: "mental", name: "Mental Health", x: 68, y: 18, labelX: 73, labelY: 18, align: "left" },
+  { id: "autoimmune", name: "Autoimmune & Inflammatory", x: 64, y: 30, labelX: 69, labelY: 30, align: "left" },
+  { id: "cardiovascular", name: "Cardiovascular", x: 62, y: 42, labelX: 67, labelY: 42, align: "left" },
+  { id: "musculoskeletal", name: "Musculoskeletal", x: 60, y: 54, labelX: 65, labelY: 54, align: "left" },
+  { id: "metabolic", name: "Lifestyle / Metabolic", x: 59, y: 66, labelX: 64, labelY: 66, align: "left" },
+  { id: "renal", name: "Renal & Urinary", x: 63, y: 76, labelX: 68, labelY: 76, align: "left" },
+  // Left side of canopy
+  { id: "neurological", name: "Neurological", x: 33, y: 18, labelX: 28, labelY: 18, align: "right" },
+  { id: "hormonal", name: "Hormonal & Endocrine", x: 37, y: 28, labelX: 32, labelY: 28, align: "right" },
+  { id: "gut", name: "Gut & Digestive Health", x: 39, y: 40, labelX: 34, labelY: 40, align: "right" },
+  { id: "respiratory", name: "Respiratory & ENT", x: 40, y: 52, labelX: 35, labelY: 52, align: "right" },
+  { id: "skin", name: "Skin & Hair", x: 41, y: 64, labelX: 36, labelY: 64, align: "right" },
+  { id: "oral", name: "Oral & Dental Health", x: 38, y: 74, labelX: 33, labelY: 74, align: "right" },
 ];
 
 // Coordinate configuration for the roots cause nodes

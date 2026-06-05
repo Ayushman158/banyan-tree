@@ -3120,11 +3120,9 @@ footer a:hover { color: var(--gold-deep); }
   .canopy-view-container {
     width: calc(100vh * 2.36);
     height: 100vh;
-    /* Shift left so the tree (center-left of image) appears in viewport center */
+    /* Tree is now centered in image — no offset needed */
     left: 50%;
     transform: translate(-50%, -50%);
-    /* Move the framing slightly rightward to reveal tree trunk */
-    margin-left: -5vw;
   }
 
   /* Same treatment for aerial roots image */
@@ -3145,8 +3143,8 @@ footer a:hover { color: var(--gold-deep); }
     transform: translate(-50%, -50%);
   }
 
-  /* Focus image on the tree — shift background-position to show center canopy area */
-  .canopy-bg { background-position: 38% center !important; }
+  /* Tree is centered in new image — background-position stays at center for all views */
+  .canopy-bg { background-position: center center !important; }
   .aerial-bg { background-position: center center !important; }
   .roots-bg  { background-position: 40% center !important; }
 
