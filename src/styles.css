@@ -2169,6 +2169,7 @@ footer a:hover { color: var(--gold-deep); }
   width: auto;
   height: auto;
   object-fit: cover;
+  object-position: center center; /* Center on the tree on all viewports */
   opacity: 1; /* Fully visible */
 }
 
@@ -3079,4 +3080,287 @@ footer a:hover { color: var(--gold-deep); }
   .method-split--rev .method-split__image { order: -1; }
   .method-split__text { padding: 32px 24px; }
   .wave-in svg, .wave-out svg { height: 50px; }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   MOBILE IMMERSIVE LAYOUT — Portrait / Touch Device Optimizations
+   Preserve cinematic storytelling. Adapt for touch. Same journey.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Phone portrait (≤ 600px wide) ── */
+@media (max-width: 600px) {
+
+  /* Stage: reduce min-height so it doesn't create dead white space on short phones */
+  .stage {
+    min-height: 100svh;
+    height: 100svh;
+  }
+
+  /* ── SPLASH SCREEN: Shift crop right so the tree is visible on portrait ── */
+  .splash-video {
+    /* Tree sits right-of-center in the video frame.
+       object-position X > 50% shifts the visible window toward the right of the video,
+       bringing the tree into the center of the mobile viewport. */
+    object-position: 70% center;
+  }
+
+  .splash-content {
+    padding: 0 24px;
+  }
+
+  .splash-eyebrow {
+    font-size: 9px;
+    letter-spacing: 0.28em;
+  }
+
+  /* ── CANOPY LAYER: Make the background image fill properly on portrait ── */
+  /* On portrait: phone is narrower than image aspect ratio.
+     Force the image to fill the full viewport height, centered on the tree. */
+  .canopy-bg-wrapper,
+  .canopy-view-container {
+    width: calc(100vh * 2.36);
+    height: 100vh;
+    /* Shift left so the tree (center-left of image) appears in viewport center */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /* Move the framing slightly rightward to reveal tree trunk */
+    margin-left: -5vw;
+  }
+
+  /* Same treatment for aerial roots image */
+  .aerial-bg-wrapper,
+  .aerial-view-container {
+    width: calc(100vh * 2.36);
+    height: 100vh;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  /* Same for roots underground image */
+  .roots-bg-wrapper,
+  .roots-view-container {
+    width: calc(100vh * 2.36);
+    height: 100vh;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  /* Focus image on the tree — shift background-position to show center canopy area */
+  .canopy-bg { background-position: 38% center !important; }
+  .aerial-bg { background-position: center center !important; }
+  .roots-bg  { background-position: 40% center !important; }
+
+  /* ── CATEGORY LABELS: Compact pill style on mobile ── */
+  .category-label {
+    font-size: 8px !important;
+    padding: 4px 9px !important;
+    letter-spacing: 0.15em !important;
+    border-radius: 12px !important;
+    /* Hide very far-right labels that fall off screen */
+  }
+
+  /* Hide labels that are positioned beyond 78% x — they fall off the right edge on phone */
+  /* We do this by zero-ing opacity on the category-interactive-group level via JS-injected classes
+     but for CSS we simply make all labels smaller and let the transform clip them gracefully */
+
+  /* Force touch targets to be big enough */
+  .category-hotspot::before {
+    content: '';
+    position: absolute;
+    inset: -18px;
+    border-radius: 50%;
+  }
+
+  /* ── HERO TAGLINE: Tighter layout on phone ── */
+  .hero-tagline {
+    left: 5vw;
+    top: 16vh;
+    max-width: 68vw;
+    width: 68vw;
+  }
+
+  .hero-title {
+    font-size: clamp(26px, 6.5vw, 40px);
+  }
+
+  .hero-eyebrow {
+    font-size: 9px;
+    letter-spacing: 0.22em;
+  }
+
+  .hero-description {
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .hero-divider {
+    width: 30px;
+    margin-bottom: 20px;
+  }
+
+  /* ── CONDITIONS SIDEBAR (Stage 2): Full-width bottom drawer ── */
+  .conditions-sidebar {
+    position: fixed !important;
+    top: auto !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    max-height: 52vh !important;
+    border-radius: 18px 18px 0 0 !important;
+    padding: 20px 16px 32px !important;
+    box-shadow: 0 -8px 40px rgba(0,0,0,0.2) !important;
+    overflow-y: auto !important;
+    /* Add a drag handle indicator */
+    background: rgba(255, 252, 242, 0.97) !important;
+  }
+  /* Pseudo drag handle */
+  .conditions-sidebar::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 4px;
+    background: rgba(31, 34, 30, 0.2);
+    border-radius: 99px;
+    margin: 0 auto 16px;
+  }
+
+  .sidebar-title {
+    font-size: 20px;
+  }
+
+  .sidebar-item-name {
+    font-size: 13px;
+  }
+
+  /* ── ROOTS FLOATING CONTROLS (Stage 3): Bottom of screen ── */
+  .roots-floating-controls {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: auto !important;
+    bottom: 24px !important;
+    flex-direction: row !important;
+    justify-content: center !important;
+    gap: 12px !important;
+    padding: 0 16px !important;
+    z-index: 40 !important;
+    pointer-events: auto !important;
+  }
+
+  .roots-explore-btn {
+    font-size: 9px !important;
+    padding: 10px 18px !important;
+    white-space: nowrap !important;
+  }
+
+  /* ── ROOTS DETAIL PANEL (Stage 3): Bottom sheet ── */
+  .roots-left-panel {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: auto !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    max-height: 60vh !important;
+    border-radius: 20px 20px 0 0 !important;
+    padding: 24px 20px 36px !important;
+    overflow-y: auto !important;
+    z-index: 50 !important;
+    background: #080a08 !important;
+  }
+  /* Drag handle for roots panel */
+  .roots-left-panel::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 99px;
+    margin: 0 auto 16px;
+  }
+
+  .roots-panel-close {
+    top: 16px !important;
+    right: 16px !important;
+  }
+
+  .panel-title {
+    font-size: clamp(24px, 6vw, 36px);
+  }
+
+  .panel-insight {
+    font-size: 16px;
+  }
+
+  .panel-meta {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 14px !important;
+  }
+
+  .panel-actions {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  .panel-actions .btn {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  /* ── ROOT NODES: Smaller, still tappable ── */
+  .root-node-label-box {
+    padding: 6px 10px !important;
+  }
+
+  .root-node-name {
+    font-size: 10px !important;
+  }
+
+  .root-node-subtitle {
+    font-size: 7px !important;
+  }
+
+  /* ── UNDERGROUND INSIGHT ── */
+  .underground-insight {
+    bottom: 72px !important;
+    right: 3vw !important;
+    left: 3vw !important;
+    max-width: 100% !important;
+    width: auto !important;
+  }
+
+  /* ── NAV: tighter on mobile ── */
+  .nav {
+    gap: 12vw !important;
+    padding: 5px 10px 5px 16px !important;
+    top: 16px !important;
+  }
+
+  .nav-mark {
+    font-size: 13px !important;
+  }
+
+  /* Hide nav links text on very small screens to save space */
+  .nav-links a span {
+    display: none;
+  }
+}
+
+/* ── Very small phones (≤ 390px) ── */
+@media (max-width: 390px) {
+  .splash-title {
+    font-size: 19px !important;
+    letter-spacing: 0.14em !important;
+    text-indent: 0.14em !important;
+  }
+
+  .hero-tagline {
+    top: 14vh;
+    max-width: 72vw;
+  }
+
+  .hero-title {
+    font-size: 22px;
+  }
 }
