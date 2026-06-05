@@ -5,7 +5,7 @@ import React, { useEffect as useE, useRef as useR, useState as useS, useMemo as 
 import { motion, AnimatePresence } from 'framer-motion';
 import { BanyanData } from './data.js';
 import TreeScene3D from './TreeScene3D.jsx';
-import { Philosophy, Methodology, Voices, FinalCTA, SiteFooter } from './sections.jsx';
+import { Philosophy, Methodology, Pricing, Voices, Qualifier, FinalCTA, SiteFooter, StatsStrip } from './sections.jsx';
 import { initSoundscape } from './sound.js';
 import SoilJournal from './SoilJournal.jsx';
 import SoilProfile from './SoilProfile.jsx';
@@ -150,7 +150,7 @@ function Loader({ gone }) {
   return (
     <div className={`loader ${gone ? "is-gone" : ""}`}>
       <div className="loader-ring">
-        <span className="loader-mark">b.</span>
+        <span className="loader-mark">h.</span>
       </div>
       <div className="loader-label">Tuning the atmosphere</div>
     </div>
@@ -172,7 +172,7 @@ function Nav({ onOpenJournal }) {
 
   return (
     <nav className={`nav ${scrolled ? "is-scrolled" : ""}`}>
-      <div className="nav-mark">Banyan</div>
+      <div className="nav-mark">Himanshu Garg</div>
       <div className="nav-right">
         <div className="nav-links">
           <a href="#philosophy" data-hoverable="true">Philosophy</a>
@@ -180,17 +180,18 @@ function Nav({ onOpenJournal }) {
           <a href="#voices" data-hoverable="true">Voices</a>
           <button className="nav-link-btn" onClick={onOpenJournal} data-hoverable="true">Journal</button>
         </div>
-        <button className="nav-cta" onClick={onOpenJournal} data-hoverable="true">Begin</button>
+        <a href="#apply" className="nav-cta" data-hoverable="true">Apply for Consult</a>
       </div>
     </nav>
   );
 }
 
 /* ---------- Breadcrumb ---------- */
-function Crumb({ category, condition, root, onJump }) {
+function Crumb({ category, condition, root, phase, onJump }) {
   const visible = category != null || condition || root;
+  const isUnderground = phase === "roots" || phase === "detail";
   return (
-    <div className={`crumb ${visible ? "is-visible" : ""}`}>
+    <div className={`crumb ${visible ? "is-visible" : ""} ${isUnderground ? "is-underground" : ""}`}>
       <span
         className={`crumb-step ${!condition && category != null ? "is-current" : ""}`}
         onClick={() => onJump("canopy")}
@@ -234,71 +235,8 @@ function Crumb({ category, condition, root, onJump }) {
   );
 }
 
-/* ---------- Root-cause panel ---------- */
-function RootPanel({ data, trace, onClose }) {
-  return (
-    <>
-      <div className={`panel-scrim ${data ? "is-visible" : ""}`} onClick={onClose}></div>
-      <div className={`panel ${data ? "is-visible" : ""}`} role="dialog" aria-modal="true">
-        <button className="panel-close" onClick={onClose} data-hoverable="true">×</button>
-        {data && (
-          <>
-            <div className="panel-eyebrow">
-              <span>Root cause · {data.number}</span>
-              {trace && (
-                <span className="panel-eyebrow-trace">From: {trace}</span>
-              )}
-            </div>
-            <h3 className="panel-title">{data.name}</h3>
-            <p className="panel-insight">{data.insight}</p>
-            <p className="panel-body">{data.body}</p>
-            <dl className="panel-meta">
-              {Object.entries(data.meta).map(([k, v]) => (
-                <div key={k}>
-                  <dt>{k}</dt>
-                  <dd>{v}</dd>
-                </div>
-              ))}
-            </dl>
-            <div className="panel-actions">
-              <button className="btn btn--primary" data-hoverable="true">
-                Begin a consultation
-              </button>
-              <button className="btn btn--ghost" data-hoverable="true" onClick={onClose}>
-                Continue exploring
-              </button>
-            </div>
-          </>
-        )}
-      </div>
-    </>
-  );
-}
 
-/* ---------- Botanical divider ---------- */
-function BotanicalDivider() {
-  return (
-    <div className="botanical-divider" aria-hidden="true">
-      <div className="botanical-divider__rule" />
-      <svg className="botanical-divider__icon" width="52" height="52" viewBox="0 0 52 52" fill="none">
-        <circle cx="26" cy="26" r="2" fill="currentColor" opacity="0.7"/>
-        {/* branching stems */}
-        <path d="M26 24 Q22 16 14 17" stroke="currentColor" strokeWidth="0.9" fill="none" opacity="0.55"/>
-        <path d="M26 24 Q30 16 38 17" stroke="currentColor" strokeWidth="0.9" fill="none" opacity="0.55"/>
-        <path d="M26 24 Q19 22 13 26" stroke="currentColor" strokeWidth="0.7" fill="none" opacity="0.35"/>
-        <path d="M26 24 Q33 22 39 26" stroke="currentColor" strokeWidth="0.7" fill="none" opacity="0.35"/>
-        {/* upward stem */}
-        <path d="M26 24 Q25 14 26 6" stroke="currentColor" strokeWidth="0.7" fill="none" opacity="0.28"/>
-        {/* leaf tips */}
-        <circle cx="14" cy="17" r="1" fill="currentColor" opacity="0.38"/>
-        <circle cx="38" cy="17" r="1" fill="currentColor" opacity="0.38"/>
-        <circle cx="13" cy="26" r="0.7" fill="currentColor" opacity="0.28"/>
-        <circle cx="39" cy="26" r="0.7" fill="currentColor" opacity="0.28"/>
-      </svg>
-      <div className="botanical-divider__rule botanical-divider__rule--right" />
-    </div>
-  );
-}
+
 
 /* ---------- App ---------- */
 function App() {
@@ -342,8 +280,7 @@ function App() {
     // Reveal root nodes only after the camera has substantially arrived underground
     setTimeout(() => {
       setRootsReady(true);
-      if (cond) setSelectedRoot(cond.root);
-    }, 1500);
+    }, 2400);
   };
 
   const onRootClick = (rootId) => {
@@ -408,7 +345,6 @@ function App() {
     <>
       <Cursor />
       <div className="paper-grain" aria-hidden="true"></div>
-      <div className="paper-vignette" aria-hidden="true"></div>
       <div className={`underground-page-tint${(phase === "roots" || phase === "detail") ? " is-active" : ""}`} aria-hidden="true"></div>
       <Particles count={24} />
       <Loader gone={loaded} />
@@ -432,8 +368,8 @@ function App() {
             />
             <div className="splash-overlay" />
             <div className="splash-content">
-              <span className="splash-eyebrow">An atlas of root-cause health</span>
-              <h1 className="splash-title">BANYAN</h1>
+              <span className="splash-eyebrow">An atlas of root-cause healing</span>
+              <h1 className="splash-title">HIMANSHU GARG</h1>
               <p className="splash-tagline">Every symptom has a deeper root.</p>
               <button
                 type="button"
@@ -449,23 +385,23 @@ function App() {
       </AnimatePresence>
 
       {!showSplash && <Nav onOpenJournal={() => setShowJournal(true)} />}
-      {!showSplash && (
-        <Crumb
-          category={selectedCategory}
-          condition={selectedCondition}
-          root={phase === "detail" ? selectedRoot : null}
-          onJump={onCrumbJump}
-        />
-      )}
 
       <section className={`stage${(phase === 'roots' || phase === 'detail') ? ' is-underground' : ''}`} data-screen-label="01 Hero">
-        {/* Atmospheric depth layers — sit behind the 3D canvas */}
+        {!showSplash && (
+          <Crumb
+            category={selectedCategory}
+            condition={selectedCondition}
+            root={phase === "detail" ? selectedRoot : null}
+            phase={phase}
+            onJump={onCrumbJump}
+          />
+        )}
+        {/* Atmospheric depth layers — behind the image */}
         <div className="atmo-sun-glow"     aria-hidden="true" />
         <div className="atmo-cloud-drift atmo-cloud-drift--one" aria-hidden="true" />
         <div className="atmo-cloud-drift atmo-cloud-drift--two" aria-hidden="true" />
         <div className="atmo-horizon-mist" aria-hidden="true" />
         <div className="atmo-water"        aria-hidden="true" />
-        <div className="atmo-fore-dark"    aria-hidden="true" />
         <TreeScene3D
           phase={phase}
           selectedCategory={selectedCategory}
@@ -478,16 +414,18 @@ function App() {
           onCrumbJump={onCrumbJump}
         />
 
+
+
         {/* Bottom-left tagline (canopy phase only) */}
         <div
           className={`hero-tagline${heroEntered ? " is-entered" : ""}`}
           style={{ opacity: !showSplash && phase === "canopy" && heroEntered ? 1 : 0 }}
         >
-          <div className="label">An atlas of root-cause health</div>
           <h1>
             Every symptom<br/>
             has a <em>deeper&nbsp;root.</em>
           </h1>
+          <p className="hero-subheader">An interactive healing journey with Himanshu Garg</p>
         </div>
 
         {/* Bottom-right cue with counts */}
@@ -495,10 +433,6 @@ function App() {
           className={`hero-cue${heroEntered ? " is-entered" : ""}`}
           style={{ opacity: !showSplash && phase === "canopy" && heroEntered ? 1 : 0 }}
         >
-          <p className="text">
-            Twelve domains of the modern body, one hundred twenty-one conditions,
-            traced back to the patterns that quietly shape them.
-          </p>
           <div className="meta">
             <span><strong>12</strong> domains</span>
             <span className="sep"></span>
@@ -512,26 +446,11 @@ function App() {
           </div>
         </div>
 
-        {/* Banners */}
-        <div className={`cat-banner ${phase === "category" ? "is-visible" : ""}`}>
-          <span className="label">Domain</span>
-          <span className="name">{catData?.name || ""}</span>
-          <span className="meta">
-            {catData?.conditions?.length || 0} conditions · Choose one to trace its root
-          </span>
-        </div>
 
-        <div className={`cond-banner ${(phase === "roots" || phase === "detail") ? "is-visible" : ""}`}>
-          <span className="label">Tracing the root of</span>
-          <span className="name">{condData?.name || ""}</span>
-          <span className="meta">
-            {catData?.name || ""} · Below the surface
-          </span>
-        </div>
 
         {backLabel && (
           <button
-            className={`stage-back ${phase !== "canopy" ? "is-visible" : ""}`}
+            className={`stage-back ${phase !== "canopy" && phase !== "detail" ? "is-visible" : ""}`}
             onClick={backAction}
             data-hoverable="true"
           >
@@ -552,6 +471,31 @@ function App() {
           <span>Each root is connected.<br/>Healing one nourishes all.</span>
         </div>
 
+        <AnimatePresence>
+          {phase === "category" && (
+            <motion.div
+              className="canopy-tooltip"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 10 }}
+              transition={{ delay: 1, duration: 0.8 }}
+            >
+              <span className="pulse"></span> Click a symptom to reveal its root causes
+            </motion.div>
+          )}
+          {phase === "roots" && !rootsReady && (
+            <motion.div
+              className="descending-tooltip"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              Descending to root causes...
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <div className={`soil-story ${(phase === 'roots' || phase === 'detail') && rootsReady ? 'is-visible' : ''}`} aria-hidden="true">
           <span className="soil-story__layer soil-story__layer--top" />
           <span className="soil-story__layer soil-story__layer--mid" />
@@ -559,20 +503,6 @@ function App() {
           <span className="soil-story__path soil-story__path--one" />
           <span className="soil-story__path soil-story__path--two" />
           <span className="soil-story__path soil-story__path--three" />
-        </div>
-
-        {/* Underground: scroll hint */}
-        <div className={`underground-scroll ${(phase === 'roots' || phase === 'detail') && rootsReady ? 'is-visible' : ''}`}>
-          <span className="underground-scroll__icon">
-            <svg width="18" height="28" viewBox="0 0 18 28" fill="none">
-              <rect x="1" y="1" width="16" height="26" rx="8" stroke="currentColor" strokeOpacity="0.45" />
-              <rect x="7.5" y="5" width="3" height="6" rx="1.5" fill="currentColor" fillOpacity="0.6">
-                <animate attributeName="y" values="5;12;5" dur="2s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="0.8;0.2;0.8" dur="2s" repeatCount="indefinite" />
-              </rect>
-            </svg>
-          </span>
-          <span>Scroll to explore deeper</span>
         </div>
 
         {/* Underground: bottom-right healing pathways */}
@@ -584,12 +514,14 @@ function App() {
         </div>
       </section>
 
-      <RootPanel data={rootData} trace={trace} onClose={onPanelClose} />
 
-      <BotanicalDivider />
+
       <Philosophy />
+      <StatsStrip />
       <Methodology />
       <Voices />
+      <Pricing />
+      <Qualifier />
       <FinalCTA />
       <SiteFooter />
 

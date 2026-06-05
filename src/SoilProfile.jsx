@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { BanyanData } from './data.js';
+import { Calendar, RotateCcw } from 'lucide-react';
 
 export default function SoilProfile({ answers, onRestart, onClose }) {
   // Translate answers into root health scores
@@ -66,9 +67,11 @@ export default function SoilProfile({ answers, onRestart, onClose }) {
         <div className="profile-actions">
           <button className="btn btn--primary" data-hoverable="true">
             Book a 90-Min Assessment
+            <Calendar size={14} className="btn-icon-right" />
           </button>
           <button className="btn btn--ghost" onClick={onRestart} data-hoverable="true">
             Retake Journal
+            <RotateCcw size={14} className="btn-icon-right" />
           </button>
         </div>
       </motion.div>

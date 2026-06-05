@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowRight } from 'lucide-react';
 
 const questions = [
   {
@@ -69,6 +70,7 @@ export default function SoilJournal({ onComplete, onClose }) {
               <p>Before we look at the leaves, we must understand the soil. A few quiet questions about the rhythms that sustain you.</p>
               <button className="btn btn--primary" onClick={handleStart} data-hoverable="true">
                 Begin Reflection
+                <ArrowRight size={14} className="btn-icon-right" />
               </button>
             </motion.div>
           )}
