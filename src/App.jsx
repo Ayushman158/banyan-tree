@@ -368,7 +368,7 @@ function App() {
             />
             <div className="splash-overlay" />
             <div className="splash-content">
-              <span className="splash-eyebrow">An atlas of root-cause health</span>
+              <span className="splash-eyebrow">An atlas of root cause healing</span>
               <h1 className="splash-title">HIMANSHU GARG</h1>
               <p className="splash-tagline">Every symptom has a deeper root.</p>
               <button
@@ -423,7 +423,7 @@ function App() {
         >
 
           
-          <span className="hero-eyebrow">An atlas of root-cause health</span>
+          <span className="hero-eyebrow">An atlas of root cause healing</span>
           
           <h1 className="hero-title">
             <span>Every symptom</span>
