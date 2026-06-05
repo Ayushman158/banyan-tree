@@ -2028,22 +2028,28 @@ footer a:hover { color: var(--gold-deep); }
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8) !important;
 }
 
-/* Legibility override: strong shadows for category labels over cinematic imagery */
+/* Legibility override: premium dark glassmorphic capsules for category labels over cinematic imagery */
 .category-label {
+  font-weight: 600 !important;
+  font-size: 10px !important;
+  letter-spacing: 0.24em !important;
   color: #ffffff !important;
-  font-weight: 500 !important;
-  letter-spacing: 0.22em !important;
-  text-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.8),
-    0 3px 12px rgba(0, 0, 0, 0.6) !important;
+  background: rgba(10, 24, 18, 0.72) !important; /* Premium deep forest glassmorphism */
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  border-radius: 20px !important;
+  padding: 6px 14px !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
 }
 
 .category-label:hover, .category-label.is-hovered, .category-label.is-active {
   color: #fffbdf !important;
-  text-shadow:
-    0 0 14px var(--gold-soft),
-    0 1px 3px rgba(0, 0, 0, 0.8),
-    0 3px 12px rgba(0, 0, 0, 0.6) !important;
+  background: rgba(200, 169, 107, 0.28) !important; /* Gold glassmorphic hover state */
+  border-color: var(--gold) !important;
+  text-shadow: 0 0 8px var(--gold-soft), 0 1px 2px rgba(0, 0, 0, 0.4) !important;
+  box-shadow: 0 0 15px rgba(200, 169, 107, 0.3), 0 4px 16px rgba(0, 0, 0, 0.3) !important;
 }
 
 /* ── Kling Video Splash Screen ── */

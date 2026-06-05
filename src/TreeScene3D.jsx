@@ -280,7 +280,7 @@ export default function TreeScene3D({
                     left: `${cat.labelX}%`,
                     top: `${cat.labelY}%`,
                     textAlign: cat.align === 'right' ? 'right' : 'left',
-                    transform: cat.align === 'right' ? 'translate(-100%, -50%)' : 'translate(0%, -50%)'
+                    transform: cat.align === 'right' ? 'translate(calc(-100% - 12px), -50%)' : 'translate(12px, -50%)'
                   }}
                   onClick={() => onCategoryClick(idx)}
                   onMouseEnter={() => { setHoverCategory(cat.id); playHoverSound(); }}
