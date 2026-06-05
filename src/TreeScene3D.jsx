@@ -9,18 +9,18 @@ import rootsImg from './assets/roots hd.jpg';
 
 // Compressed coordinates to fit within the 16:10 / 4:3 safe area when cropped
 const CATEGORIES = [
-  { id: "mental", name: "Mental Health", x: 58, y: 22, labelX: 53, labelY: 22, align: "right" },
-  { id: "metabolic", name: "Lifestyle / Metabolic", x: 56, y: 68, labelX: 51, labelY: 68, align: "right" },
-  { id: "musculoskeletal", name: "Musculoskeletal", x: 53, y: 56, labelX: 48, labelY: 56, align: "right" },
-  { id: "cardiovascular", name: "Cardiovascular", x: 52, y: 44, labelX: 47, labelY: 44, align: "right" },
-  { id: "autoimmune", name: "Autoimmune & Inflammatory", x: 55, y: 32, labelX: 50, labelY: 32, align: "right" },
-  { id: "hormonal", name: "Hormonal & Endocrine", x: 68, y: 17, labelX: 62, labelY: 17, align: "right" },
-  { id: "neurological", name: "Neurological", x: 64, y: 12, labelX: 58, labelY: 12, align: "right" },
-  { id: "gut", name: "Gut & Digestive Health", x: 72, y: 26, labelX: 66, labelY: 26, align: "right" },
-  { id: "respiratory", name: "Respiratory & ENT", x: 74, y: 35, labelX: 68, labelY: 35, align: "right" },
-  { id: "skin", name: "Skin & Hair", x: 75, y: 48, labelX: 69, labelY: 48, align: "right" },
-  { id: "oral", name: "Oral & Dental Health", x: 73, y: 60, labelX: 67, labelY: 60, align: "right" },
-  { id: "renal", name: "Renal & Urinary", x: 69, y: 70, labelX: 63, labelY: 70, align: "right" }
+  { id: "mental", name: "Mental Health", x: 72, y: 22, labelX: 67, labelY: 22, align: "right" },
+  { id: "metabolic", name: "Lifestyle / Metabolic", x: 70, y: 68, labelX: 65, labelY: 68, align: "right" },
+  { id: "musculoskeletal", name: "Musculoskeletal", x: 68, y: 56, labelX: 63, labelY: 56, align: "right" },
+  { id: "cardiovascular", name: "Cardiovascular", x: 67, y: 44, labelX: 62, labelY: 44, align: "right" },
+  { id: "autoimmune", name: "Autoimmune & Inflammatory", x: 69, y: 32, labelX: 64, labelY: 32, align: "right" },
+  { id: "hormonal", name: "Hormonal & Endocrine", x: 80, y: 17, labelX: 74, labelY: 17, align: "right" },
+  { id: "neurological", name: "Neurological", x: 76, y: 12, labelX: 70, labelY: 12, align: "right" },
+  { id: "gut", name: "Gut & Digestive Health", x: 84, y: 26, labelX: 78, labelY: 26, align: "right" },
+  { id: "respiratory", name: "Respiratory & ENT", x: 86, y: 35, labelX: 80, labelY: 35, align: "right" },
+  { id: "skin", name: "Skin & Hair", x: 87, y: 48, labelX: 81, labelY: 48, align: "right" },
+  { id: "oral", name: "Oral & Dental Health", x: 85, y: 60, labelX: 79, labelY: 60, align: "right" },
+  { id: "renal", name: "Renal & Urinary", x: 81, y: 70, labelX: 75, labelY: 70, align: "right" }
 ];
 
 // Coordinate configuration for the roots cause nodes
@@ -211,7 +211,7 @@ export default function TreeScene3D({
         <div className="cinematic-bg-wrapper canopy-bg-wrapper">
           <div 
             className="cinematic-bg canopy-bg" 
-            style={{ backgroundImage: `url(${canopyImg})` }} 
+            style={{ backgroundImage: `url("${canopyImg}")` }} 
           >
             {/* Animated light rays overlay */}
             <div className="sunbeams-overlay" />
@@ -300,7 +300,7 @@ export default function TreeScene3D({
         <div className="cinematic-bg-wrapper aerial-bg-wrapper">
           <div 
             className="cinematic-bg aerial-bg" 
-            style={{ backgroundImage: `url(${aerialImg})` }} 
+            style={{ backgroundImage: `url("${aerialImg}")` }} 
           />
         </div>
         
@@ -413,7 +413,7 @@ export default function TreeScene3D({
         <div className="cinematic-bg-wrapper roots-bg-wrapper">
           <div 
             className="cinematic-bg roots-bg" 
-            style={{ backgroundImage: `url(${rootsImg})` }} 
+            style={{ backgroundImage: `url("${rootsImg}")` }} 
           />
         </div>
 

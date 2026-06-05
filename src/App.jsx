@@ -421,11 +421,28 @@ function App() {
           className={`hero-tagline${heroEntered ? " is-entered" : ""}`}
           style={{ opacity: !showSplash && phase === "canopy" && heroEntered ? 1 : 0 }}
         >
-          <h1>
-            Every symptom<br/>
-            has a <em>deeper&nbsp;root.</em>
+
+          
+          <span className="hero-eyebrow">An atlas of root-cause health</span>
+          
+          <h1 className="hero-title">
+            <span>Every symptom</span>
+            <span>has a</span>
+            <span className="gold-italic">deeper root.</span>
           </h1>
-          <p className="hero-subheader">An interactive healing journey with Himanshu Garg</p>
+          
+          <div className="hero-divider" />
+          
+          <p className="hero-description">
+            Explore symptoms, uncover root causes, and understand the hidden patterns shaping your health.
+          </p>
+          
+          <button className="hero-btn" onClick={() => setShowJournal(true)} data-hoverable="true">
+            <span>Begin the Journey</span>
+            <span className="arrow">→</span>
+          </button>
+          
+          <p className="hero-author">Guided by Himanshu Garg</p>
         </div>
 
         {/* Bottom-right cue with counts */}

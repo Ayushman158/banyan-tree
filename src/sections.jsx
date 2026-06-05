@@ -519,7 +519,7 @@ function Qualifier() {
 function FinalCTA() {
   const ref = useReveal();
   return (
-    <section className="spread final" id="begin" ref={ref} style={{ backgroundImage: `url(${beginAtRootBg})` }}>
+    <section className="spread final" id="begin" ref={ref} style={{ backgroundImage: `url("${beginAtRootBg}")` }}>
       <div className="final-bg-mark" aria-hidden="true">h.</div>
       <Parallax speed={0.03} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 36, width: "100%" }}>
         <div className="section-tag reveal" style={{ marginBottom: 24 }}>

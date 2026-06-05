@@ -757,40 +757,111 @@ body {
    HERO COPY — bottom corners, tree owns the center
    ══════════════════════════════════════════════════════════════════════════ */
 .hero-tagline {
-  position: absolute; left: 6vw; bottom: 9vh; z-index: 20;
-  pointer-events: none; max-width: 34ch;
+  position: absolute; left: 4.5vw; top: 22vh; z-index: 20;
+  pointer-events: none; width: 90vw; max-width: 480px;
+  display: flex; flex-direction: column; align-items: flex-start;
+  text-align: left;
   transform: translateY(36px);
   transition: opacity 0.9s var(--ease), transform 1.5s var(--ease);
 }
 .hero-tagline.is-entered { transform: translateY(0); }
-.hero-tagline .label {
-  font-family: var(--mono); font-size: 10px; letter-spacing: 0.34em;
-  text-transform: uppercase; color: var(--ink-soft);
-  display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+
+.hero-logo {
+  margin-bottom: 24px;
+  opacity: 0.95;
+  pointer-events: auto;
 }
-.hero-tagline .label::before {
-  content: ""; width: 22px; height: 1px; background: var(--moss); flex-shrink: 0;
+
+.hero-eyebrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+  margin-bottom: 20px;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.4);
 }
-.hero-tagline h1 {
-  font-family: var(--serif); font-weight: 300;
-  font-size: clamp(46px, 5.6vw, 80px);
-  line-height: 1.02; letter-spacing: -0.01em; color: var(--deep-forest);
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
-}
-.hero-tagline h1 em {
-  font-style: italic;
+
+.hero-title {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(36px, 4.5vw, 56px);
+  line-height: 1.08;
+  letter-spacing: -0.01em;
   color: var(--deep-forest);
-  font-weight: inherit; /* Less bold, inherits 300 from h1 */
-  text-shadow: inherit; /* Inherits text shadow from h1 */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 0 0 24px 0;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.6);
 }
-.hero-subheader {
+.hero-title span {
+  display: block;
+}
+.hero-title .gold-italic {
+  font-style: italic;
+  color: var(--gold-deep);
+}
+
+.hero-divider {
+  width: 42px;
+  height: 2px;
+  background: var(--gold-deep);
+  margin: 0 0 28px 0;
+}
+
+.hero-description {
+  font-family: var(--sans);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.62;
+  color: var(--ink-soft);
+  max-width: 420px;
+  text-align: left;
+  margin: 0 0 32px 0;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.4);
+}
+
+.hero-btn {
+  font-family: var(--sans);
+  font-weight: 500;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  color: var(--gold-soft);
+  background: var(--deep-forest);
+  border: 1px solid var(--deep-forest);
+  padding: 14px 28px;
+  border-radius: 6px;
+  cursor: pointer;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 8px 24px rgba(36, 56, 44, 0.2);
+  transition: all 0.3s var(--ease);
+}
+.hero-btn .arrow {
+  font-size: 16px;
+  transition: transform 0.3s var(--ease);
+}
+.hero-btn:hover {
+  background: var(--moss);
+  border-color: var(--moss);
+  color: #ffffff;
+  box-shadow: 0 12px 30px rgba(80, 101, 78, 0.35);
+}
+.hero-btn:hover .arrow {
+  transform: translateX(4px);
+}
+
+.hero-author {
   font-family: var(--sans);
   font-weight: 400;
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--deep-forest);
+  font-size: 12px;
+  color: var(--ink-soft);
   margin-top: 16px;
-  max-width: 400px;
+  opacity: 0.85;
 }
 
 .hero-cue {
@@ -1243,12 +1314,39 @@ footer a:hover { color: var(--gold-deep); }
   }
   .hero-cue { display: none; } /* Hide complex cue on small screens */
   .hero-tagline {
-    bottom: 6vh; left: 4vw; right: 4vw;
-    text-align: center; max-width: 100%;
-    display: flex; flex-direction: column; align-items: center;
+    position: relative;
+    top: auto;
+    left: auto;
+    bottom: auto;
+    margin: 80px auto 40px auto;
+    padding: 0 24px;
+    align-items: center;
+    text-align: center;
+    max-width: 100%;
   }
-  .hero-tagline .label { justify-content: center; margin-bottom: 12px; }
-  .hero-tagline h1 { font-size: 42px; }
+  .hero-logo {
+    margin-bottom: 16px;
+  }
+  .hero-eyebrow {
+    margin-bottom: 16px;
+  }
+  .hero-title {
+    font-size: 34px !important;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .hero-divider {
+    margin: 0 auto 20px auto;
+  }
+  .hero-description {
+    margin: 0 auto 24px auto;
+  }
+  .hero-btn {
+    margin: 0 auto;
+  }
+  .hero-author {
+    margin-top: 12px;
+  }
   .cat-banner .name, .cond-banner .name { font-size: 28px; }
   footer { flex-direction: column; align-items: center; text-align: center; gap: 24px; padding: 40px 4vw 30px; }
   footer .right { flex-wrap: wrap; justify-content: center; }
