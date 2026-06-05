@@ -779,9 +779,9 @@ body {
 }
 .hero-tagline h1 em {
   font-style: italic;
-  color: #8C6D27; /* Darker bronze gold for better contrast on light sky */
-  font-weight: 600; /* Bolder */
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+  color: var(--deep-forest);
+  font-weight: inherit; /* Less bold, inherits 300 from h1 */
+  text-shadow: inherit; /* Inherits text shadow from h1 */
 }
 .hero-subheader {
   font-family: var(--sans);
@@ -1152,11 +1152,20 @@ section.spread { position: relative; padding: 18vh 7vw; z-index: 15; background:
   position: relative; z-index: 1;
 }
 .final h2 .line { display: block; white-space: nowrap; }
-.final h2 em { font-style: italic; color: var(--deep-forest); font-weight: 400; }
+.final h2 em { font-style: italic; color: var(--gold); font-weight: 400; }
 .final p { font-family: var(--sans); font-weight: 500; max-width: 48ch; color: var(--deep-forest); font-size: 16.5px; line-height: 1.68; position: relative; z-index: 1; }
 .final .reveal { position: relative; z-index: 1; }
 .final .section-tag { color: var(--deep-forest); }
 .final .section-tag::before { background: var(--deep-forest); }
+.final .btn--ghost {
+  color: var(--ink) !important;
+  border-color: rgba(31, 34, 30, 0.4) !important;
+}
+.final .btn--ghost:hover {
+  background: rgba(31, 34, 30, 0.08) !important;
+  color: var(--ink) !important;
+  border-color: var(--ink) !important;
+}
 
 footer {
   padding: 50px 7vw 36px;
@@ -2065,7 +2074,7 @@ footer a:hover { color: var(--gold-deep); }
   font-size: 10px;
   letter-spacing: 0.4em;
   text-transform: uppercase;
-  color: var(--gold); /* Gold color for high visibility */
+  color: #ffffff; /* White for high contrast */
   margin-bottom: 20px;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
   opacity: 0;

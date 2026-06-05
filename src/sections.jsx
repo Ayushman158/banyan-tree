@@ -542,11 +542,9 @@ function FinalCTA() {
         <div className="reveal delay-3" style={{ display: "flex", gap: 14, marginTop: 12 }}>
           <button className="btn btn--primary" data-hoverable="true">
             Schedule a consultation
-            <Calendar size={14} className="btn-icon-right" />
           </button>
           <button className="btn btn--ghost" data-hoverable="true">
             Read the philosophy
-            <BookOpen size={14} className="btn-icon-right" />
           </button>
         </div>
       </Parallax>
