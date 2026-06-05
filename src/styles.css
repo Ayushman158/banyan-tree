@@ -896,7 +896,9 @@ body {
   padding: 42px 46px 36px;
   opacity: 0; pointer-events: none;
   transition: opacity 0.7s var(--ease), transform 0.9s var(--ease);
-  overflow: hidden;
+  max-height: 85vh; /* Prevents details card from clipping on smaller screen heights */
+  overflow-y: auto; /* Enables scrolling for long descriptions */
+  -webkit-overflow-scrolling: touch;
 }
 .panel::before {
   content: "";
@@ -1262,6 +1264,24 @@ footer a:hover { color: var(--gold-deep); }
   .underground-scroll { display: none; }
   .ol-root__name { font-size: 13px; }
   .ol-root__subtitle { font-size: 8px; letter-spacing: 0.28em; }
+
+  @media (max-width: 420px) {
+    .nav {
+      width: calc(100vw - 24px);
+      padding: 4px 6px 4px 12px;
+      gap: 6px;
+    }
+    .nav-mark {
+      font-size: 13px;
+      padding: 4px;
+      gap: 6px;
+    }
+    .nav-cta {
+      padding: 6px 10px;
+      font-size: 9px;
+      letter-spacing: 0.16em;
+    }
+  }
 }
 
 /* ── Breadcrumb Underground Styling ── */

@@ -553,7 +553,7 @@ function FinalCTA() {
 }
 
 /* ── Footer ──────────────────────────────────────────────────────────────── */
-function SiteFooter() {
+function SiteFooter({ onOpenJournal }) {
   return (
     <footer>
       <div className="left">
@@ -561,7 +561,16 @@ function SiteFooter() {
         <span>Functional Medicine · Ayurveda · Lisbon &amp; Kyoto</span>
       </div>
       <div className="right">
-        <a href="#" data-hoverable="true">Journal</a>
+        <a
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            if (onOpenJournal) onOpenJournal();
+          }}
+          data-hoverable="true"
+        >
+          Journal
+        </a>
         <a href="#philosophy" data-hoverable="true">Philosophy</a>
         <a href="#programs" data-hoverable="true">Programs</a>
         <a href="#begin" data-hoverable="true">Contact</a>

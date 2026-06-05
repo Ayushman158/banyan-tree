@@ -523,7 +523,7 @@ function App() {
       <Pricing />
       <Qualifier />
       <FinalCTA />
-      <SiteFooter />
+      <SiteFooter onOpenJournal={() => setShowJournal(true)} />
 
       {showJournal && !journalAnswers && (
         <SoilJournal onComplete={setJournalAnswers} onClose={() => setShowJournal(false)} />

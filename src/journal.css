@@ -240,8 +240,12 @@
 }
 
 @media (max-width: 600px) {
+  .journal-container, .profile-container {
+    padding: 0;
+    margin: 16px;
+  }
   .journal-card, .profile-container {
-    padding: 32px 24px;
+    padding: 32px 20px;
   }
   .profile-actions {
     flex-direction: column;
