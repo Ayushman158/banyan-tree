@@ -387,9 +387,8 @@ export default function TreeScene3D({
             const isDimmed = (selectedCondition != null && !isActive) || (selectedCondition == null && hoverCondition != null && !isHovered);
 
             const align = x < 50 ? 'right' : 'left';
-            const labelStyle = align === 'left'
-              ? { left: `${x}%`, top: `${y}%`, transform: 'translate(14px, -50%)', textAlign: 'left' }
-              : { left: `${x}%`, top: `${y}%`, transform: 'translate(-100%, -50%) translate(-14px, 0)', textAlign: 'right' };
+            const desktopTransform = align === 'left' ? 'translate(14px, -50%)' : 'translate(-100%, -50%) translate(-14px, 0)';
+            const desktopTextAlign = align === 'left' ? 'left' : 'right';
 
             return (
               <div
@@ -419,7 +418,18 @@ export default function TreeScene3D({
                 <button
                   type="button"
                   className={`condition-label ${isActive ? 'is-active' : ''} ${isHovered ? 'is-hovered' : ''}`}
-                  style={labelStyle}
+                  style={{
+                    '--desktop-x': `${x}%`,
+                    '--desktop-y': `${y}%`,
+                    '--mobile-x': `${x}%`,
+                    '--mobile-y': `calc(${y}% + 14px)`,
+                    '--desktop-transform': desktopTransform,
+                    '--desktop-text-align': desktopTextAlign,
+                    left: 'var(--desktop-x)',
+                    top: 'var(--desktop-y)',
+                    textAlign: 'var(--desktop-text-align)',
+                    transform: 'var(--desktop-transform)'
+                  }}
                   onClick={() => onConditionClick(cond.id)}
                   onMouseEnter={() => { setHoverCondition(cond.id); playHoverSound(); }}
                   onMouseLeave={() => setHoverCondition(null)}
@@ -539,9 +549,12 @@ export default function TreeScene3D({
                 <div
                   className={`root-node-label-box ${layout.side}`}
                   style={{
-                    left: isRightSide ? '20px' : '0px',
-                    transform: labelTransform,
-                    textAlign: isRightSide ? 'left' : 'center',
+                    '--desktop-left': isRightSide ? '20px' : '0px',
+                    '--desktop-transform': labelTransform,
+                    '--desktop-text-align': isRightSide ? 'left' : 'center',
+                    left: 'var(--desktop-left)',
+                    transform: 'var(--desktop-transform)',
+                    textAlign: 'var(--desktop-text-align)',
                   }}
                 >
                   <div className="root-node-title-row">

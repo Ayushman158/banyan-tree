@@ -3182,6 +3182,27 @@ footer a:hover { color: var(--gold-deep); }
     text-align: center !important;
   }
 
+  .condition-label {
+    font-size: 8px !important;
+    padding: 4px 9px !important;
+    letter-spacing: 0.15em !important;
+    border-radius: 12px !important;
+    
+    /* Center the labels under the dots on mobile so they don't get cut off */
+    left: var(--mobile-x) !important;
+    top: var(--mobile-y) !important;
+    transform: translate(-50%, 0) !important;
+    text-align: center !important;
+  }
+
+  .root-node-label-box {
+    /* Center the labels under the dots on mobile so they don't get cut off */
+    left: 50% !important;
+    transform: translate(-50%, 15px) !important;
+    text-align: center !important;
+    width: 120px !important; /* Slightly narrower on mobile */
+  }
+
   /* Hide labels that are positioned beyond 78% x — they fall off the right edge on phone */
   /* We do this by zero-ing opacity on the category-interactive-group level via JS-injected classes
      but for CSS we simply make all labels smaller and let the transform clip them gracefully */
