@@ -3124,37 +3124,37 @@ footer a:hover { color: var(--gold-deep); }
     letter-spacing: 0.28em;
   }
 
-  /* ── CANOPY LAYER: Zoom out on mobile so the whole tree fits the frame ── */
+  /* ── CANOPY LAYER (Stage 1): Push tree downwards to make room for hero text ── */
   .canopy-bg-wrapper,
   .canopy-view-container {
-    height: 52svh;
-    width: calc(52svh * 2.36);
+    height: 56svh;
+    width: calc(56svh * 2.36);
     left: 50%;
-    top: 68%; /* Push tree downwards to make room for text at the top */
+    top: 65%;
     transform: translate(-50%, -50%);
     -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
     mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
   }
 
-  /* Same treatment for aerial roots image */
+  /* ── AERIAL ROOTS LAYER (Stage 2): Push tree up to make room for bottom sidebar ── */
   .aerial-bg-wrapper,
   .aerial-view-container {
-    height: 52svh;
-    width: calc(52svh * 2.36);
+    height: 56svh;
+    width: calc(56svh * 2.36);
     left: 50%;
-    top: 68%;
+    top: 45%;
     transform: translate(-50%, -50%);
     -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
     mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
   }
 
-  /* Same for roots underground image */
+  /* ── DEEP ROOTS LAYER (Stage 3): Push tree further up to make room for floating controls and details panel ── */
   .roots-bg-wrapper,
   .roots-view-container {
-    height: 52svh;
-    width: calc(52svh * 2.36);
+    height: 56svh;
+    width: calc(56svh * 2.36);
     left: 50%;
-    top: 68%;
+    top: 35%;
     transform: translate(-50%, -50%);
     -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
     mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
@@ -3175,11 +3175,14 @@ footer a:hover { color: var(--gold-deep); }
     letter-spacing: 0.15em !important;
     border-radius: 12px !important;
     
-    /* Center the labels under the dots on mobile so they don't get cut off on the horizontal edges */
+    /* Center the labels under the dots on mobile and force wrapping */
     left: var(--mobile-x) !important;
     top: var(--mobile-y) !important;
     transform: translate(-50%, 0) !important;
     text-align: center !important;
+    max-width: 90px !important;
+    white-space: normal !important;
+    line-height: 1.25 !important;
   }
 
   .condition-label {
@@ -3188,19 +3191,35 @@ footer a:hover { color: var(--gold-deep); }
     letter-spacing: 0.15em !important;
     border-radius: 12px !important;
     
-    /* Center the labels under the dots on mobile so they don't get cut off */
+    /* Center the labels under the dots on mobile and force wrapping */
     left: var(--mobile-x) !important;
     top: var(--mobile-y) !important;
     transform: translate(-50%, 0) !important;
     text-align: center !important;
+    max-width: 90px !important;
+    white-space: normal !important;
+    line-height: 1.25 !important;
   }
 
   .root-node-label-box {
-    /* Center the labels under the dots on mobile so they don't get cut off */
+    /* Center the labels under the dots on mobile */
     left: 50% !important;
     transform: translate(-50%, 15px) !important;
     text-align: center !important;
-    width: 120px !important; /* Slightly narrower on mobile */
+    width: 110px !important; 
+    max-width: 110px !important;
+  }
+  
+  /* ── BREADCRUMB: Allow wrapping on narrow screens ── */
+  .crumb {
+    max-width: 85vw !important;
+    white-space: normal !important;
+    text-align: center !important;
+    line-height: 1.4 !important;
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+    padding: 10px 14px !important;
+    row-gap: 4px !important;
   }
 
   /* Hide labels that are positioned beyond 78% x — they fall off the right edge on phone */
