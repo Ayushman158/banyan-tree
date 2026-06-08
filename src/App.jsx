@@ -358,6 +358,16 @@ function App() {
             transition={{ duration: 1.2, ease: [0.76, 0, 0.24, 1] }}
             className="splash-screen"
           >
+            {/* Blurred background copy — fills letterbox bars on mobile */}
+            <video
+              className="splash-video-bg"
+              src={splashVideo}
+              autoPlay
+              loop
+              muted
+              playsInline
+              aria-hidden="true"
+            />
             <video
               className="splash-video"
               src={splashVideo}

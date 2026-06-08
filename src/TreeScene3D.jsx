@@ -38,6 +38,162 @@ const ROOT_LAYOUTS = {
   "lifestyle": { x: 65, y: 60, labelX: 68, labelY: 60, align: "left", side: "right" }
 };
 
+const getCategoryCoords = (cat, isMobile) => {
+  if (!isMobile) {
+    return { x: cat.x, y: cat.y, labelX: cat.labelX, labelY: cat.labelY };
+  }
+  // Mobile: position categories in two columns (left/right) with even vertical spacing
+  // Left column (align: "right" in desktop = left side of tree): x=20%
+  // Right column (align: "left" in desktop = right side of tree): x=80%
+  // Y values spread evenly from 12% to 85% (6 nodes per column, ~14.6% apart)
+  const mobileCoords = {
+    // Right column (desktop align: "left")
+    "mental":          { x: 80, y: 12 },
+    "autoimmune":      { x: 80, y: 27 },
+    "cardiovascular":  { x: 80, y: 42 },
+    "musculoskeletal": { x: 80, y: 57 },
+    "metabolic":       { x: 80, y: 72 },
+    "renal":           { x: 80, y: 87 },
+    // Left column (desktop align: "right")
+    "neurological":    { x: 20, y: 12 },
+    "hormonal":        { x: 20, y: 27 },
+    "gut":             { x: 20, y: 42 },
+    "respiratory":     { x: 20, y: 57 },
+    "skin":            { x: 20, y: 72 },
+    "oral":            { x: 20, y: 87 },
+  };
+  const mc = mobileCoords[cat.id];
+  if (!mc) return { x: cat.x, y: cat.y, labelX: cat.x, labelY: cat.y };
+  return { x: mc.x, y: mc.y, labelX: mc.x, labelY: mc.y };
+};
+
+// On mobile: distribute conditions in a clean grid (3 columns × N rows)
+const getMobileConditionCoords = (idx, total) => {
+  const cols = 3;
+  const rows = Math.ceil(total / cols);
+  const col = idx % cols;
+  const row = Math.floor(idx / cols);
+  
+  // x: spread across 15% to 85% (3 columns → 15%, 50%, 85%)
+  const xPositions = [18, 50, 82];
+  const x = xPositions[col];
+  
+  // y: spread from 15% to 85% evenly
+  const yPad = 15;
+  const yRange = 70; // 85 - 15
+  const y = rows === 1 ? 50 : yPad + (row / (rows - 1)) * yRange;
+  
+  return { x, y };
+};
+
+const getConditionLabelStyle = (x, y, isMobile) => {
+  const align = x < 50 ? 'right' : 'left';
+  const desktopTransform = align === 'left' ? 'translate(14px, -50%)' : 'translate(-100%, -50%) translate(-14px, 0)';
+  const desktopTextAlign = align === 'left' ? 'left' : 'right';
+
+  if (!isMobile) {
+    return {
+      left: `${x}%`,
+      top: `${y}%`,
+      textAlign: desktopTextAlign,
+      transform: desktopTransform
+    };
+  }
+  
+  // Mobile: place label below dot, edge-aware
+  let transform = 'translate(-50%, 0)';
+  let textAlign = 'center';
+  let leftPos = `${x}%`;
+  
+  if (x <= 25) {
+    transform = 'translate(-10%, 0)';
+    textAlign = 'left';
+    leftPos = `${x}%`;
+  } else if (x >= 75) {
+    transform = 'translate(-90%, 0)';
+    textAlign = 'right';
+    leftPos = `${x}%`;
+  }
+  
+  return {
+    left: leftPos,
+    top: `calc(${y}% + 14px)`,
+    transform: transform,
+    textAlign: textAlign,
+    maxWidth: '100px',
+    whiteSpace: 'normal',
+    lineHeight: '1.25'
+  };
+};
+
+const getRootCoords = (id, layout, isMobile) => {
+  if (!isMobile) {
+    return layout;
+  }
+  // Mobile: arrange all 7 nodes in a well-spaced grid layout
+  // Row 1 (top, y~38%): Nutrition + Lifestyle — spaced at 30% and 70%
+  // Row 2 (middle, y~58%): Nervous System + Sleep — spaced at 25% and 75%  
+  // Row 3 (bottom, y~78%): Chronic Stress + Emotional + Trauma — spaced at 15%, 50%, 85%
+  const mobilePositions = {
+    "nutrition":      { x: 30, y: 38 },
+    "lifestyle":      { x: 70, y: 38 },
+    "nervous-system": { x: 25, y: 58 },
+    "sleep":          { x: 75, y: 58 },
+    "chronic-stress": { x: 18, y: 78 },
+    "emotional":      { x: 50, y: 78 },
+    "trauma":         { x: 82, y: 78 },
+  };
+  const pos = mobilePositions[id];
+  if (!pos) return layout;
+  return { ...layout, x: pos.x, y: pos.y };
+};
+
+const getRootLabelStyle = (id, layout, isMobile) => {
+  const isRightSide = layout.side === 'right';
+  const systemicIndex = ["chronic-stress", "nervous-system", "emotional", "sleep", "trauma"].indexOf(id);
+  const isEven = systemicIndex % 2 === 0;
+  
+  if (!isMobile) {
+    const labelTransform = isRightSide 
+      ? 'translate(0%, -50%)' 
+      : (isEven ? 'translate(-50%, 15px)' : 'translate(-50%, -48px)');
+    return {
+      left: isRightSide ? '20px' : '0px',
+      transform: labelTransform,
+      textAlign: isRightSide ? 'left' : 'center',
+    };
+  }
+  
+  // Mobile: place label below the dot, edge-aware alignment
+  const coords = getRootCoords(id, layout, true);
+  const x = coords.x;
+  
+  let transform = 'translate(-50%, 12px)';
+  let textAlign = 'center';
+  let left = '50%';
+  
+  // Left edge: right-align label so it doesn't bleed off the left
+  if (x <= 25) {
+    transform = 'translate(-15%, 12px)';
+    textAlign = 'left';
+    left = '0';
+  }
+  // Right edge: left-align label so it doesn't bleed off the right
+  else if (x >= 75) {
+    transform = 'translate(-85%, 12px)';
+    textAlign = 'right';
+    left = '100%';
+  }
+  
+  return {
+    left: left,
+    transform: transform,
+    textAlign: textAlign,
+    width: '100px',
+    maxWidth: '100px',
+  };
+};
+
 // Helper: generate consistent but organic-looking dog-leg paths for aerial roots
 // We compress the bases to 30%-70% so they fit within cropped screens
 const getXForPath = (pathIdx, y) => {
@@ -112,6 +268,14 @@ export default function TreeScene3D({
   const [hoverCondition, setHoverCondition] = useState(null);
   const [hoverRoot, setHoverRoot] = useState(null);
   const [connectionsGlowing, setConnectionsGlowing] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 600);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const canopyGroupRef = useRef(null);
   const aerialGroupRef = useRef(null);
@@ -230,6 +394,7 @@ export default function TreeScene3D({
             className="canopy-svg"
           >
             {CATEGORIES.map((cat) => {
+              const coords = getCategoryCoords(cat, isMobile);
               const isHovered = hoverCategory === cat.id;
               const isActive = activeCatObj && activeCatObj.id === cat.id;
               const isDimmed = hoverCategory !== null && !isHovered;
@@ -245,34 +410,35 @@ export default function TreeScene3D({
                     vectorEffect="non-scaling-stroke"
                     className="canopy-path desktop-path"
                     style={{ 
-                      opacity: isDimmed ? 0.3 : 1,
-                      transition: 'stroke 0.4s var(--ease), stroke-width 0.4s var(--ease), opacity 0.4s var(--ease)' 
+                       opacity: isDimmed ? 0.3 : 1,
+                       transition: 'stroke 0.4s var(--ease), stroke-width 0.4s var(--ease), opacity 0.4s var(--ease)' 
                     }}
                   />
                   {/* Mobile Path */}
                   <path
-                    d={`M ${cat.x} ${cat.y} L ${cat.x} ${cat.y + 2}`}
+                    d={`M ${coords.x} ${coords.y} L ${coords.x} ${coords.y + 2}`}
                     stroke={isActive || isHovered ? "var(--gold)" : "rgba(20, 35, 28, 0.38)"}
                     strokeWidth={isActive || isHovered ? 1.5 : 0.9}
                     fill="none"
                     vectorEffect="non-scaling-stroke"
                     className="canopy-path mobile-path"
                     style={{ 
-                      opacity: isDimmed ? 0.3 : 1,
-                      transition: 'stroke 0.4s var(--ease), stroke-width 0.4s var(--ease), opacity 0.4s var(--ease)' 
+                       opacity: isDimmed ? 0.3 : 1,
+                       transition: 'stroke 0.4s var(--ease), stroke-width 0.4s var(--ease), opacity 0.4s var(--ease)' 
                     }}
                   />
                 </React.Fragment>
               );
             })}
           </svg>
-
+ 
           {/* Hotspots & Labels */}
           {CATEGORIES.map((cat, idx) => {
+            const coords = getCategoryCoords(cat, isMobile);
             const isHovered = hoverCategory === cat.id;
             const isActive = activeCatObj && activeCatObj.id === cat.id;
             const isDimmed = hoverCategory !== null && !isHovered;
-
+ 
             return (
               <div 
                 key={cat.id}
@@ -283,14 +449,14 @@ export default function TreeScene3D({
                 <button
                   type="button"
                   className={`category-hotspot ${isActive ? 'is-active' : ''} ${isHovered ? 'is-hovered' : ''}`}
-                  style={{ left: `${cat.x}%`, top: `${cat.y}%` }}
+                  style={{ left: `${coords.x}%`, top: `${coords.y}%` }}
                   onClick={() => onCategoryClick(idx)}
                   onMouseEnter={() => { setHoverCategory(cat.id); playHoverSound(); }}
                   onMouseLeave={() => setHoverCategory(null)}
                   data-hoverable="true"
                   aria-label={`Select category ${cat.name}`}
                 />
-
+ 
                 {/* Text Label */}
                 <button
                   type="button"
@@ -298,8 +464,8 @@ export default function TreeScene3D({
                   style={{
                     '--desktop-x': `${cat.labelX}%`,
                     '--desktop-y': `${cat.labelY}%`,
-                    '--mobile-x': `${cat.x}%`,
-                    '--mobile-y': `calc(${cat.y}% + 14px)`,
+                    '--mobile-x': `${coords.x}%`,
+                    '--mobile-y': `calc(${coords.y}% + 14px)`,
                     '--desktop-transform': cat.align === 'right' ? 'translate(calc(-100% - 12px), -50%)' : 'translate(12px, -50%)',
                     '--desktop-text-align': cat.align === 'right' ? 'right' : 'left',
                     left: 'var(--desktop-x)',
@@ -375,20 +541,23 @@ export default function TreeScene3D({
           </svg>
 
           {activeCatObj?.conditions?.map((cond, idx) => {
+            const total = activeCatObj.conditions.length;
+            // Desktop: use organic path-based positions
             const pathIdx = idx % 7;
-            const count = Math.ceil(activeCatObj.conditions.length / 7);
+            const count = Math.ceil(total / 7);
             const k = Math.floor(idx / 7);
-            const waveY = (pathIdx % 2 === 0) ? -8 : 8; // Stagger adjacent nodes
-            const y = 20 + 60 * (k + 0.5) / count + waveY;
-            const x = getXForPath(pathIdx, y);
+            const waveY = (pathIdx % 2 === 0) ? -8 : 8;
+            const desktopY = 20 + 60 * (k + 0.5) / count + waveY;
+            const desktopX = getXForPath(pathIdx, desktopY);
+            
+            // Mobile: use evenly spaced grid
+            const mobileCoords = getMobileConditionCoords(idx, total);
+            const x = isMobile ? mobileCoords.x : desktopX;
+            const y = isMobile ? mobileCoords.y : desktopY;
 
             const isHovered = hoverCondition === cond.id;
             const isActive = selectedCondition === cond.id;
             const isDimmed = (selectedCondition != null && !isActive) || (selectedCondition == null && hoverCondition != null && !isHovered);
-
-            const align = x < 50 ? 'right' : 'left';
-            const desktopTransform = align === 'left' ? 'translate(14px, -50%)' : 'translate(-100%, -50%) translate(-14px, 0)';
-            const desktopTextAlign = align === 'left' ? 'left' : 'right';
 
             return (
               <div
@@ -418,18 +587,7 @@ export default function TreeScene3D({
                 <button
                   type="button"
                   className={`condition-label ${isActive ? 'is-active' : ''} ${isHovered ? 'is-hovered' : ''}`}
-                  style={{
-                    '--desktop-x': `${x}%`,
-                    '--desktop-y': `${y}%`,
-                    '--mobile-x': `${x}%`,
-                    '--mobile-y': `calc(${y}% + 14px)`,
-                    '--desktop-transform': desktopTransform,
-                    '--desktop-text-align': desktopTextAlign,
-                    left: 'var(--desktop-x)',
-                    top: 'var(--desktop-y)',
-                    textAlign: 'var(--desktop-text-align)',
-                    transform: 'var(--desktop-transform)'
-                  }}
+                  style={getConditionLabelStyle(x, y, isMobile)}
                   onClick={() => onConditionClick(cond.id)}
                   onMouseEnter={() => { setHoverCondition(cond.id); playHoverSound(); }}
                   onMouseLeave={() => setHoverCondition(null)}
@@ -467,7 +625,8 @@ export default function TreeScene3D({
 
             {Object.entries(ROOT_LAYOUTS).map(([id, layout]) => {
               const isActive = activeRootIds.includes(id) || connectionsGlowing;
-              const pathD = getRootPath(id, layout);
+              const coords = getRootCoords(id, layout, isMobile);
+              const pathD = getRootPath(id, coords);
               
               return (
                 <g key={`group-${id}`}>
@@ -511,25 +670,22 @@ export default function TreeScene3D({
             const rc = BanyanData.rootCauses[id];
             if (!rc) return null;
             
+            const coords = getRootCoords(id, layout, isMobile);
             const isDirect = activeCondObj?.root === id;
             const isActive = activeRootIds.includes(id);
             const isHovered = hoverRoot === id;
             const isDimmed = hoverRoot !== null && !isHovered;
             
             const isRightSide = layout.side === 'right';
-            const systemicIndex = ["chronic-stress", "nervous-system", "emotional", "sleep", "trauma"].indexOf(id);
-            const isEven = systemicIndex % 2 === 0;
-            const labelTransform = isRightSide 
-              ? 'translate(0%, -50%)' 
-              : (isEven ? 'translate(-50%, 15px)' : 'translate(-50%, -48px)');
+            const labelStyle = getRootLabelStyle(id, layout, isMobile);
             
             return (
               <div
                 key={id}
                 className={`root-node-group ${isActive ? 'is-active' : ''} ${isDimmed ? 'is-dimmed' : ''}`}
                 style={{
-                  left: `${layout.x}%`,
-                  top: `${layout.y}%`,
+                  left: `${coords.x}%`,
+                  top: `${coords.y}%`,
                   transform: 'translate(-50%, -50%)',
                   opacity: rootsReady ? 1 : 0,
                   pointerEvents: rootsReady ? 'auto' : 'none',
@@ -548,14 +704,7 @@ export default function TreeScene3D({
 
                 <div
                   className={`root-node-label-box ${layout.side}`}
-                  style={{
-                    '--desktop-left': isRightSide ? '20px' : '0px',
-                    '--desktop-transform': labelTransform,
-                    '--desktop-text-align': isRightSide ? 'left' : 'center',
-                    left: 'var(--desktop-left)',
-                    transform: 'var(--desktop-transform)',
-                    textAlign: 'var(--desktop-text-align)',
-                  }}
+                  style={labelStyle}
                 >
                   <div className="root-node-title-row">
                     {isDirect && (

@@ -2170,6 +2170,11 @@ footer a:hover { color: var(--gold-deep); }
   background: var(--paper);
 }
 
+/* Blurred background video — hidden on desktop, shown on mobile */
+.splash-video-bg {
+  display: none;
+}
+
 .splash-video {
   position: absolute;
   top: 50%;
@@ -2180,8 +2185,8 @@ footer a:hover { color: var(--gold-deep); }
   width: auto;
   height: auto;
   object-fit: cover;
-  object-position: center center; /* Center on the tree on all viewports */
-  opacity: 1; /* Fully visible */
+  object-position: center center;
+  opacity: 1;
 }
 
 .splash-overlay {
@@ -3107,16 +3112,58 @@ footer a:hover { color: var(--gold-deep); }
     height: 100svh;
   }
 
-  /* ── SPLASH SCREEN: Shift crop right so the tree is visible on portrait ── */
+  /* ── SPLASH SCREEN: Precision-crop to center tree + hide watermark on mobile ── */
+  .splash-screen {
+    background: #0a100c;
+  }
+
+  /* Blurred fill — covers any edge gaps from the zoom-crop */
+  .splash-video-bg {
+    display: block;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 80% center;
+    filter: blur(40px) brightness(0.5) saturate(1.2);
+    transform: scale(1.2);
+    z-index: 0;
+  }
+
   .splash-video {
-    /* Tree sits right-of-center in the video frame.
-       object-position X > 50% shifts the visible window toward the right of the video,
-       bringing the tree into the center of the mobile viewport. */
-    object-position: 70% center;
+    /* Zoom into the right side of the video where the tree lives */
+    object-fit: cover;
+    object-position: 80% 35%;
+    min-width: auto;
+    min-height: auto;
+    width: 100%;
+    height: 75vh;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+    /* Soft fade at the bottom to hide watermark + blend into text area */
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, black 70%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 0%, black 70%, transparent 100%);
+  }
+
+  .splash-overlay {
+    /* Darken more at the bottom for text readability */
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.15) 0%,
+      rgba(0, 0, 0, 0.25) 40%,
+      rgba(0, 0, 0, 0.65) 75%,
+      rgba(0, 0, 0, 0.85) 100%
+    ) !important;
   }
 
   .splash-content {
-    padding: 0 24px;
+    /* Push text to the bottom portion below the cropped video */
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 24px calc(60px + env(safe-area-inset-bottom, 0px));
   }
 
   .splash-eyebrow {
@@ -3125,45 +3172,71 @@ footer a:hover { color: var(--gold-deep); }
   }
 
   /* ── CANOPY LAYER (Stage 1): Push tree downwards to make room for hero text ── */
-  .canopy-bg-wrapper,
+  .canopy-bg-wrapper {
+    height: 60svh;
+    width: calc(60svh * 2.36);
+    left: 50%;
+    top: 62%;
+    transform: translate(-50%, -50%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
+  }
   .canopy-view-container {
-    height: 56svh;
-    width: calc(56svh * 2.36);
-    left: 50%;
-    top: 65%;
-    transform: translate(-50%, -50%);
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
-    mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+    height: 60svh !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    left: 0 !important;
+    top: 62% !important;
+    transform: translateY(-50%) !important;
   }
 
-  /* ── AERIAL ROOTS LAYER (Stage 2): Push tree up to make room for bottom sidebar ── */
-  .aerial-bg-wrapper,
+  /* ── AERIAL ROOTS LAYER (Stage 2): Constrain interactive container width on mobile to avoid edge overflow ── */
+  .aerial-bg-wrapper {
+    height: 65svh;
+    width: calc(65svh * 2.36);
+    left: 50%;
+    top: 42%;
+    transform: translate(-50%, -50%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
+  }
   .aerial-view-container {
-    height: 56svh;
-    width: calc(56svh * 2.36);
-    left: 50%;
-    top: 45%;
-    transform: translate(-50%, -50%);
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
-    mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+    height: 65svh !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    left: 0 !important;
+    top: 42% !important;
+    transform: translateY(-50%) !important;
   }
 
-  /* ── DEEP ROOTS LAYER (Stage 3): Push tree further up to make room for floating controls and details panel ── */
-  .roots-bg-wrapper,
-  .roots-view-container {
-    height: 56svh;
-    width: calc(56svh * 2.36);
+  /* ── DEEP ROOTS LAYER (Stage 3): Use 70svh to give root nodes more vertical room ── */
+  .roots-bg-wrapper {
+    height: 70svh;
+    width: calc(70svh * 2.36);
     left: 50%;
-    top: 35%;
+    top: 38%;
     transform: translate(-50%, -50%);
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
-    mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
+  }
+  .roots-view-container {
+    height: 70svh !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    left: 0 !important;
+    top: 38% !important;
+    transform: translateY(-50%) !important;
   }
 
   /* Tree is centered in new image — background-position stays at center for all views */
   .canopy-bg { background-position: center center !important; }
   .aerial-bg { background-position: center center !important; }
   .roots-bg  { background-position: 40% center !important; }
+
+  /* Hide redundant desktop back button on mobile since breadcrumbs handle navigation */
+  .stage-back {
+    display: none !important;
+  }
 
   /* ── CATEGORY LABELS: Compact pill style on mobile ── */
   .desktop-path { display: none !important; }
@@ -3188,38 +3261,52 @@ footer a:hover { color: var(--gold-deep); }
   .condition-label {
     font-size: 8px !important;
     padding: 4px 9px !important;
-    letter-spacing: 0.15em !important;
+    letter-spacing: 0.12em !important;
     border-radius: 12px !important;
-    
-    /* Center the labels under the dots on mobile and force wrapping */
-    left: var(--mobile-x) !important;
-    top: var(--mobile-y) !important;
-    transform: translate(-50%, 0) !important;
-    text-align: center !important;
-    max-width: 90px !important;
     white-space: normal !important;
-    line-height: 1.25 !important;
+    line-height: 1.3 !important;
+  }
+
+  /* Hide SVG path lines on mobile — conditions use grid layout instead */
+  .aerial-svg {
+    display: none !important;
   }
 
   .root-node-label-box {
-    /* Center the labels under the dots on mobile */
-    left: 50% !important;
-    transform: translate(-50%, 15px) !important;
-    text-align: center !important;
-    width: 110px !important; 
-    max-width: 110px !important;
+    /* On mobile, let inline React styles manage positioning */
+    font-size: 8px !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+  }
+
+  .root-node-name {
+    font-size: 10px !important;
+    line-height: 1.3 !important;
+  }
+
+  .root-node-subtitle {
+    font-size: 7px !important;
+    opacity: 0.7 !important;
+  }
+
+  .root-node-dot {
+    width: 10px !important;
+    height: 10px !important;
   }
   
   /* ── BREADCRUMB: Allow wrapping on narrow screens ── */
   .crumb {
-    max-width: 85vw !important;
+    top: 72px !important;
+    max-width: 90vw !important;
     white-space: normal !important;
     text-align: center !important;
     line-height: 1.4 !important;
     justify-content: center !important;
     flex-wrap: wrap !important;
-    padding: 10px 14px !important;
+    padding: 8px 14px !important;
     row-gap: 4px !important;
+    font-size: 8px !important;
+    letter-spacing: 0.12em !important;
   }
 
   /* Hide labels that are positioned beyond 78% x — they fall off the right edge on phone */
@@ -3309,98 +3396,62 @@ footer a:hover { color: var(--gold-deep); }
   /* ── ROOTS FLOATING CONTROLS (Stage 3): Bottom of screen ── */
   .roots-floating-controls {
     position: fixed !important;
-    left: 0 !important;
-    right: 0 !important;
+    left: 16px !important;
+    right: 16px !important;
     top: auto !important;
-    bottom: 24px !important;
+    bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important;
+    width: auto !important;
     flex-direction: row !important;
     justify-content: center !important;
-    gap: 12px !important;
-    padding: 0 16px !important;
+    gap: 10px !important;
+    padding: 0 !important;
     z-index: 40 !important;
     pointer-events: auto !important;
   }
 
+  .roots-floating-controls .roots-back-link,
   .roots-explore-btn {
-    font-size: 9px !important;
-    padding: 10px 18px !important;
+    flex: 1 !important;
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center !important;
     white-space: nowrap !important;
+    font-size: 8px !important;
+    padding: 10px 10px !important;
+    letter-spacing: 0.12em !important;
   }
 
-  /* ── ROOTS DETAIL PANEL (Stage 3): Bottom sheet ── */
-  .roots-left-panel {
+  /* ── UNDERGROUND CTA (Stage 3): View Healing Pathways ── */
+  .underground-cta {
     position: fixed !important;
-    left: 0 !important;
-    right: 0 !important;
-    top: auto !important;
-    bottom: 0 !important;
-    width: 100% !important;
-    max-height: 60vh !important;
-    border-radius: 20px 20px 0 0 !important;
-    padding: 24px 20px 36px !important;
-    overflow-y: auto !important;
-    z-index: 50 !important;
-    background: #080a08 !important;
-  }
-  /* Drag handle for roots panel */
-  .roots-left-panel::before {
-    content: '';
-    display: block;
-    width: 40px;
-    height: 4px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 99px;
-    margin: 0 auto 16px;
-  }
-
-  .roots-panel-close {
-    top: 16px !important;
+    left: 16px !important;
     right: 16px !important;
-  }
-
-  .panel-title {
-    font-size: clamp(24px, 6vw, 36px);
-  }
-
-  .panel-insight {
-    font-size: 16px;
-  }
-
-  .panel-meta {
-    grid-template-columns: 1fr 1fr !important;
-    gap: 14px !important;
-  }
-
-  .panel-actions {
-    flex-direction: column !important;
-    gap: 10px !important;
-  }
-
-  .panel-actions .btn {
-    width: 100% !important;
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important;
+    width: auto !important;
+    z-index: 45 !important;
+    display: flex !important;
     justify-content: center !important;
   }
-
-  /* ── ROOT NODES: Smaller, still tappable ── */
-  .root-node-label-box {
-    padding: 6px 10px !important;
-  }
-
-  .root-node-name {
+  .underground-cta__btn {
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 12px 24px !important;
     font-size: 10px !important;
-  }
-
-  .root-node-subtitle {
-    font-size: 7px !important;
+    letter-spacing: 0.15em !important;
   }
 
   /* ── UNDERGROUND INSIGHT ── */
   .underground-insight {
-    bottom: 72px !important;
-    right: 3vw !important;
-    left: 3vw !important;
-    max-width: 100% !important;
+    position: fixed !important;
+    left: 16px !important;
+    right: 16px !important;
+    bottom: calc(140px + env(safe-area-inset-bottom, 0px)) !important;
     width: auto !important;
+    max-width: none !important;
+    z-index: 35 !important;
+    margin: 0 !important;
+    font-size: 11px !important;
+    padding: 10px 14px !important;
   }
 
   /* ── NAV: tighter on mobile ── */
