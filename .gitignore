@@ -4,3 +4,5 @@ node_modules
 dist-ssr
 *.local
 Thumbs.db
+diagnose_mobile.js
+mobile_*.png
