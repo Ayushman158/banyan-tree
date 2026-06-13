@@ -305,10 +305,13 @@ export default function TreeScene3D({
       aerialBgRef.current.style.webkitMaskImage = val;
     }
     if (aerialBgInnerRef.current) {
-      // Skip blur/scale on mobile — use simple opacity transitions instead
+      // Skip blur/scale on mobile — use simple opacity transitions instead, and explicitly clear any filters
       if (isMobile) {
         gsap.set(aerialBgInnerRef.current, {
           opacity: 0.7,
+          scaleX: 1.0,
+          scaleY: 1.0,
+          filter: 'none',
           transformOrigin: 'center 32%'
         });
       } else {
