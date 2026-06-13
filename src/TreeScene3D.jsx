@@ -274,7 +274,7 @@ export default function TreeScene3D({
   const [hoverCondition, setHoverCondition] = useState(null);
   const [hoverRoot, setHoverRoot] = useState(null);
   const [connectionsGlowing, setConnectionsGlowing] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' ? window.innerWidth <= 600 : false);
   const [conditionsRevealed, setConditionsRevealed] = useState(false);
 
   useEffect(() => {
@@ -366,10 +366,11 @@ export default function TreeScene3D({
         tl.to(stageFrameRef.current, { scale: 1.0, duration: mobile ? 0.7 : 1.2, ease: 'power2.inOut' }, 0);
       }
 
-      // Aerial fades out gracefully and resets y position
+      // Aerial fades out gracefully, resets y position, and resets filter/blur
       tl.to(aerialGroupRef.current, { 
         opacity: 0, 
         y: '0vh',
+        filter: mobile ? 'none' : 'blur(3px)',
         duration: mobile ? 0.5 : 0.9, 
         ease: 'power1.inOut', 
         pointerEvents: 'none' 
@@ -454,10 +455,11 @@ export default function TreeScene3D({
       // ── STEP 2: Elegant Reveal of Stage 2 ───
       const revealStart = mobile ? 0.45 : 0.75;
       
-      // Animate Stage 2 back to center y position and full opacity
+      // Animate Stage 2 back to center y position, full opacity, and clear blur filters
       tl.to(aerialGroupRef.current, { 
         opacity: 1, 
         y: '0vh', 
+        filter: mobile ? 'none' : 'blur(0px)',
         pointerEvents: 'auto',
         duration: mobile ? 0.5 : 0.8,
         ease: 'power2.out'
