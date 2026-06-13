@@ -125,21 +125,19 @@ const getRootCoords = (id, layout, isMobile) => {
   if (!isMobile) {
     return layout;
   }
-  // Mobile: Cluster root causes organically at the bottom of the screen instead of a rigid grid
-  // Mobile: spread root nodes across the visible mid-section of the roots image
-  // Bottom UI elements occupy ~200px from bottom (insight + controls + CTA)
-  // Keep nodes in y:30-62% so they sit clearly in the image, not behind buttons
+  // Mobile: Staggered root causes organically to prevent any overlap
+  // Keep nodes in y:30-64% to stay safely above the bottom sheet UI (which rises to ~72%)
   const mobilePositions = {
-    // Top row — upper root network
-    "nutrition":      { x: 18, y: 34 },
+    // Row 1: Upper roots
+    "nutrition":      { x: 20, y: 32 },
     "nervous-system": { x: 50, y: 30 },
-    "sleep":          { x: 78, y: 36 },
-    // Middle row — main root mass
-    "lifestyle":      { x: 26, y: 50 },
-    "chronic-stress": { x: 72, y: 52 },
-    // Lower row — deep roots (but above bottom UI)
-    "emotional":      { x: 38, y: 63 },
-    "trauma":         { x: 62, y: 61 },
+    "sleep":          { x: 80, y: 32 },
+    // Row 2: Mid-level roots
+    "lifestyle":      { x: 32, y: 48 },
+    "chronic-stress": { x: 68, y: 48 },
+    // Row 3: Deep roots
+    "emotional":      { x: 18, y: 64 },
+    "trauma":         { x: 82, y: 64 },
   };
   const pos = mobilePositions[id];
   if (!pos) return layout;
@@ -163,12 +161,11 @@ const getRootLabelStyle = (id, layout, isMobile) => {
   }
   const coords = getRootCoords(id, layout, true);
   const x = coords.x;
-  const y = coords.y;
   
-  // Bottom-row nodes (y > 55%) show label ABOVE the dot so they don't
-  // overlap the fixed bottom UI (insight bar + controls + CTA).
-  // Top/middle nodes show label BELOW the dot.
-  const below = y <= 55;
+  // To avoid vertical overlap and collisions with the bottom UI sheet,
+  // only 'nervous-system' (top center node) has its label placed BELOW the dot.
+  // The other 6 nodes have their labels placed ABOVE the dots.
+  const below = id === 'nervous-system';
   const baseTransform = below
     ? 'translate(-50%, 14px)'
     : 'translate(-50%, calc(-100% - 10px))';
@@ -195,8 +192,8 @@ const getRootLabelStyle = (id, layout, isMobile) => {
     transform: transform,
     '--mobile-transform': transform,
     textAlign: textAlign,
-    width: '114px',
-    maxWidth: '114px',
+    width: '120px',
+    maxWidth: '120px',
   };
 };
 
@@ -249,9 +246,22 @@ const getCategoryPath = (cat) => {
 };
 
 // Generates the curved SVG path for the roots lines converging at the center (50, 30)
-const getRootPath = (id, layout) => {
+const getRootPath = (id, layout, isMobile) => {
   const jx = 50;
   const jy = 30;
+  if (isMobile) {
+    if (id === 'nervous-system') {
+      return `M 50 30 L 50 33`; // Ground the center node slightly
+    }
+    const { x, y } = layout;
+    // Organic bezier curve extending horizontally from node, converging vertically at (50, 30)
+    const cp1x = x + (jx - x) * 0.5;
+    const cp1y = y;
+    const cp2x = jx;
+    const cp2y = jy + (y - jy) * 0.5;
+    return `M ${x} ${y} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${jx} ${jy}`;
+  }
+  
   if (layout.side === 'bottom') {
     return `M ${layout.x} ${layout.y} C ${layout.x} ${layout.y - 12}, ${jx} ${jy + 15}, ${jx} ${jy}`;
   } else {
@@ -914,7 +924,7 @@ export default function TreeScene3D({
             {Object.entries(ROOT_LAYOUTS).map(([id, layout]) => {
               const isActive = activeRootIds.includes(id) || connectionsGlowing;
               const coords = getRootCoords(id, layout, isMobile);
-              const pathD = getRootPath(id, coords);
+              const pathD = getRootPath(id, coords, isMobile);
               
               return (
                 <g key={`group-${id}`}>

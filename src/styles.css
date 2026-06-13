@@ -3593,13 +3593,14 @@ footer a:hover { color: var(--gold-deep); }
   .root-node-label-box {
     font-size: 9px !important;
     white-space: normal !important;
-    word-break: break-word !important;
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
     background: rgba(8, 12, 10, 0.88) !important;
     border: 1px solid rgba(200, 169, 107, 0.25) !important;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5) !important;
     padding: 8px 12px !important;
     border-radius: 10px !important;
-    max-width: 110px !important;
+    max-width: 120px !important;
   }
 
   .root-node-name {
@@ -3951,7 +3952,7 @@ footer a:hover { color: var(--gold-deep); }
 
   .root-node-label-box {
     padding: 6px 10px !important;
-    max-width: 95px !important;
+    max-width: 110px !important;
   }
 
   /* Breadcrumb adjustments */
