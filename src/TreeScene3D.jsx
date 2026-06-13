@@ -366,12 +366,19 @@ export default function TreeScene3D({
         tl.to(stageFrameRef.current, { scale: 1.0, duration: mobile ? 0.7 : 1.2, ease: 'power2.inOut' }, 0);
       }
 
-      // Aerial fades out gracefully
-      tl.to(aerialGroupRef.current, { opacity: 0, duration: mobile ? 0.5 : 0.9, ease: 'power1.inOut', pointerEvents: 'none' }, 0);
+      // Aerial fades out gracefully and resets y position
+      tl.to(aerialGroupRef.current, { 
+        opacity: 0, 
+        y: '0vh',
+        duration: mobile ? 0.5 : 0.9, 
+        ease: 'power1.inOut', 
+        pointerEvents: 'none' 
+      }, 0);
 
-      // Stage 1 fades back in (no blur on mobile)
+      // Stage 1 fades back in and resets y position
       tl.to(canopyGroupRef.current, {
         opacity: 1,
+        y: '0vh',
         filter: mobile ? 'none' : 'blur(0px)',
         duration: mobile ? 0.6 : 1.0,
         ease: 'power1.inOut',
@@ -446,11 +453,20 @@ export default function TreeScene3D({
 
       // ── STEP 2: Elegant Reveal of Stage 2 ───
       const revealStart = mobile ? 0.45 : 0.75;
-      tl.set(aerialGroupRef.current, { opacity: 1, pointerEvents: 'auto' }, revealStart);
+      
+      // Animate Stage 2 back to center y position and full opacity
+      tl.to(aerialGroupRef.current, { 
+        opacity: 1, 
+        y: '0vh', 
+        pointerEvents: 'auto',
+        duration: mobile ? 0.5 : 0.8,
+        ease: 'power2.out'
+      }, revealStart);
 
-      // Fade out Stage 1 canopy background
+      // Fade out Stage 1 canopy background and reset its y position
       tl.to(canopyGroupRef.current, {
         opacity: 0,
+        y: '0vh',
         duration: mobile ? 0.7 : 1.1,
         ease: 'power1.inOut',
         pointerEvents: 'none'
