@@ -129,20 +129,25 @@ const getRootCoords = (id, layout, isMobile) => {
   if (!isMobile) {
     return layout;
   }
-  // Mobile: Staggered root causes organically to prevent any overlap
-  // Keep nodes in y:30-64% to stay safely above the bottom sheet UI (which rises to ~72%)
+  // Mobile: Staggered 3-2-3-2-1 layout to prevent any overlap
+  // Keep nodes in y:22-69% to stay safely above the bottom sheet UI
   const mobilePositions = {
-    "gut-dysfunction":      { x: 22, y: 32 },
-    "hormonal-imbalance":   { x: 50, y: 30 },
-    "poor-sleep":           { x: 78, y: 32 },
-    "environmental-toxins": { x: 35, y: 40 },
-    "hidden-infections":    { x: 65, y: 40 },
-    "nutrients-deficiency": { x: 20, y: 50 },
-    "mitochondrial-dysfunction": { x: 50, y: 50 },
-    "chronic-stress":       { x: 80, y: 50 },
-    "dosha-imbalance":      { x: 22, y: 64 },
-    "inflammation":         { x: 50, y: 62 },
-    "poor-detoxification":  { x: 78, y: 64 },
+    // Row 1
+    "gut-dysfunction":      { x: 18, y: 22 },
+    "hormonal-imbalance":   { x: 50, y: 22 },
+    "poor-sleep":           { x: 82, y: 22 },
+    // Row 2
+    "environmental-toxins": { x: 30, y: 34 },
+    "hidden-infections":    { x: 70, y: 34 },
+    // Row 3
+    "nutrients-deficiency": { x: 18, y: 46 },
+    "mitochondrial-dysfunction": { x: 50, y: 46 },
+    "chronic-stress":       { x: 82, y: 46 },
+    // Row 4
+    "dosha-imbalance":      { x: 30, y: 58 },
+    "poor-detoxification":  { x: 70, y: 58 },
+    // Row 5
+    "inflammation":         { x: 50, y: 69 },
   };
   const pos = mobilePositions[id];
   if (!pos) return layout;
@@ -183,13 +188,8 @@ const getRootLabelStyle = (id, layout, isMobile) => {
   const coords = getRootCoords(id, layout, true);
   const x = coords.x;
   
-  // To avoid vertical overlap and collisions with the bottom UI sheet,
-  // only 'nervous-system' (top center node) has its label placed BELOW the dot.
-  // The other 6 nodes have their labels placed ABOVE the dots.
-  const below = id === 'hormonal-imbalance' || id === 'mitochondrial-dysfunction' || id === 'inflammation';
-  const baseTransform = below
-    ? 'translate(-50%, 14px)'
-    : 'translate(-50%, calc(-100% - 10px))';
+  // Mobile labels all placed ABOVE the dots to prevent colliding with the bottom sheet UI
+  const baseTransform = 'translate(-50%, calc(-100% - 10px))';
 
   let transform = baseTransform;
   let textAlign = 'center';
@@ -197,17 +197,15 @@ const getRootLabelStyle = (id, layout, isMobile) => {
   
   // Far left edge (x <= 22): anchor to left so label doesn't bleed off-screen
   if (x <= 22) {
-    transform = below ? 'translate(-8%, 14px)' : 'translate(-8%, calc(-100% - 10px))';
+    transform = 'translate(-8%, calc(-100% - 10px))';
     textAlign = 'left';
-    left = '0';
   }
-  // Far right edge (x >= 68): anchor to right edge
-  else if (x >= 68) {
-    transform = below ? 'translate(-92%, 14px)' : 'translate(-92%, calc(-100% - 10px))';
+  // Far right edge (x >= 78): anchor to right so label doesn't bleed off-screen
+  else if (x >= 78) {
+    transform = 'translate(-92%, calc(-100% - 10px))';
     textAlign = 'right';
-    left = '100%';
   }
-  
+
   return {
     left: left,
     transform: transform,
