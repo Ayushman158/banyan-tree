@@ -654,31 +654,20 @@ export default function TreeScene3D({
               return (
                 <React.Fragment key={cat.id}>
                   {/* Desktop Path */}
-                  <path
-                    d={getCategoryPath(cat)}
-                    stroke={isActive || isHovered ? "var(--gold)" : "rgba(20, 35, 28, 0.38)"}
-                    strokeWidth={isActive || isHovered ? 1.5 : 0.9}
-                    fill="none"
-                    vectorEffect="non-scaling-stroke"
-                    className="canopy-path desktop-path"
-                    style={{ 
-                       opacity: isDimmed ? 0.3 : 1,
-                       transition: 'stroke 0.4s var(--ease), stroke-width 0.4s var(--ease), opacity 0.4s var(--ease)' 
-                    }}
-                  />
-                  {/* Mobile Path */}
-                  <path
-                    d={`M ${coords.x} ${coords.y} L ${coords.x} 48 L ${coords.x < 50 ? 48 : 52} 48`}
-                    stroke={isActive || isHovered ? "var(--gold)" : "rgba(20, 35, 28, 0.38)"}
-                    strokeWidth={isActive || isHovered ? 1.5 : 0.9}
-                    fill="none"
-                    vectorEffect="non-scaling-stroke"
-                    className="canopy-path mobile-path"
-                    style={{ 
-                       opacity: isDimmed ? 0.3 : 1,
-                       transition: 'stroke 0.4s var(--ease), stroke-width 0.4s var(--ease), opacity 0.4s var(--ease)' 
-                     }}
-                  />
+                  {!isMobile && (
+                    <path
+                      d={getCategoryPath(cat)}
+                      stroke={isActive || isHovered ? "var(--gold)" : "rgba(20, 35, 28, 0.38)"}
+                      strokeWidth={isActive || isHovered ? 1.5 : 0.9}
+                      fill="none"
+                      vectorEffect="non-scaling-stroke"
+                      className="canopy-path desktop-path"
+                      style={{ 
+                         opacity: isDimmed ? 0.3 : 1,
+                         transition: 'stroke 0.4s var(--ease), stroke-width 0.4s var(--ease), opacity 0.4s var(--ease)' 
+                      }}
+                    />
+                  )}
                 </React.Fragment>
               );
             })}
