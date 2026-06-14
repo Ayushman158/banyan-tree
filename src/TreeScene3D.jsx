@@ -129,25 +129,23 @@ const getRootCoords = (id, layout, isMobile) => {
   if (!isMobile) {
     return layout;
   }
-  // Mobile: Staggered 3-2-3-2-1 layout to prevent any overlap
-  // Keep nodes in y:22-69% to stay safely above the bottom sheet UI
+  // Mobile: 6 on left, 5 on right side-by-side layout
+  // Nodes placed at x: 12 and x: 88, with labels extending inwards
   const mobilePositions = {
-    // Row 1
-    "gut-dysfunction":      { x: 18, y: 22 },
-    "hormonal-imbalance":   { x: 50, y: 22 },
-    "poor-sleep":           { x: 82, y: 22 },
-    // Row 2
-    "environmental-toxins": { x: 30, y: 34 },
-    "hidden-infections":    { x: 70, y: 34 },
-    // Row 3
-    "nutrients-deficiency": { x: 18, y: 46 },
-    "mitochondrial-dysfunction": { x: 50, y: 46 },
-    "chronic-stress":       { x: 82, y: 46 },
-    // Row 4
-    "dosha-imbalance":      { x: 30, y: 58 },
-    "poor-detoxification":  { x: 70, y: 58 },
-    // Row 5
-    "inflammation":         { x: 50, y: 69 },
+    // Left Column
+    "gut-dysfunction":      { x: 12, y: 28 },
+    "poor-sleep":           { x: 12, y: 36 },
+    "hidden-infections":    { x: 12, y: 44 },
+    "mitochondrial-dysfunction": { x: 12, y: 52 },
+    "dosha-imbalance":      { x: 12, y: 60 },
+    "poor-detoxification":  { x: 12, y: 68 },
+    
+    // Right Column
+    "hormonal-imbalance":   { x: 88, y: 32 },
+    "environmental-toxins": { x: 88, y: 40 },
+    "nutrients-deficiency": { x: 88, y: 48 },
+    "chronic-stress":       { x: 88, y: 56 },
+    "inflammation":         { x: 88, y: 64 },
   };
   const pos = mobilePositions[id];
   if (!pos) return layout;
@@ -185,32 +183,33 @@ const getRootLabelStyle = (id, layout, isMobile) => {
       textAlign,
     };
   }
+
   const coords = getRootCoords(id, layout, true);
   const x = coords.x;
   
-  // Mobile labels all placed ABOVE the dots to prevent colliding with the bottom sheet UI
-  const baseTransform = 'translate(-50%, calc(-100% - 10px))';
-
-  let transform = baseTransform;
-  let textAlign = 'center';
-  let left = '50%';
+  let transform, textAlign, left;
   
-  // Far left edge (x <= 22): anchor to left so label doesn't bleed off-screen
-  if (x <= 22) {
-    transform = 'translate(-8%, calc(-100% - 10px))';
+  if (x <= 20) {
+    // Left column: label sits immediately to the right of the dot, centered vertically
+    transform = 'translate(16px, -50%)';
     textAlign = 'left';
-  }
-  // Far right edge (x >= 78): anchor to right so label doesn't bleed off-screen
-  else if (x >= 78) {
-    transform = 'translate(-92%, calc(-100% - 10px))';
+    left = '0%';
+  } else if (x >= 80) {
+    // Right column: label sits immediately to the left of the dot, centered vertically
+    transform = 'translate(calc(-100% - 16px), -50%)';
     textAlign = 'right';
+    left = '100%';
+  } else {
+    // Center fallback
+    transform = 'translate(-50%, calc(-100% - 10px))';
+    textAlign = 'center';
+    left = '50%';
   }
 
   return {
-    left: left,
-    transform: transform,
-    '--mobile-transform': transform,
-    textAlign: textAlign,
+    left,
+    transform,
+    textAlign,
     width: '120px',
     maxWidth: '120px',
   };
