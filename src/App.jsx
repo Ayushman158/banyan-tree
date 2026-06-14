@@ -160,6 +160,7 @@ function Loader({ gone }) {
 /* ---------- Nav ---------- */
 function Nav({ onOpenJournal }) {
   const [scrolled, setScrolled] = useS(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useS(false);
 
   useE(() => {
     const handleScroll = () => {
@@ -171,18 +172,64 @@ function Nav({ onOpenJournal }) {
   }, []);
 
   return (
-    <nav className={`nav ${scrolled ? "is-scrolled" : ""}`}>
-      <div className="nav-mark">Himanshu Garg</div>
-      <div className="nav-right">
-        <div className="nav-links">
-          <a href="#philosophy" data-hoverable="true">Philosophy</a>
-          <a href="#method" data-hoverable="true">Method</a>
-          <a href="#voices" data-hoverable="true">Voices</a>
-          <button className="nav-link-btn" onClick={onOpenJournal} data-hoverable="true">Journal</button>
+    <>
+      {/* Desktop Nav */}
+      <nav className={`nav ${scrolled ? "is-scrolled" : ""}`}>
+        <div className="nav-mark">Himanshu Garg</div>
+        <div className="nav-right">
+          <div className="nav-links">
+            <a href="#philosophy" data-hoverable="true">Philosophy</a>
+            <a href="#method" data-hoverable="true">Method</a>
+            <a href="#voices" data-hoverable="true">Voices</a>
+            <button className="nav-link-btn" onClick={onOpenJournal} data-hoverable="true">Journal</button>
+          </div>
+          <a href="#apply" className="nav-cta" data-hoverable="true">Apply for Consult</a>
         </div>
-        <a href="#apply" className="nav-cta" data-hoverable="true">Apply for Consult</a>
-      </div>
-    </nav>
+      </nav>
+
+      {/* Mobile Header Bar */}
+      <header className={`mobile-header ${scrolled ? "is-scrolled" : ""}`}>
+        <div className="mobile-header-mark">Himanshu Garg</div>
+        <button 
+          type="button" 
+          className={`hamburger-btn ${mobileMenuOpen ? 'is-open' : ''}`}
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label="Toggle navigation menu"
+        >
+          <span className="hamburger-line"></span>
+          <span className="hamburger-line"></span>
+          <span className="hamburger-line"></span>
+        </button>
+      </header>
+
+      {/* Mobile Menu Drawer */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div 
+            className="mobile-menu-drawer"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.35, ease: "easeOut" }}
+          >
+            <div className="mobile-menu-links">
+              <a href="#philosophy" onClick={() => setMobileMenuOpen(false)}>Philosophy</a>
+              <a href="#method" onClick={() => setMobileMenuOpen(false)}>Method</a>
+              <a href="#voices" onClick={() => setMobileMenuOpen(false)}>Voices</a>
+              <button 
+                className="mobile-menu-btn" 
+                onClick={() => { onOpenJournal(); setMobileMenuOpen(false); }}
+              >
+                Journal
+              </button>
+              <a href="#apply" className="mobile-menu-cta" onClick={() => setMobileMenuOpen(false)}>
+                Apply for Consult
+              </a>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
 
@@ -424,7 +471,30 @@ function App() {
           onCrumbJump={onCrumbJump}
         />
 
+        {/* Mobile top vignette for text legibility (all phase header background) */}
+        <div
+          className="mobile-top-vignette"
+          style={{ 
+            opacity: !showSplash && heroEntered ? 1 : 0,
+            pointerEvents: 'none'
+          }}
+        />
 
+        {/* Mobile top tagline (canopy phase only) */}
+        <div
+          className="mobile-top-tagline"
+          style={{ 
+            opacity: !showSplash && phase === "canopy" && heroEntered ? 1 : 0,
+            pointerEvents: 'none'
+          }}
+        >
+          <span className="mobile-hero-eyebrow">An atlas of root cause healing</span>
+          <h1 className="mobile-hero-title">
+            <span>Every symptom</span>
+            <span>has a</span>
+            <span className="gold-italic">deeper root.</span>
+          </h1>
+        </div>
 
         {/* Bottom-left tagline (canopy phase only) */}
         <div
@@ -455,23 +525,7 @@ function App() {
           <p className="hero-author">Guided by Himanshu Garg</p>
         </div>
 
-        {/* Bottom-right cue with counts */}
-        <div
-          className={`hero-cue${heroEntered ? " is-entered" : ""}`}
-          style={{ opacity: !showSplash && phase === "canopy" && heroEntered ? 1 : 0 }}
-        >
-          <div className="meta">
-            <span><strong>12</strong> domains</span>
-            <span className="sep"></span>
-            <span><strong>121</strong> conditions</span>
-            <span className="sep"></span>
-            <span><strong>7</strong> roots</span>
-          </div>
-          <div className="cue-line">
-            <span className="pulse"></span>
-            Choose a domain to begin
-          </div>
-        </div>
+
 
 
 

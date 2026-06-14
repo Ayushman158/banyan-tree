@@ -1,310 +1,695 @@
-/* Banyan — taxonomy of conditions and their root causes.
-   12 categories arrayed around the canopy, each containing 3–17 conditions.
-   Every condition resolves to one of seven root-cause archetypes below. */
-
 export const rootCauses = {
-    "chronic-stress": {
-      name: "Chronic Stress",
-      subtitle: "CORTISOL DYSREGULATION",
-      number: "01",
-      insight: "Stress is not the storm — it is the soil where storms keep growing.",
-      body: "Prolonged activation of the body's stress response erodes the systems that keep mind and body steady. Cortisol stays elevated, sleep architecture shallow, digestion suppressed. Over months, the body forgets what calm feels like. The work is not avoiding stress — it is teaching the system to return.",
-      meta: { Domain: "Physiological", Span: "Months → Years", Layer: "HPA axis" },
-    },
-    "nervous-system": {
-      name: "Nervous System Dysregulation",
-      subtitle: "STRESS RESPONSE LOOP",
-      number: "02",
-      insight: "A regulated nervous system is the quiet ground beneath every other practice.",
-      body: "When the autonomic nervous system loses its capacity to shift between activation and rest, symptoms travel everywhere — racing thoughts, shallow sleep, unsteady mood, unreliable digestion. Regulation is rebuilt slowly: through breath, rhythm, co-regulation, and time spent in places where the body can finally exhale.",
-      meta: { Domain: "Somatic", Span: "Weeks → Months", Layer: "Polyvagal" },
-    },
-    "emotional": {
-      name: "Emotional Suppression",
-      subtitle: "UNEXPRESSED TENSION",
-      number: "03",
-      insight: "Emotions that are unfelt do not disappear — they take residence in the body.",
-      body: "What gets pushed away does not leave; it settles into muscle, gut, and breath. Years of carefully managed composure can present as fatigue, tightness, hypervigilance, or a quiet dimming of joy. Reconnection is not catharsis — it is the patient practice of allowing feeling to move again.",
-      meta: { Domain: "Emotional", Span: "Years", Layer: "Somatic memory" },
-    },
-    "sleep": {
-      name: "Sleep Disruption",
-      subtitle: "CIRCADIAN IMBALANCE",
-      number: "04",
-      insight: "Sleep is the body's deepest medicine — and the first to be sacrificed.",
-      body: "Without restorative sleep the body cannot clear, repair, or regulate. Energy thins, mood narrows, immunity falters, hormonal rhythms drift. Healing sleep is rarely about more hours; it is about returning depth — through light, temperature, nervous-system tone, and the slow unlearning of urgency before bed.",
-      meta: { Domain: "Restorative", Span: "Nightly", Layer: "Circadian" },
-    },
-    "trauma": {
-      name: "Unprocessed Trauma",
-      subtitle: "BODY HOLDS THE SCORE",
-      number: "05",
-      insight: "The body keeps a record the mind chose not to read.",
-      body: "Trauma is not the event — it is what the nervous system could not metabolize at the time. Years later it can echo as anxiety, autoimmunity, chronic tension, or a sense of not quite arriving in one's own life. Resolution is gentle and embodied, not heroic: the system learns, slowly, that the moment has passed.",
-      meta: { Domain: "Psychosomatic", Span: "Lifetime", Layer: "Implicit memory" },
-    },
-    "lifestyle": {
-      name: "Lifestyle Imbalance",
-      subtitle: "SEDENTARY PATTERNS",
-      number: "06",
-      insight: "A life out of rhythm produces a body out of rhythm.",
-      body: "Modern days are engineered to override our biology — light when there should be dark, urgency where there should be pause, stimulation in place of stillness. The result is a body that never quite finds its register. Restoration begins by re-introducing rhythm: of light, of meals, of movement, of rest.",
-      meta: { Domain: "Behavioural", Span: "Daily", Layer: "Circadian / ritual" },
-    },
-    "nutrition": {
-      name: "Nutritional Imbalance",
-      subtitle: "METABOLIC DEPLETION",
-      number: "07",
-      insight: "We do not eat to feed ourselves — we eat to feed the systems that make us.",
-      body: "The gut is an internal ecosystem in conversation with mood, immunity, hormones, and thought. Deficiencies and inflammation rarely arrive announced; they show up as fatigue, mental fog, sensitivity, skin disruption. Nourishment is not optimization — it is the patient repair of an interior soil that has been depleted.",
-      meta: { Domain: "Biochemical", Span: "Months", Layer: "Microbiome" },
-    },
+  "gut-dysfunction": {
+    "name": "Gut dysfunction",
+    "subtitle": "MICROBIOME IMBALANCE",
+    "number": "01",
+    "insight": "The gut is an internal ecosystem in conversation with mood, immunity, and hormones.",
+    "body": "An imbalance in gut flora can lead to systemic inflammation and poor absorption.",
+    "meta": {
+      "Domain": "Biochemical",
+      "Span": "Months",
+      "Layer": "Microbiome"
+    }
+  },
+  "environmental-toxins": {
+    "name": "Environmental toxins",
+    "subtitle": "TOXIC LOAD",
+    "number": "02",
+    "insight": "The environment we live in shapes the health of our cells.",
+    "body": "Accumulation of heavy metals, mold, or chemical toxins burdens the body's detoxification systems.",
+    "meta": {
+      "Domain": "Environmental",
+      "Span": "Years",
+      "Layer": "Cellular"
+    }
+  },
+  "nutrients-deficiency": {
+    "name": "Nutrients deficiency",
+    "subtitle": "CELLULAR STARVATION",
+    "number": "03",
+    "insight": "We do not eat to feed ourselves — we eat to feed the systems that make us.",
+    "body": "Lack of essential vitamins and minerals impairs every physiological process.",
+    "meta": {
+      "Domain": "Nutritional",
+      "Span": "Months",
+      "Layer": "Metabolic"
+    }
+  },
+  "hormonal-imbalance": {
+    "name": "Hormonal imbalance",
+    "subtitle": "ENDOCRINE DYSREGULATION",
+    "number": "04",
+    "insight": "Hormones are the body's chemical messengers, dictating rhythm and function.",
+    "body": "When hormones fall out of rhythm, it can cause cascading effects on mood, metabolism, and energy.",
+    "meta": {
+      "Domain": "Physiological",
+      "Span": "Months",
+      "Layer": "Endocrine"
+    }
+  },
+  "mitochondrial-dysfunction": {
+    "name": "Mitochondrial dysfunction",
+    "subtitle": "ENERGY DEPLETION",
+    "number": "05",
+    "insight": "Mitochondria are the engines of the cell, and when they falter, the whole system slows.",
+    "body": "Poor cellular energy production is at the root of fatigue, brain fog, and chronic illness.",
+    "meta": {
+      "Domain": "Cellular",
+      "Span": "Years",
+      "Layer": "Mitochondrial"
+    }
+  },
+  "dosha-imbalance": {
+    "name": "Dosha imbalance",
+    "subtitle": "CONSTITUTIONAL SHIFT",
+    "number": "06",
+    "insight": "A life out of rhythm produces a body out of rhythm.",
+    "body": "In Ayurveda, when Vata, Pitta, or Kapha fall out of balance, disease begins to take root.",
+    "meta": {
+      "Domain": "Energetic",
+      "Span": "Daily",
+      "Layer": "Constitutional"
+    }
+  },
+  "hidden-infections": {
+    "name": "Hidden infections",
+    "subtitle": "IMMUNE BURDEN",
+    "number": "07",
+    "insight": "The body keeps fighting battles you cannot see.",
+    "body": "Chronic, low-grade infections (viral, bacterial, parasitic) continuously drain the immune system and cause systemic inflammation.",
+    "meta": {
+      "Domain": "Immunological",
+      "Span": "Months",
+      "Layer": "Immune"
+    }
+  },
+  "chronic-stress": {
+    "name": "Chronic stress",
+    "subtitle": "CORTISOL DYSREGULATION",
+    "number": "08",
+    "insight": "Stress is not the storm — it is the soil where storms keep growing.",
+    "body": "Prolonged activation of the body's stress response erodes the systems that keep mind and body steady.",
+    "meta": {
+      "Domain": "Physiological",
+      "Span": "Months → Years",
+      "Layer": "HPA axis"
+    }
+  },
+  "poor-sleep": {
+    "name": "Poor sleep",
+    "subtitle": "CIRCADIAN IMBALANCE",
+    "number": "09",
+    "insight": "Sleep is the body's deepest medicine — and the first to be sacrificed.",
+    "body": "Without restorative sleep the body cannot clear, repair, or regulate.",
+    "meta": {
+      "Domain": "Restorative",
+      "Span": "Nightly",
+      "Layer": "Circadian"
+    }
+  },
+  "inflammation": {
+    "name": "Inflammation",
+    "subtitle": "SYSTEMIC FIRE",
+    "number": "10",
+    "insight": "Inflammation is the body's alarm system stuck in the 'on' position.",
+    "body": "Chronic inflammation damages healthy tissue and is the precursor to most chronic diseases.",
+    "meta": {
+      "Domain": "Immunological",
+      "Span": "Months",
+      "Layer": "Systemic"
+    }
+  },
+  "poor-detoxification": {
+    "name": "Poor detoxification",
+    "subtitle": "ELIMINATION BLOCKADE",
+    "number": "11",
+    "insight": "Toxins that cannot leave the body will take residence within it.",
+    "body": "When the liver, kidneys, or lymphatic system are sluggish, metabolic waste and toxins build up.",
+    "meta": {
+      "Domain": "Metabolic",
+      "Span": "Months",
+      "Layer": "Elimination"
+    }
+  }
 };
 
-const rootOrder = [
+export const rootOrder = [
+  "gut-dysfunction",
+  "environmental-toxins",
+  "nutrients-deficiency",
+  "hormonal-imbalance",
+  "mitochondrial-dysfunction",
+  "dosha-imbalance",
+  "hidden-infections",
   "chronic-stress",
-  "nervous-system",
-  "emotional",
-  "sleep",
-  "trauma",
-  "lifestyle",
-  "nutrition",
+  "poor-sleep",
+  "inflammation",
+  "poor-detoxification"
 ];
 
-// icon: SVG path string rendered at 20×20 viewBox
 const categories = [
   {
-    id: "mental",
-    name: "Mental Health",
-    tag: "Mind",
-    icon: `<path d="M10 3a4 4 0 0 1 4 4c0 1.5-.8 2.8-2 3.5V12h-4v-1.5A4 4 0 0 1 6 7a4 4 0 0 1 4-4z" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/><circle cx="10" cy="15.5" r="1" fill="currentColor"/>`,
-    defaultRoot: "nervous-system",
-    conditions: [
-      { name: "Depression", root: "emotional" },
-      { name: "Anxiety", root: "nervous-system" },
-      { name: "Bipolar Disorder", root: "trauma" },
-      { name: "Psychotic Disorders", root: "trauma" },
-      { name: "ADHD", root: "nervous-system" },
-      { name: "Insomnia", root: "sleep" },
-      { name: "Burnout", root: "chronic-stress" },
-      { name: "Brain Fog", root: "nutrition" },
-      { name: "Mood Swings", root: "emotional" },
-      { name: "Low Motivation", root: "emotional" },
-    ],
+    "id": "mental",
+    "name": "Mental Health",
+    "tag": "Mind",
+    "icon": "<path d=\"M10 3a4 4 0 0 1 4 4c0 1.5-.8 2.8-2 3.5V12h-4v-1.5A4 4 0 0 1 6 7a4 4 0 0 1 4-4z\" stroke=\"currentColor\" stroke-width=\"1.2\" fill=\"none\" stroke-linecap=\"round\"/><circle cx=\"10\" cy=\"15.5\" r=\"1\" fill=\"currentColor\"/>",
+    "defaultRoot": "chronic-stress",
+    "conditions": [
+      {
+        "name": "Depression",
+        "root": "chronic-stress"
+      },
+      {
+        "name": "Anxiety",
+        "root": "chronic-stress"
+      },
+      {
+        "name": "OCD",
+        "root": "chronic-stress"
+      },
+      {
+        "name": "Psychotic Disorders",
+        "root": "chronic-stress"
+      },
+      {
+        "name": "ADHD",
+        "root": "chronic-stress"
+      },
+      {
+        "name": "Insomnia",
+        "root": "chronic-stress"
+      },
+      {
+        "name": "Brain Fog",
+        "root": "chronic-stress"
+      },
+      {
+        "name": "Mood Swings",
+        "root": "chronic-stress"
+      },
+      {
+        "name": "Low Motivation",
+        "root": "chronic-stress"
+      }
+    ]
   },
   {
-    id: "metabolic",
-    name: "Lifestyle\u00A0/ Metabolic",
-    tag: "Metabolism",
-    icon: `<circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M7 10h6M10 7v6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>`,
-    defaultRoot: "lifestyle",
-    conditions: [
-      { name: "Obesity", root: "lifestyle" },
-      { name: "Type 2 Diabetes", root: "lifestyle" },
-      { name: "Fatty Liver (NAFLD)", root: "nutrition" },
-      { name: "Gout", root: "nutrition" },
-      { name: "Fatigue / Chronic Fatigue", root: "chronic-stress" },
-      { name: "Low Immunity", root: "nutrition" },
-      { name: "Sluggish Metabolism", root: "lifestyle" },
-      { name: "Temperature Intolerance", root: "nervous-system" },
-      { name: "Poor Recovery", root: "sleep" },
-    ],
+    "id": "metabolic",
+    "name": "Metabolic Conditions",
+    "tag": "Metabolism",
+    "icon": "<circle cx=\"10\" cy=\"10\" r=\"7\" stroke=\"currentColor\" stroke-width=\"1.2\" fill=\"none\"/><path d=\"M7 10h6M10 7v6\" stroke=\"currentColor\" stroke-width=\"1.2\" stroke-linecap=\"round\"/>",
+    "defaultRoot": "mitochondrial-dysfunction",
+    "conditions": [
+      {
+        "name": "Obesity",
+        "root": "mitochondrial-dysfunction"
+      },
+      {
+        "name": "Type 2 Diabetes",
+        "root": "mitochondrial-dysfunction"
+      },
+      {
+        "name": "Fatty Liver",
+        "root": "mitochondrial-dysfunction"
+      },
+      {
+        "name": "Gout",
+        "root": "mitochondrial-dysfunction"
+      },
+      {
+        "name": "Chronic Fatigue",
+        "root": "mitochondrial-dysfunction"
+      },
+      {
+        "name": "Low Immunity",
+        "root": "mitochondrial-dysfunction"
+      },
+      {
+        "name": "Sluggish Metabolism",
+        "root": "mitochondrial-dysfunction"
+      },
+      {
+        "name": "Hot/cold Intolerance",
+        "root": "mitochondrial-dysfunction"
+      },
+      {
+        "name": "Poor Recovery",
+        "root": "mitochondrial-dysfunction"
+      }
+    ]
   },
   {
-    id: "musculoskeletal",
-    name: "Musculoskeletal",
-    tag: "Frame",
-    icon: `<path d="M10 3v14M6 6l4-3 4 3M6 14l4 3 4-3" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`,
-    defaultRoot: "chronic-stress",
-    conditions: [
-      { name: "Osteoarthritis", root: "lifestyle" },
-      { name: "Rheumatoid Arthritis", root: "trauma" },
-      { name: "Fibromyalgia", root: "nervous-system" },
-      { name: "Back & Neck Pain", root: "chronic-stress" },
-      { name: "Osteoporosis", root: "nutrition" },
-      { name: "Tendinitis", root: "lifestyle" },
-      { name: "Sciatica", root: "nervous-system" },
-      { name: "Frozen Shoulder", root: "emotional" },
-      { name: "Joint Stiffness", root: "lifestyle" },
-    ],
+    "id": "musculoskeletal",
+    "name": "Musculoskeletal Conditions",
+    "tag": "Frame",
+    "icon": "<path d=\"M10 3v14M6 6l4-3 4 3M6 14l4 3 4-3\" stroke=\"currentColor\" stroke-width=\"1.2\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>",
+    "defaultRoot": "inflammation",
+    "conditions": [
+      {
+        "name": "Osteoarthritis",
+        "root": "inflammation"
+      },
+      {
+        "name": "Rheumatoid Arthritis",
+        "root": "inflammation"
+      },
+      {
+        "name": "Fibromyalgia",
+        "root": "inflammation"
+      },
+      {
+        "name": "Back/Neck/Knee Pain",
+        "root": "inflammation"
+      },
+      {
+        "name": "Osteoporosis",
+        "root": "inflammation"
+      },
+      {
+        "name": "Tendinitis",
+        "root": "inflammation"
+      },
+      {
+        "name": "Sciatica",
+        "root": "inflammation"
+      },
+      {
+        "name": "Frozen Shoulder",
+        "root": "inflammation"
+      }
+    ]
   },
   {
-    id: "cardiovascular",
-    name: "Cardiovascular",
-    icon: `<path d="M10 16s-7-4.5-7-8a4 4 0 0 1 7-2.6A4 4 0 0 1 17 8c0 3.5-7 8-7 8z" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linejoin="round"/>`,
-    tag: "Circulation",
-    defaultRoot: "lifestyle",
-    conditions: [
-      { name: "Dyslipidemia", root: "nutrition" },
-      { name: "Hypertension", root: "chronic-stress" },
-      { name: "Atherosclerosis", root: "lifestyle" },
-      { name: "Coronary Artery Disease", root: "lifestyle" },
-      { name: "Coronary Artery Calcification", root: "lifestyle" },
-      { name: "Deep Vein Thrombosis (DVT)", root: "lifestyle" },
-      { name: "Varicose Veins", root: "lifestyle" },
-      { name: "Postural Hypotension", root: "nervous-system" },
-    ],
+    "id": "cardiovascular",
+    "name": "Cardiovascular Conditions",
+    "tag": "Circulation",
+    "icon": "<path d=\"M10 16s-7-4.5-7-8a4 4 0 0 1 7-2.6A4 4 0 0 1 17 8c0 3.5-7 8-7 8z\" stroke=\"currentColor\" stroke-width=\"1.2\" fill=\"none\" stroke-linejoin=\"round\"/>",
+    "defaultRoot": "inflammation",
+    "conditions": [
+      {
+        "name": "Dyslipidemia (Cholestrol imbalance)",
+        "root": "inflammation"
+      },
+      {
+        "name": "Hypertension/hypotension",
+        "root": "inflammation"
+      },
+      {
+        "name": "Deep vein thrombosis",
+        "root": "inflammation"
+      },
+      {
+        "name": "Atherosclerosis",
+        "root": "inflammation"
+      },
+      {
+        "name": "Palpitations",
+        "root": "inflammation"
+      },
+      {
+        "name": "Varicose Veins",
+        "root": "inflammation"
+      }
+    ]
   },
   {
-    id: "autoimmune",
-    name: "Autoimmune\u00A0& Inflammatory",
-    icon: `<path d="M10 3l1.8 5.5H17l-4.6 3.3 1.8 5.5L10 14l-4.2 3.3 1.8-5.5L3 8.5h5.2z" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linejoin="round"/>`,
-    tag: "Inflammation",
-    defaultRoot: "trauma",
-    conditions: [
-      { name: "Hashimoto’s Thyroiditis", root: "trauma" },
-      { name: "Graves’ Disease", root: "chronic-stress" },
-      { name: "Celiac Disease", root: "nutrition" },
-      { name: "Multiple Sclerosis", root: "trauma" },
-      { name: "Lupus (SLE)", root: "trauma" },
-      { name: "Psoriasis", root: "emotional" },
-      { name: "Inflammatory Bowel Disease (IBD)", root: "nutrition" },
-      { name: "Myasthenia Gravis", root: "trauma" },
-      { name: "Other Autoimmune Conditions", root: "trauma" },
-    ],
+    "id": "autoimmune",
+    "name": "Autoimmune Conditions",
+    "tag": "Inflammation",
+    "icon": "<path d=\"M10 3l1.8 5.5H17l-4.6 3.3 1.8 5.5L10 14l-4.2 3.3 1.8-5.5L3 8.5h5.2z\" stroke=\"currentColor\" stroke-width=\"1.2\" fill=\"none\" stroke-linejoin=\"round\"/>",
+    "defaultRoot": "hidden-infections",
+    "conditions": [
+      {
+        "name": "Hashimoto’s Thyroiditis",
+        "root": "hidden-infections"
+      },
+      {
+        "name": "Graves’ Disease",
+        "root": "hidden-infections"
+      },
+      {
+        "name": "Celiac Disease",
+        "root": "hidden-infections"
+      },
+      {
+        "name": "Multiple Sclerosis",
+        "root": "hidden-infections"
+      },
+      {
+        "name": "Lupus (SLE)",
+        "root": "hidden-infections"
+      },
+      {
+        "name": "Inflammatory Bowel Disease (IBD)",
+        "root": "hidden-infections"
+      },
+      {
+        "name": "Myasthenia Gravis",
+        "root": "hidden-infections"
+      }
+    ]
   },
   {
-    id: "hormonal",
-    name: "Hormonal\u00A0& Endocrine",
-    icon: `<circle cx="10" cy="6" r="3" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M10 9v8M7 14h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>`,
-    tag: "Hormones",
-    defaultRoot: "chronic-stress",
-    conditions: [
-      { name: "Hypothyroidism", root: "chronic-stress" },
-      { name: "Hyperthyroidism", root: "chronic-stress" },
-      { name: "Polycystic Ovary Syndrome (PCOS)", root: "lifestyle" },
-      { name: "Adrenal Fatigue", root: "chronic-stress" },
-      { name: "Cushing’s Syndrome", root: "chronic-stress" },
-      { name: "Endometriosis", root: "trauma" },
-      { name: "Infertility", root: "emotional" },
-      { name: "Perimenopause Symptoms", root: "lifestyle" },
-      { name: "PMS (Premenstrual Syndrome)", root: "lifestyle" },
-      { name: "Painful Periods (Dysmenorrhea)", root: "lifestyle" },
-      { name: "Erectile Dysfunction", root: "emotional" },
-      { name: "Amenorrhea", root: "chronic-stress" },
-    ],
+    "id": "hormonal",
+    "name": "Hormonal Conditions",
+    "tag": "Hormones",
+    "icon": "<circle cx=\"10\" cy=\"6\" r=\"3\" stroke=\"currentColor\" stroke-width=\"1.2\" fill=\"none\"/><path d=\"M10 9v8M7 14h6\" stroke=\"currentColor\" stroke-width=\"1.2\" stroke-linecap=\"round\"/>",
+    "defaultRoot": "hormonal-imbalance",
+    "conditions": [
+      {
+        "name": "Hypothyroidism/hyperthyroidism",
+        "root": "hormonal-imbalance"
+      },
+      {
+        "name": "Polycystic Ovary Syndrome (PCOS)",
+        "root": "hormonal-imbalance"
+      },
+      {
+        "name": "Adrenal Fatigue",
+        "root": "hormonal-imbalance"
+      },
+      {
+        "name": "Endometriosis",
+        "root": "hormonal-imbalance"
+      },
+      {
+        "name": "Infertility",
+        "root": "hormonal-imbalance"
+      },
+      {
+        "name": "Perimenopause Symptoms",
+        "root": "hormonal-imbalance"
+      },
+      {
+        "name": "PMS (Premenstrual Syndrome)",
+        "root": "hormonal-imbalance"
+      },
+      {
+        "name": "Painful Periods (Dysmenorrhea)",
+        "root": "hormonal-imbalance"
+      },
+      {
+        "name": "Erectile Dysfunction/low testosterone",
+        "root": "hormonal-imbalance"
+      },
+      {
+        "name": "Amenorrhea (absent periods)",
+        "root": "hormonal-imbalance"
+      },
+      {
+        "name": "Heavy periods/irregular periods",
+        "root": "hormonal-imbalance"
+      },
+      {
+        "name": "Fibroids",
+        "root": "hormonal-imbalance"
+      },
+      {
+        "name": "BPH/prostate",
+        "root": "hormonal-imbalance"
+      }
+    ]
   },
   {
-    id: "neurological",
-    name: "Neurological",
-    icon: `<path d="M5 10c0-2.8 2.2-5 5-5s5 2.2 5 5-2.2 5-5 5" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M10 10l3-2M10 10l-2 3M10 10l2 2" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity=".7"/>`,
-    tag: "Nervous",
-    defaultRoot: "nervous-system",
-    conditions: [
-      { name: "Alzheimer’s Disease", root: "lifestyle" },
-      { name: "Parkinson’s Disease", root: "lifestyle" },
-      { name: "Epilepsy", root: "nervous-system" },
-      { name: "Migraine", root: "chronic-stress" },
-      { name: "Neuropathy", root: "nutrition" },
-      { name: "Restless Legs Syndrome", root: "sleep" },
-      { name: "Headache (Tension / Stress-Related)", root: "chronic-stress" },
-      { name: "Peripheral Tingling", root: "nervous-system" },
-    ],
+    "id": "neurological",
+    "name": "Neurological Conditions",
+    "tag": "Nervous",
+    "icon": "<path d=\"M5 10c0-2.8 2.2-5 5-5s5 2.2 5 5-2.2 5-5 5\" stroke=\"currentColor\" stroke-width=\"1.2\" fill=\"none\" stroke-linecap=\"round\"/><path d=\"M10 10l3-2M10 10l-2 3M10 10l2 2\" stroke=\"currentColor\" stroke-width=\"1\" stroke-linecap=\"round\" opacity=\".7\"/>",
+    "defaultRoot": "environmental-toxins",
+    "conditions": [
+      {
+        "name": "Alzheimer’s Disease",
+        "root": "environmental-toxins"
+      },
+      {
+        "name": "Parkinson’s Disease",
+        "root": "environmental-toxins"
+      },
+      {
+        "name": "Epilepsy",
+        "root": "environmental-toxins"
+      },
+      {
+        "name": "Headache/migraine",
+        "root": "environmental-toxins"
+      },
+      {
+        "name": "Neuropathy",
+        "root": "environmental-toxins"
+      },
+      {
+        "name": "Restless Legs Syndrome",
+        "root": "environmental-toxins"
+      },
+      {
+        "name": "Peripheral Tingling",
+        "root": "environmental-toxins"
+      }
+    ]
   },
   {
-    id: "gut",
-    name: "Gut\u00A0& Digestive Health",
-    icon: `<path d="M7 4c-2 0-3 1.5-3 3s1.5 3 3 3h6c2 0 3 1.5 3 3s-1 3-3 3H8" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/>`,
-    tag: "Gut",
-    defaultRoot: "nutrition",
-    conditions: [
-      { name: "Irritable Bowel Syndrome (IBS)", root: "nervous-system" },
-      { name: "Gastroesophageal Reflux Disease (GERD)", root: "lifestyle" },
-      { name: "Peptic Ulcer", root: "chronic-stress" },
-      { name: "Crohn’s Disease", root: "trauma" },
-      { name: "Gallstones", root: "nutrition" },
-      { name: "Pancreatitis", root: "lifestyle" },
-      { name: "Acid Reflux", root: "lifestyle" },
-      { name: "Gas / Flatulence", root: "nutrition" },
-      { name: "Indigestion", root: "nutrition" },
-      { name: "Poor Appetite", root: "emotional" },
-      { name: "Overeating", root: "emotional" },
-      { name: "Constipation", root: "lifestyle" },
-      { name: "Diarrhea", root: "nutrition" },
-      { name: "Bloating", root: "nutrition" },
-      { name: "Piles (Hemorrhoids)", root: "lifestyle" },
-      { name: "Anal Fissure", root: "lifestyle" },
-      { name: "Gastritis", root: "chronic-stress" },
-    ],
+    "id": "gut",
+    "name": "Gut & Digestion",
+    "tag": "Gut",
+    "icon": "<path d=\"M7 4c-2 0-3 1.5-3 3s1.5 3 3 3h6c2 0 3 1.5 3 3s-1 3-3 3H8\" stroke=\"currentColor\" stroke-width=\"1.2\" fill=\"none\" stroke-linecap=\"round\"/>",
+    "defaultRoot": "gut-dysfunction",
+    "conditions": [
+      {
+        "name": "IBS/IBD",
+        "root": "gut-dysfunction"
+      },
+      {
+        "name": "Peptic Ulcer/ H pylori",
+        "root": "gut-dysfunction"
+      },
+      {
+        "name": "Gallstones",
+        "root": "gut-dysfunction"
+      },
+      {
+        "name": "Pancreatitis",
+        "root": "gut-dysfunction"
+      },
+      {
+        "name": "Acid Reflux (gerd)",
+        "root": "gut-dysfunction"
+      },
+      {
+        "name": "Gas / bloating",
+        "root": "gut-dysfunction"
+      },
+      {
+        "name": "Indigestion/dyspepsia",
+        "root": "gut-dysfunction"
+      },
+      {
+        "name": "Poor Appetite",
+        "root": "gut-dysfunction"
+      },
+      {
+        "name": "Constipation",
+        "root": "gut-dysfunction"
+      },
+      {
+        "name": "Diarrhea",
+        "root": "gut-dysfunction"
+      },
+      {
+        "name": "Piles/fissures",
+        "root": "gut-dysfunction"
+      },
+      {
+        "name": "Gastritis",
+        "root": "gut-dysfunction"
+      }
+    ]
   },
   {
-    id: "respiratory",
-    name: "Respiratory\u00A0& ENT",
-    icon: `<path d="M10 4v6M7 7c-2.5 1-4 3-4 5.5 0 1.4 1 2.5 2.5 2.5S8 14 8 12.5V10m4 0v2.5c0 1.4 1 2.5 2.5 2.5S17 13.9 17 12.5C17 10 15.5 8 13 7" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/>`,
-    tag: "Breath",
-    defaultRoot: "emotional",
-    conditions: [
-      { name: "Asthma", root: "emotional" },
-      { name: "Chronic Obstructive Pulmonary Disease (COPD)", root: "lifestyle" },
-      { name: "Sleep Apnea", root: "sleep" },
-      { name: "Bronchitis", root: "lifestyle" },
-      { name: "Allergic Rhinitis", root: "nutrition" },
-      { name: "Sinusitis", root: "lifestyle" },
-      { name: "Tonsillitis / Pharyngitis", root: "lifestyle" },
-      { name: "Sore Throat", root: "lifestyle" },
-      { name: "Common Cold", root: "lifestyle" },
-      { name: "Snoring", root: "sleep" },
-      { name: "Post-Nasal Drip", root: "lifestyle" },
-      { name: "Chronic Cough", root: "emotional" },
-      { name: "Vertigo", root: "nervous-system" },
-      { name: "Tinnitus", root: "chronic-stress" },
-      { name: "Dry Eyes", root: "nutrition" },
-    ],
+    "id": "respiratory",
+    "name": "Respiratory",
+    "tag": "Breath",
+    "icon": "<path d=\"M10 4v6M7 7c-2.5 1-4 3-4 5.5 0 1.4 1 2.5 2.5 2.5S8 14 8 12.5V10m4 0v2.5c0 1.4 1 2.5 2.5 2.5S17 13.9 17 12.5C17 10 15.5 8 13 7\" stroke=\"currentColor\" stroke-width=\"1.2\" fill=\"none\" stroke-linecap=\"round\"/>",
+    "defaultRoot": "poor-detoxification",
+    "conditions": [
+      {
+        "name": "Asthma",
+        "root": "poor-detoxification"
+      },
+      {
+        "name": "Sleep Apnea",
+        "root": "poor-detoxification"
+      },
+      {
+        "name": "Bronchitis",
+        "root": "poor-detoxification"
+      },
+      {
+        "name": "Allergic Rhinitis",
+        "root": "poor-detoxification"
+      },
+      {
+        "name": "Sinusitis",
+        "root": "poor-detoxification"
+      },
+      {
+        "name": "Tonsillitis / Sore throat",
+        "root": "poor-detoxification"
+      },
+      {
+        "name": "Common Cold",
+        "root": "poor-detoxification"
+      },
+      {
+        "name": "Snoring",
+        "root": "poor-detoxification"
+      },
+      {
+        "name": "Post-Nasal Drip",
+        "root": "poor-detoxification"
+      },
+      {
+        "name": "Chronic Cough",
+        "root": "poor-detoxification"
+      },
+      {
+        "name": "Vertigo",
+        "root": "poor-detoxification"
+      },
+      {
+        "name": "Tinnitus",
+        "root": "poor-detoxification"
+      }
+    ]
   },
   {
-    id: "skin",
-    name: "Skin\u00A0& Hair",
-    icon: `<ellipse cx="10" cy="10" rx="6" ry="7.5" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M7.5 7.5c1.5-1 3.5-1 5 0" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity=".6"/>`,
-    tag: "Skin",
-    defaultRoot: "nutrition",
-    conditions: [
-      { name: "Acne", root: "nutrition" },
-      { name: "Hair Fall", root: "chronic-stress" },
-      { name: "Dandruff", root: "nutrition" },
-      { name: "Eczema", root: "emotional" },
-      { name: "Rosacea", root: "nutrition" },
-      { name: "Vitiligo", root: "trauma" },
-      { name: "Hives", root: "nervous-system" },
-      { name: "Oily Skin", root: "nutrition" },
-      { name: "Dry Skin", root: "nutrition" },
-      { name: "Puffiness / Dark Circles", root: "sleep" },
-      { name: "Premature Aging", root: "lifestyle" },
-      { name: "Body Odor", root: "nutrition" },
-      { name: "Excessive Sweating", root: "nervous-system" },
-      { name: "Boils", root: "nutrition" },
-      { name: "Heat Rashes", root: "lifestyle" },
-      { name: "Fungal Skin Infections", root: "nutrition" },
-    ],
+    "id": "skin",
+    "name": "Skin & Hair",
+    "tag": "Skin",
+    "icon": "<ellipse cx=\"10\" cy=\"10\" rx=\"6\" ry=\"7.5\" stroke=\"currentColor\" stroke-width=\"1.2\" fill=\"none\"/><path d=\"M7.5 7.5c1.5-1 3.5-1 5 0\" stroke=\"currentColor\" stroke-width=\"1\" stroke-linecap=\"round\" opacity=\".6\"/>",
+    "defaultRoot": "poor-detoxification",
+    "conditions": [
+      {
+        "name": "Acne/pigmentation",
+        "root": "poor-detoxification"
+      },
+      {
+        "name": "Hair Fall",
+        "root": "poor-detoxification"
+      },
+      {
+        "name": "Dandruff",
+        "root": "poor-detoxification"
+      },
+      {
+        "name": "Eczema",
+        "root": "poor-detoxification"
+      },
+      {
+        "name": "Rosacea/heat rashes",
+        "root": "poor-detoxification"
+      },
+      {
+        "name": "Vitiligo",
+        "root": "poor-detoxification"
+      },
+      {
+        "name": "Hives",
+        "root": "poor-detoxification"
+      },
+      {
+        "name": "Oily/Dry Skin",
+        "root": "poor-detoxification"
+      },
+      {
+        "name": "Puffiness / Dark Circles",
+        "root": "poor-detoxification"
+      },
+      {
+        "name": "Premature Aging",
+        "root": "poor-detoxification"
+      },
+      {
+        "name": "Body Odor",
+        "root": "poor-detoxification"
+      },
+      {
+        "name": "Excessive Sweating",
+        "root": "poor-detoxification"
+      },
+      {
+        "name": "Boils",
+        "root": "poor-detoxification"
+      },
+      {
+        "name": "Psoriasis",
+        "root": "poor-detoxification"
+      }
+    ]
   },
   {
-    id: "oral",
-    name: "Oral\u00A0& Dental Health",
-    icon: `<path d="M6 4h8l1 5c0 3.3-2.2 6-5 6s-5-2.7-5-6z" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linejoin="round"/><path d="M10 9v4" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity=".6"/>`,
-    tag: "Mouth",
-    defaultRoot: "nutrition",
-    conditions: [
-      { name: "Mouth Ulcers", root: "nutrition" },
-      { name: "Bad Breath (Halitosis)", root: "nutrition" },
-      { name: "Oral Thrush", root: "nutrition" },
-    ],
+    "id": "oral",
+    "name": "Eyes & Dental",
+    "tag": "Eyes & Mouth",
+    "icon": "<path d=\"M6 4h8l1 5c0 3.3-2.2 6-5 6s-5-2.7-5-6z\" stroke=\"currentColor\" stroke-width=\"1.2\" fill=\"none\" stroke-linejoin=\"round\"/><path d=\"M10 9v4\" stroke=\"currentColor\" stroke-width=\"1\" stroke-linecap=\"round\" opacity=\".6\"/>",
+    "defaultRoot": "nutrients-deficiency",
+    "conditions": [
+      {
+        "name": "Mouth Ulcers",
+        "root": "nutrients-deficiency"
+      },
+      {
+        "name": "Bleeding gums",
+        "root": "nutrients-deficiency"
+      },
+      {
+        "name": "Bad Breath",
+        "root": "nutrients-deficiency"
+      },
+      {
+        "name": "Oral Thrush",
+        "root": "nutrients-deficiency"
+      },
+      {
+        "name": "Dry eyes",
+        "root": "nutrients-deficiency"
+      },
+      {
+        "name": "Itchy/watery eyes",
+        "root": "nutrients-deficiency"
+      }
+    ]
   },
   {
-    id: "renal",
-    name: "Renal\u00A0& Urinary",
-    icon: `<path d="M8 4C5.5 4 4 6 4 8.5c0 3 2 5.5 4 6.5h4c2-1 4-3.5 4-6.5C16 6 14.5 4 12 4c-1 0-1.5.5-2 1-.5-.5-1-1-2-1z" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linejoin="round"/>`,
-    tag: "Filter",
-    defaultRoot: "lifestyle",
-    conditions: [
-      { name: "Chronic Kidney Disease (CKD)", root: "lifestyle" },
-      { name: "Kidney Stones", root: "nutrition" },
-      { name: "Urinary Tract Infection (UTI)", root: "nutrition" },
-      { name: "Water Retention", root: "lifestyle" },
-      { name: "Frequent Urination", root: "nervous-system" },
-    ],
-  },
+    "id": "renal",
+    "name": "Renal & Urinary Conditions",
+    "tag": "Filter",
+    "icon": "<path d=\"M8 4C5.5 4 4 6 4 8.5c0 3 2 5.5 4 6.5h4c2-1 4-3.5 4-6.5C16 6 14.5 4 12 4c-1 0-1.5.5-2 1-.5-.5-1-1-2-1z\" stroke=\"currentColor\" stroke-width=\"1.2\" fill=\"none\" stroke-linejoin=\"round\"/>",
+    "defaultRoot": "poor-detoxification",
+    "conditions": [
+      {
+        "name": "Chronic Kidney Disease (CKD)",
+        "root": "poor-detoxification"
+      },
+      {
+        "name": "Kidney Stones",
+        "root": "poor-detoxification"
+      },
+      {
+        "name": "Urinary Tract Infection (UTI)",
+        "root": "poor-detoxification"
+      },
+      {
+        "name": "Water Retention",
+        "root": "poor-detoxification"
+      },
+      {
+        "name": "Frequent Urination",
+        "root": "poor-detoxification"
+      }
+    ]
+  }
 ];
 
-// Add a stable id to each condition: <cat>-<slug>.
 categories.forEach(cat => {
   cat.conditions.forEach(c => {
     c.id = cat.id + "-" + c.name.toLowerCase()
@@ -316,7 +701,6 @@ categories.forEach(cat => {
   });
 });
 
-// Build flat condition lookup.
 const conditionsById = {};
 categories.forEach(cat => cat.conditions.forEach(c => { conditionsById[c.id] = c; }));
 
