@@ -4007,23 +4007,11 @@ footer a:hover { color: var(--gold-deep); }
 
   /* ─── STAGE 3: UNDERGROUND INSIGHT ─────────────────────────────────── */
   .underground-insight {
-    position: fixed !important;
-    left: 16px !important;
-    right: 16px !important;
-    bottom: calc(136px + env(safe-area-inset-bottom, 0px)) !important;
-    width: auto !important;
-    max-width: none !important;
-    z-index: 35 !important;
-    margin: 0 !important;
-    font-size: 11px !important;
-    padding: 11px 18px !important;
-    border-radius: 14px !important;
-    background: rgba(10, 24, 18, 0.75) !important;
-    -webkit-backdrop-filter: blur(14px) saturate(140%) !important;
-    backdrop-filter: blur(14px) saturate(140%) !important;
-    border: 1px solid rgba(200, 169, 107, 0.2) !important;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.20) !important;
-    color: rgba(247, 245, 240, 0.88) !important;
+    display: none !important; /* Hide to save vertical space on mobile Stage 3 */
+  }
+
+  .root-node-subtitle {
+    display: none !important; /* Hide to reduce label height and increase vertical spacing */
   }
 
   .underground-insight__icon {

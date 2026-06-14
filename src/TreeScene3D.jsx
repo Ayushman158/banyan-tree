@@ -133,19 +133,19 @@ const getRootCoords = (id, layout, isMobile) => {
   // Nodes placed at x: 12 and x: 88, with labels extending inwards
   const mobilePositions = {
     // Left Column
-    "gut-dysfunction":      { x: 12, y: 28 },
-    "poor-sleep":           { x: 12, y: 36 },
-    "hidden-infections":    { x: 12, y: 44 },
-    "mitochondrial-dysfunction": { x: 12, y: 52 },
-    "dosha-imbalance":      { x: 12, y: 60 },
-    "poor-detoxification":  { x: 12, y: 68 },
+    "gut-dysfunction":      { x: 12, y: 20 },
+    "poor-sleep":           { x: 12, y: 31 },
+    "hidden-infections":    { x: 12, y: 42 },
+    "mitochondrial-dysfunction": { x: 12, y: 53 },
+    "dosha-imbalance":      { x: 12, y: 64 },
+    "poor-detoxification":  { x: 12, y: 75 },
     
     // Right Column
-    "hormonal-imbalance":   { x: 88, y: 32 },
-    "environmental-toxins": { x: 88, y: 40 },
-    "nutrients-deficiency": { x: 88, y: 48 },
-    "chronic-stress":       { x: 88, y: 56 },
-    "inflammation":         { x: 88, y: 64 },
+    "hormonal-imbalance":   { x: 88, y: 25.5 },
+    "environmental-toxins": { x: 88, y: 36.5 },
+    "nutrients-deficiency": { x: 88, y: 47.5 },
+    "chronic-stress":       { x: 88, y: 58.5 },
+    "inflammation":         { x: 88, y: 69.5 },
   };
   const pos = mobilePositions[id];
   if (!pos) return layout;
