@@ -3321,8 +3321,8 @@ footer a:hover { color: var(--gold-deep); }
   }
 
   .canopy-bg {
-    background-size: 180% auto !important; /* Aggressively zoom to cut out reflection */
-    background-position: center 12% !important; /* Focus on the canopy and upper trunk */
+    background-size: cover !important; 
+    background-position: center 30% !important; /* Focus on the canopy and upper trunk */
     animation: none !important; 
     transform: none !important; 
     filter: brightness(1.22) !important; /* Brighten the mobile canopy background to match desktop */
