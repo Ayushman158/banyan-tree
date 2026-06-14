@@ -376,22 +376,22 @@ export default function TreeScene3D({
         tl.to(stageFrameRef.current, { scale: 1.0, duration: mobile ? 0.7 : 1.2, ease: 'power2.inOut' }, 0);
       }
 
-      // Aerial fades out gracefully, resets y position, and resets filter/blur
+      // Aerial slides gently back upward (reverse of the descent) and fades
       tl.to(aerialGroupRef.current, { 
         opacity: 0, 
-        y: '0vh',
-        filter: mobile ? 'none' : 'blur(3px)',
-        duration: mobile ? 0.5 : 0.9, 
+        y: mobile ? '-6vh' : '-10vh',
+        filter: mobile ? 'none' : 'blur(2px)',
+        duration: mobile ? 0.7 : 1.1, 
         ease: 'power1.inOut', 
         pointerEvents: 'none' 
       }, 0);
 
-      // Stage 1 fades back in and resets y position
+      // Stage 1 drifts back down from its raised position and fades in
       tl.to(canopyGroupRef.current, {
         opacity: 1,
         y: '0vh',
         filter: mobile ? 'none' : 'blur(0px)',
-        duration: mobile ? 0.6 : 1.0,
+        duration: mobile ? 0.8 : 1.2,
         ease: 'power1.inOut',
         pointerEvents: 'auto'
       }, 0.1);
@@ -399,14 +399,14 @@ export default function TreeScene3D({
       // Restore the Stage 1 interactive overlay to full opacity
       const canopyOverlay = canopyGroupRef.current?.querySelector('.canopy-view-container');
       if (canopyOverlay) {
-        tl.to(canopyOverlay, { opacity: 1, duration: mobile ? 0.5 : 0.8, ease: 'power1.inOut', pointerEvents: 'auto' }, 0.1);
+        tl.to(canopyOverlay, { opacity: 1, duration: mobile ? 0.5 : 0.8, ease: 'power1.inOut', pointerEvents: 'auto' }, 0.15);
       }
 
-      // After aerial is hidden, reset BOTH the mask and the image state
-      // so the next reveal starts fresh
+      // After aerial is hidden, reset the mask and image state
+      // so the next aerial descent starts fresh
       tl.call(() => {
         if (aerialBgRef.current) {
-          const val = 'linear-gradient(to bottom, black 0%, black 20%, transparent 35%)';
+          const val = 'linear-gradient(to bottom, black 0%, black 2%, transparent 20%)';
           aerialBgRef.current.style.maskImage = val;
           aerialBgRef.current.style.webkitMaskImage = val;
         }
@@ -414,137 +414,155 @@ export default function TreeScene3D({
           gsap.set(aerialBgInnerRef.current, mobile ? {
             scaleX: 1.0,
             scaleY: 1.0,
+            opacity: 0.6,
             filter: 'none',
-            transformOrigin: 'center 32%'
+            transformOrigin: 'center 25%'
           } : {
-            scaleX: 1.04,
-            scaleY: 0.92,
+            scaleX: 1.03,
+            scaleY: 0.94,
             filter: 'blur(3px)',
-            transformOrigin: 'center 32%'
+            transformOrigin: 'center 25%'
           });
         }
         if (!mobile) {
           const paths = aerialGroupRef.current?.querySelectorAll('.aerial-path');
           if (paths && paths.length > 0) {
-            gsap.set(paths, { strokeDashoffset: 120, strokeDasharray: 120 });
+            gsap.set(paths, { strokeDashoffset: 140, strokeDasharray: 140 });
           }
         }
         const labelGroups = aerialGroupRef.current?.querySelectorAll('.condition-interactive-group');
         if (labelGroups && labelGroups.length > 0) {
-          gsap.set(labelGroups, { opacity: 0, y: 0, scale: 1.0, filter: mobile ? 'none' : 'blur(0px)' });
+          gsap.set(labelGroups, { opacity: 0, y: mobile ? 8 : 15, scale: 1.0, filter: mobile ? 'none' : 'blur(2px)' });
         }
-      }, [], mobile ? 0.6 : 1.0);
+      }, [], mobile ? 0.8 : 1.2);
 
       // Roots stays hidden
       tl.to(rootsGroupRef.current, { opacity: 0, y: '0vh', duration: mobile ? 0.4 : 0.6, ease: 'power2.inOut', pointerEvents: 'none' }, 0);
 
     } else if (phase === 'category') {
-      const tl = gsap.timeline();
+      const tl = gsap.timeline({ defaults: { overwrite: 'auto' } });
 
-      // ── STEP 1: Gentle intentional zoom into Stage 1 (canopy) ────────────
-      // Mobile: subtler zoom (1.04 vs 1.08) and faster
-      if (stageFrameRef.current) {
-        tl.to(stageFrameRef.current, {
-          scale: mobile ? 1.04 : 1.08,
-          duration: mobile ? 0.5 : 0.8,
-          ease: 'power3.out'
-        }, 0);
-      }
+      // ── ACT 1: The Camera Drifts Down the Trunk ──────────────────────────
+      // Instead of zooming in, we subtly *pan down* — the canopy recedes
+      // upward as if the viewer is descending along the tree trunk.
+      // This primes the eye for the aerial roots appearing from above.
 
-      // Immediately fade out the Stage 1 category labels/lines overlay
+      // Softly dim the canopy category dots / labels first (they belong to Stage 1)
       const canopyOverlay = canopyGroupRef.current?.querySelector('.canopy-view-container');
       if (canopyOverlay) {
         tl.to(canopyOverlay, {
           opacity: 0,
-          duration: mobile ? 0.25 : 0.35,
-          ease: 'power2.out',
+          duration: mobile ? 0.4 : 0.5,
+          ease: 'power1.out',
           pointerEvents: 'none'
         }, 0);
       }
 
-      // ── STEP 2: Elegant Reveal of Stage 2 ───
-      const revealStart = mobile ? 0.45 : 0.75;
-      
-      // Animate Stage 2 back to center y position, full opacity, and clear blur filters
-      tl.to(aerialGroupRef.current, { 
-        opacity: 1, 
-        y: '0vh', 
-        filter: mobile ? 'none' : 'blur(0px)',
-        pointerEvents: 'auto',
-        duration: mobile ? 0.5 : 0.8,
-        ease: 'power2.out'
-      }, revealStart);
+      // Very gentle zoom — just enough to signal "we're going deeper"
+      if (stageFrameRef.current) {
+        tl.to(stageFrameRef.current, {
+          scale: mobile ? 1.02 : 1.05,
+          duration: mobile ? 1.0 : 1.6,
+          ease: 'power1.inOut'
+        }, 0);
+      }
 
-      // Fade out Stage 1 canopy background and reset its y position
+      // Canopy slides gently **upward** and fades — the tree crown recedes
       tl.to(canopyGroupRef.current, {
         opacity: 0,
-        y: '0vh',
-        duration: mobile ? 0.7 : 1.1,
+        y: mobile ? '-4vh' : '-8vh',
+        duration: mobile ? 1.0 : 1.6,
         ease: 'power1.inOut',
         pointerEvents: 'none'
-      }, revealStart);
+      }, 0.1);
 
-      // Layer A — Feathered Mask Reveal (faster on mobile)
-      const maskObj = { pct: 35 };
+      // ── ACT 2: The Aerial Roots Descend ──────────────────────────────────
+      // The Stage 2 wrapper starts **above** the viewport and drifts down
+      // naturally — as if roots are falling through the canopy by gravity.
+      const rootsDescendStart = mobile ? 0.3 : 0.5;
+
+      // Position Stage 2 above the frame, then let it settle to center
+      tl.fromTo(aerialGroupRef.current,
+        {
+          opacity: 0,
+          y: mobile ? '-8vh' : '-14vh',
+          filter: mobile ? 'none' : 'blur(2px)',
+          pointerEvents: 'none'
+        },
+        {
+          opacity: 1,
+          y: '0vh',
+          filter: mobile ? 'none' : 'blur(0px)',
+          pointerEvents: 'auto',
+          duration: mobile ? 1.2 : 2.0,
+          ease: 'power2.out'  // Deceleration = natural gravity settling
+        },
+        rootsDescendStart
+      );
+
+      // Layer A — Feathered mask reveals the background top-to-bottom
+      // (the roots *grow* downward into view)
+      const maskObj = { pct: 20 };
       tl.fromTo(maskObj,
-        { pct: 35 },
+        { pct: 20 },
         {
           pct: 115,
-          duration: mobile ? 1.2 : 2.2,
-          ease: 'power2.inOut',
+          duration: mobile ? 1.4 : 2.6,
+          ease: 'sine.inOut',  // Gentler than power2 — feels organic/calm
           onUpdate: () => {
             if (aerialBgRef.current) {
-              const val = `linear-gradient(to bottom, black 0%, black ${maskObj.pct - 15}%, transparent ${maskObj.pct}%)`;
+              const feather = 18;
+              const val = `linear-gradient(to bottom, black 0%, black ${maskObj.pct - feather}%, transparent ${maskObj.pct}%)`;
               aerialBgRef.current.style.maskImage = val;
               aerialBgRef.current.style.webkitMaskImage = val;
             }
           }
         },
-        revealStart
+        rootsDescendStart
       );
 
-      // Layer B — Depth of Field & Physical Stretch (skip blur on mobile)
+      // Layer B — Depth of field: background comes into focus as roots settle
       if (aerialBgInnerRef.current) {
         if (mobile) {
-          // Mobile: simple opacity fade, no blur/scale for GPU performance
           tl.fromTo(aerialBgInnerRef.current,
-            { opacity: 0.7 },
-            { opacity: 1, duration: 1.0, ease: 'power2.out' },
-            revealStart
+            { opacity: 0.6 },
+            { opacity: 1, duration: 1.4, ease: 'sine.out' },
+            rootsDescendStart
           );
         } else {
           tl.fromTo(aerialBgInnerRef.current,
             {
-              scaleX: 1.04,
-              scaleY: 0.88,
-              filter: 'blur(4px)',
-              transformOrigin: 'center 32%'
+              scaleX: 1.03,
+              scaleY: 0.94,
+              filter: 'blur(3px)',
+              transformOrigin: 'center 25%'
             },
             {
               scaleX: 1.0,
               scaleY: 1.0,
               filter: 'blur(0px)',
-              duration: 2.4,
-              ease: 'power2.out'
+              duration: 2.8,
+              ease: 'sine.out'
             },
-            revealStart
+            rootsDescendStart
           );
         }
       }
 
-      // Layer C — SVG path energy flow (desktop only — hidden on mobile via CSS)
+      // Layer C — SVG root lines draw downward (desktop only)
+      // Longer duration + stagger = roots unfurling one by one
       if (!mobile) {
         const paths = aerialGroupRef.current?.querySelectorAll('.aerial-path');
         if (paths && paths.length > 0) {
           tl.fromTo(paths,
-            { strokeDasharray: 120, strokeDashoffset: 120 },
+            { strokeDasharray: 140, strokeDashoffset: 140 },
             {
               strokeDashoffset: 0,
-              duration: 2.0,
-              ease: 'power2.out',
-              stagger: 0.1
+              duration: 2.8,
+              ease: 'sine.inOut',
+              stagger: 0.15
             },
-            revealStart + 0.1
+            rootsDescendStart + 0.3
           );
         }
       }
@@ -552,28 +570,29 @@ export default function TreeScene3D({
       // Roots panel stays hidden
       tl.to(rootsGroupRef.current, { opacity: 0, pointerEvents: 'none', duration: 0.4 }, 0);
 
-      // ── STEP 3: Disease nodes drop/bounce in after roots are fully revealed
-      const conditionRevealTime = mobile ? 1.6 : 2.95;
+      // ── ACT 3: Disease Labels Appear Gently ──────────────────────────────
+      // No bounce, no pop — they materialize calmly like labels appearing
+      // on a botanical diagram, softly fading + floating up into place.
+      const conditionRevealTime = mobile ? 1.5 : 3.0;
       tl.call(() => setConditionsRevealed(true), [], conditionRevealTime);
 
-      // Staggered cinematic drop/bounce of labels (lighter on mobile — no blur)
       const labelGroups = aerialGroupRef.current?.querySelectorAll('.condition-interactive-group');
       if (labelGroups && labelGroups.length > 0) {
         tl.fromTo(labelGroups,
           {
             opacity: 0,
-            y: mobile ? -12 : -25,
-            filter: mobile ? 'none' : 'blur(3px)',
-            scale: mobile ? 0.95 : 0.9
+            y: mobile ? 8 : 15,     // Start slightly BELOW (float upward into place)
+            filter: mobile ? 'none' : 'blur(2px)',
+            scale: 1.0               // No scale change — keeps it calm
           },
           {
             opacity: 1,
             y: 0,
             filter: mobile ? 'none' : 'blur(0px)',
             scale: 1.0,
-            duration: mobile ? 0.6 : 1.1,
-            ease: mobile ? 'power2.out' : 'back.out(1.2)',
-            stagger: mobile ? 0.04 : 0.08
+            duration: mobile ? 0.8 : 1.4,
+            ease: 'power1.out',       // Gentle deceleration — no spring/bounce
+            stagger: mobile ? 0.06 : 0.1
           },
           conditionRevealTime
         );
