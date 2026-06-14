@@ -71,14 +71,14 @@ const getCategoryCoords = (cat, isMobile) => {
   return { x: mc.x, y: mc.y, labelX: mc.x, labelY: mc.y };
 };
 
-// On mobile: Anchor conditions to root paths (`getXForPath`) and stagger Y coordinates
+// On mobile: Alternate conditions tightly around the trunk to prevent label overflow
 const getMobileConditionCoords = (idx, total) => {
-  const spread = 42; // x from 30 to 72 (width of trunk)
-  const x = total <= 1 ? 50 : 30 + (idx / (total - 1)) * spread;
+  // Mobile tree trunk is centered. Place dots right on the edge of the trunk (42 and 58)
+  const x = total <= 1 ? 50 : (idx % 2 === 0 ? 42 : 58);
   
-  // Y coordinates cascade from 15% to 85%
-  const yPad = 15;
-  const yRange = 70;
+  // Y coordinates cascade from 20% to 75% to avoid top header and bottom UI
+  const yPad = 20;
+  const yRange = 55;
   const y = total <= 1 ? 50 : yPad + (idx / (total - 1)) * yRange;
 
   return { x, y };
