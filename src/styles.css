@@ -3452,7 +3452,7 @@ footer a:hover { color: var(--gold-deep); }
     left: var(--mobile-x) !important;
     top: var(--mobile-y) !important;
     transform: var(--mobile-transform, translate(-50%, -50%)) !important;
-    text-align: var(--mobile-text-align, center) !important;
+    text-align: center !important;
     max-width: clamp(84px, 24vw, 102px) !important;
     white-space: normal !important;
     line-height: 1.32 !important;
