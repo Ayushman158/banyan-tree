@@ -94,7 +94,7 @@ const categories = [
   },
   {
     id: "metabolic",
-    name: "Lifestyle / Metabolic",
+    name: "Lifestyle\u00A0/ Metabolic",
     tag: "Metabolism",
     icon: `<circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M7 10h6M10 7v6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>`,
     defaultRoot: "lifestyle",
@@ -147,7 +147,7 @@ const categories = [
   },
   {
     id: "autoimmune",
-    name: "Autoimmune & Inflammatory",
+    name: "Autoimmune\u00A0& Inflammatory",
     icon: `<path d="M10 3l1.8 5.5H17l-4.6 3.3 1.8 5.5L10 14l-4.2 3.3 1.8-5.5L3 8.5h5.2z" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linejoin="round"/>`,
     tag: "Inflammation",
     defaultRoot: "trauma",
@@ -165,7 +165,7 @@ const categories = [
   },
   {
     id: "hormonal",
-    name: "Hormonal & Endocrine",
+    name: "Hormonal\u00A0& Endocrine",
     icon: `<circle cx="10" cy="6" r="3" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M10 9v8M7 14h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>`,
     tag: "Hormones",
     defaultRoot: "chronic-stress",
@@ -203,7 +203,7 @@ const categories = [
   },
   {
     id: "gut",
-    name: "Gut & Digestive Health",
+    name: "Gut\u00A0& Digestive Health",
     icon: `<path d="M7 4c-2 0-3 1.5-3 3s1.5 3 3 3h6c2 0 3 1.5 3 3s-1 3-3 3H8" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/>`,
     tag: "Gut",
     defaultRoot: "nutrition",
@@ -229,7 +229,7 @@ const categories = [
   },
   {
     id: "respiratory",
-    name: "Respiratory & ENT",
+    name: "Respiratory\u00A0& ENT",
     icon: `<path d="M10 4v6M7 7c-2.5 1-4 3-4 5.5 0 1.4 1 2.5 2.5 2.5S8 14 8 12.5V10m4 0v2.5c0 1.4 1 2.5 2.5 2.5S17 13.9 17 12.5C17 10 15.5 8 13 7" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/>`,
     tag: "Breath",
     defaultRoot: "emotional",
@@ -253,7 +253,7 @@ const categories = [
   },
   {
     id: "skin",
-    name: "Skin & Hair",
+    name: "Skin\u00A0& Hair",
     icon: `<ellipse cx="10" cy="10" rx="6" ry="7.5" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M7.5 7.5c1.5-1 3.5-1 5 0" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity=".6"/>`,
     tag: "Skin",
     defaultRoot: "nutrition",
@@ -278,7 +278,7 @@ const categories = [
   },
   {
     id: "oral",
-    name: "Oral & Dental Health",
+    name: "Oral\u00A0& Dental Health",
     icon: `<path d="M6 4h8l1 5c0 3.3-2.2 6-5 6s-5-2.7-5-6z" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linejoin="round"/><path d="M10 9v4" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity=".6"/>`,
     tag: "Mouth",
     defaultRoot: "nutrition",
@@ -290,7 +290,7 @@ const categories = [
   },
   {
     id: "renal",
-    name: "Renal & Urinary",
+    name: "Renal\u00A0& Urinary",
     icon: `<path d="M8 4C5.5 4 4 6 4 8.5c0 3 2 5.5 4 6.5h4c2-1 4-3.5 4-6.5C16 6 14.5 4 12 4c-1 0-1.5.5-2 1-.5-.5-1-1-2-1z" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linejoin="round"/>`,
     tag: "Filter",
     defaultRoot: "lifestyle",

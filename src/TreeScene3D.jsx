@@ -15,18 +15,18 @@ import mobileAerialImg from './assets/hero mobile stage 2.png';
 const CATEGORIES = [
   // Right side of canopy (pushed inwards)
   { id: "mental", name: "Mental Health", x: 58, y: 20, labelX: 63, labelY: 20, align: "left" },
-  { id: "autoimmune", name: "Autoimmune & Inflammatory", x: 56, y: 28, labelX: 61, labelY: 28, align: "left" },
+  { id: "autoimmune", name: "Autoimmune\u00A0& Inflammatory", x: 56, y: 28, labelX: 61, labelY: 28, align: "left" },
   { id: "cardiovascular", name: "Cardiovascular", x: 54, y: 40, labelX: 59, labelY: 40, align: "left" },
   { id: "musculoskeletal", name: "Musculoskeletal", x: 53, y: 52, labelX: 58, labelY: 52, align: "left" },
-  { id: "metabolic", name: "Lifestyle / Metabolic", x: 55, y: 64, labelX: 60, labelY: 64, align: "left" },
-  { id: "renal", name: "Renal & Urinary", x: 58, y: 75, labelX: 63, labelY: 75, align: "left" },
+  { id: "metabolic", name: "Lifestyle\u00A0/ Metabolic", x: 55, y: 64, labelX: 60, labelY: 64, align: "left" },
+  { id: "renal", name: "Renal\u00A0& Urinary", x: 58, y: 75, labelX: 63, labelY: 75, align: "left" },
   // Left side of canopy (pushed inwards to avoid hero text)
   { id: "neurological", name: "Neurological", x: 42, y: 20, labelX: 37, labelY: 20, align: "right" },
-  { id: "hormonal", name: "Hormonal & Endocrine", x: 44, y: 28, labelX: 39, labelY: 28, align: "right" },
-  { id: "gut", name: "Gut & Digestive Health", x: 46, y: 40, labelX: 41, labelY: 40, align: "right" },
-  { id: "respiratory", name: "Respiratory & ENT", x: 47, y: 52, labelX: 42, labelY: 52, align: "right" },
-  { id: "skin", name: "Skin & Hair", x: 45, y: 64, labelX: 40, labelY: 64, align: "right" },
-  { id: "oral", name: "Oral & Dental Health", x: 42, y: 75, labelX: 37, labelY: 75, align: "right" },
+  { id: "hormonal", name: "Hormonal\u00A0& Endocrine", x: 44, y: 28, labelX: 39, labelY: 28, align: "right" },
+  { id: "gut", name: "Gut\u00A0& Digestive Health", x: 46, y: 40, labelX: 41, labelY: 40, align: "right" },
+  { id: "respiratory", name: "Respiratory\u00A0& ENT", x: 47, y: 52, labelX: 42, labelY: 52, align: "right" },
+  { id: "skin", name: "Skin\u00A0& Hair", x: 45, y: 64, labelX: 40, labelY: 64, align: "right" },
+  { id: "oral", name: "Oral\u00A0& Dental Health", x: 42, y: 75, labelX: 37, labelY: 75, align: "right" },
 ];
 
 // Coordinate configuration for the roots cause nodes

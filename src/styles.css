@@ -3446,16 +3446,16 @@ footer a:hover { color: var(--gold-deep); }
   .category-label {
     font-size: 7.5px !important;
     font-weight: 600 !important;
-    padding: 5px 9px !important;
+    padding: 5px 10px !important;
     letter-spacing: 0.13em !important;
     border-radius: 99px !important;
     left: var(--mobile-x) !important;
     top: var(--mobile-y) !important;
     transform: var(--mobile-transform, translate(-50%, -50%)) !important;
     text-align: var(--mobile-text-align, center) !important;
-    max-width: 80px !important;
+    max-width: clamp(84px, 24vw, 102px) !important;
     white-space: normal !important;
-    line-height: 1.28 !important;
+    line-height: 1.32 !important;
     /* Dark glassmorphism for high contrast over any background */
     background: rgba(10, 24, 18, 0.80) !important;
     -webkit-backdrop-filter: blur(12px) saturate(140%) !important;
@@ -3930,8 +3930,9 @@ footer a:hover { color: var(--gold-deep); }
   /* Tighter category pills for small screens */
   .category-label {
     font-size: 7px !important;
-    padding: 4px 8px !important;
-    max-width: 72px !important;
+    padding: 4px 9px !important;
+    max-width: clamp(76px, 21vw, 84px) !important;
+    line-height: 1.3 !important;
   }
 
   /* Tighter condition pills */
