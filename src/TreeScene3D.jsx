@@ -128,16 +128,16 @@ const getRootCoords = (id, layout, isMobile) => {
   // Mobile: Staggered root causes organically to prevent any overlap
   // Keep nodes in y:30-64% to stay safely above the bottom sheet UI (which rises to ~72%)
   const mobilePositions = {
-    // Row 1: Upper roots
-    "nutrition":      { x: 20, y: 32 },
+    // Row 1: Upper roots (symmetrical at 28% from center)
+    "nutrition":      { x: 22, y: 32 },
     "nervous-system": { x: 50, y: 30 },
-    "sleep":          { x: 80, y: 32 },
-    // Row 2: Mid-level roots
-    "lifestyle":      { x: 32, y: 48 },
-    "chronic-stress": { x: 68, y: 48 },
-    // Row 3: Deep roots
-    "emotional":      { x: 18, y: 64 },
-    "trauma":         { x: 82, y: 64 },
+    "sleep":          { x: 78, y: 32 },
+    // Row 2: Mid-level roots (symmetrical at 22% from center)
+    "lifestyle":      { x: 28, y: 48 },
+    "chronic-stress": { x: 72, y: 48 },
+    // Row 3: Deep roots (symmetrical at 30% from center, safely inside screen edges)
+    "emotional":      { x: 20, y: 64 },
+    "trauma":         { x: 80, y: 64 },
   };
   const pos = mobilePositions[id];
   if (!pos) return layout;
