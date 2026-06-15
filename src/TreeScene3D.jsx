@@ -76,9 +76,9 @@ const getMobileConditionCoords = (idx, total) => {
   // Mobile tree trunk is centered. Place dots right on the edge of the trunk (42 and 58)
   const x = total <= 1 ? 50 : (idx % 2 === 0 ? 42 : 58);
   
-  // Y coordinates cascade from 20% to 75% to avoid top header and bottom UI
-  const yPad = 20;
-  const yRange = 55;
+  // Y coordinates cascade from 32% to 75% to avoid top header and bottom UI
+  const yPad = 32;
+  const yRange = 43;
   const y = total <= 1 ? 50 : yPad + (idx / (total - 1)) * yRange;
 
   return { x, y };
@@ -133,19 +133,19 @@ const getRootCoords = (id, layout, isMobile) => {
   // Nodes placed at x: 12 and x: 88, with labels extending inwards
   const mobilePositions = {
     // Left Column
-    "gut-dysfunction":      { x: 12, y: 20 },
-    "poor-sleep":           { x: 12, y: 31 },
-    "hidden-infections":    { x: 12, y: 42 },
-    "mitochondrial-dysfunction": { x: 12, y: 53 },
-    "dosha-imbalance":      { x: 12, y: 64 },
+    "gut-dysfunction":      { x: 12, y: 35 },
+    "poor-sleep":           { x: 12, y: 43 },
+    "hidden-infections":    { x: 12, y: 51 },
+    "mitochondrial-dysfunction": { x: 12, y: 59 },
+    "dosha-imbalance":      { x: 12, y: 67 },
     "poor-detoxification":  { x: 12, y: 75 },
     
     // Right Column
-    "hormonal-imbalance":   { x: 88, y: 25.5 },
-    "environmental-toxins": { x: 88, y: 36.5 },
-    "nutrients-deficiency": { x: 88, y: 47.5 },
-    "chronic-stress":       { x: 88, y: 58.5 },
-    "inflammation":         { x: 88, y: 69.5 },
+    "hormonal-imbalance":   { x: 88, y: 38 },
+    "environmental-toxins": { x: 88, y: 47 },
+    "nutrients-deficiency": { x: 88, y: 56 },
+    "chronic-stress":       { x: 88, y: 65 },
+    "inflammation":         { x: 88, y: 74 },
   };
   const pos = mobilePositions[id];
   if (!pos) return layout;
