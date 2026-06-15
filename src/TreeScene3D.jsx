@@ -45,12 +45,43 @@ const ROOT_LAYOUTS = {
 };
 
 const getCategoryCoords = (cat, isMobile) => {
-  return { x: cat.x, y: cat.y, labelX: cat.labelX, labelY: cat.labelY };
+  if (!isMobile) {
+    return { x: cat.x, y: cat.y, labelX: cat.labelX, labelY: cat.labelY };
+  }
+  // Mobile: Spaced and adjusted curve around the canopy
+  // Top and bottom rows point outward to avoid middle overlap, middle rows point inward to avoid screen edges
+  const mobileCoords = {
+    // Right column - aligned with canopy/trunk structure
+    "mental":          { x: 62, y: 32 },
+    "autoimmune":      { x: 66, y: 40 },
+    "cardiovascular":  { x: 70, y: 48 },
+    "musculoskeletal": { x: 68, y: 56 },
+    "metabolic":       { x: 64, y: 64 },
+    "renal":           { x: 60, y: 72 },
+    // Left column - aligned with canopy/trunk structure
+    "neurological":    { x: 38, y: 32 },
+    "hormonal":        { x: 34, y: 40 },
+    "gut":             { x: 30, y: 48 },
+    "respiratory":     { x: 32, y: 56 },
+    "skin":            { x: 36, y: 64 },
+    "oral":            { x: 40, y: 72 },
+  };
+  const mc = mobileCoords[cat.id];
+  if (!mc) return { x: cat.x, y: cat.y, labelX: cat.x, labelY: cat.y };
+  return { x: mc.x, y: mc.y, labelX: mc.x, labelY: mc.y };
 };
 
-// Mobile specific condition logic removed to match desktop
+// On mobile: Alternate conditions tightly around the trunk to prevent label overflow
 const getMobileConditionCoords = (idx, total) => {
-  return { x: 50, y: 50 }; // Unused, but kept to prevent errors
+  // Mobile tree trunk is centered. Place dots right on the edge of the trunk (42 and 58)
+  const x = total <= 1 ? 50 : (idx % 2 === 0 ? 42 : 58);
+  
+  // Y coordinates cascade from 32% to 75% to avoid top header and bottom UI
+  const yPad = 32;
+  const yRange = 43;
+  const y = total <= 1 ? 50 : yPad + (idx / (total - 1)) * yRange;
+
+  return { x, y };
 };
 
 const getConditionLabelStyle = (x, y, isMobile) => {
@@ -58,16 +89,67 @@ const getConditionLabelStyle = (x, y, isMobile) => {
   const desktopTransform = align === 'left' ? 'translate(14px, -50%)' : 'translate(-100%, -50%) translate(-14px, 0)';
   const desktopTextAlign = align === 'left' ? 'left' : 'right';
 
+  if (!isMobile) {
+    return {
+      left: `${x}%`,
+      top: `${y}%`,
+      textAlign: desktopTextAlign,
+      transform: desktopTransform
+    };
+  }
+  
+  // Mobile: Alternate text alignment (left/right) to utilize empty side space
+  let transform = 'translate(-50%, 0)';
+  let textAlign = 'center';
+  let leftPos = `${x}%`;
+  
+  if (x < 50) {
+    // Left side of trunk, label points to the left edge
+    transform = 'translate(-100%, -50%) translate(-12px, 0)';
+    textAlign = 'right';
+  } else {
+    // Right side of trunk, label points to the right edge
+    transform = 'translate(12px, -50%)';
+    textAlign = 'left';
+  }
+  
   return {
-    left: `${x}%`,
+    left: leftPos,
     top: `${y}%`,
-    textAlign: desktopTextAlign,
-    transform: desktopTransform
+    transform: transform,
+    '--mobile-transform': transform,
+    textAlign: textAlign,
+    maxWidth: '120px',
+    whiteSpace: 'normal',
+    lineHeight: '1.25'
   };
 };
 
 const getRootCoords = (id, layout, isMobile) => {
-  return layout;
+  if (!isMobile) {
+    return layout;
+  }
+  // Mobile: 6 on left, 5 on right side-by-side layout
+  // Nodes placed at x: 12 and x: 88, with labels extending inwards
+  const mobilePositions = {
+    // Left Column
+    "gut-dysfunction":      { x: 12, y: 35 },
+    "poor-sleep":           { x: 12, y: 43 },
+    "hidden-infections":    { x: 12, y: 51 },
+    "mitochondrial-dysfunction": { x: 12, y: 59 },
+    "dosha-imbalance":      { x: 12, y: 67 },
+    "poor-detoxification":  { x: 12, y: 75 },
+    
+    // Right Column
+    "hormonal-imbalance":   { x: 88, y: 38 },
+    "environmental-toxins": { x: 88, y: 47 },
+    "nutrients-deficiency": { x: 88, y: 56 },
+    "chronic-stress":       { x: 88, y: 65 },
+    "inflammation":         { x: 88, y: 74 },
+  };
+  const pos = mobilePositions[id];
+  if (!pos) return layout;
+  return { ...layout, x: pos.x, y: pos.y };
 };
 
 const getRootLabelStyle = (id, layout, isMobile) => {
@@ -76,28 +158,60 @@ const getRootLabelStyle = (id, layout, isMobile) => {
   const systemicIndex = ["gut-dysfunction", "environmental-toxins", "nutrients-deficiency", "hormonal-imbalance", "mitochondrial-dysfunction", "dosha-imbalance"].indexOf(id);
   const isEven = systemicIndex % 2 === 0;
   
-  let labelTransform;
-  let left;
-  let textAlign;
+  if (!isMobile) {
+    let labelTransform;
+    let left;
+    let textAlign;
 
-  if (isRightSide) {
-    labelTransform = 'translate(0%, -50%)';
-    left = '20px';
+    if (isRightSide) {
+      labelTransform = 'translate(0%, -50%)';
+      left = '20px';
+      textAlign = 'left';
+    } else if (isLeftSide) {
+      labelTransform = 'translate(-100%, -50%)';
+      left = '-20px';
+      textAlign = 'right';
+    } else {
+      labelTransform = isEven ? 'translate(-50%, 15px)' : 'translate(-50%, -48px)';
+      left = '0px';
+      textAlign = 'center';
+    }
+
+    return {
+      left,
+      transform: labelTransform,
+      textAlign,
+    };
+  }
+
+  const coords = getRootCoords(id, layout, true);
+  const x = coords.x;
+  
+  let transform, textAlign, left;
+  
+  if (x <= 20) {
+    // Left column: label sits immediately to the right of the dot, centered vertically
+    transform = 'translate(16px, -50%)';
     textAlign = 'left';
-  } else if (isLeftSide) {
-    labelTransform = 'translate(-100%, -50%)';
-    left = '-20px';
+    left = '0%';
+  } else if (x >= 80) {
+    // Right column: label sits immediately to the left of the dot, centered vertically
+    transform = 'translate(calc(-100% - 16px), -50%)';
     textAlign = 'right';
+    left = '100%';
   } else {
-    labelTransform = isEven ? 'translate(-50%, 15px)' : 'translate(-50%, -48px)';
-    left = '0px';
+    // Center fallback
+    transform = 'translate(-50%, calc(-100% - 10px))';
     textAlign = 'center';
+    left = '50%';
   }
 
   return {
     left,
-    transform: labelTransform,
+    transform,
     textAlign,
+    width: '120px',
+    maxWidth: '120px',
   };
 };
 
@@ -148,6 +262,18 @@ const getCategoryPath = (cat) => {
 const getRootPath = (id, layout, isMobile) => {
   const jx = 50;
   const jy = 30;
+  if (isMobile) {
+    if (id === 'hormonal-imbalance') {
+      return `M 50 30 L 50 33`; // Ground the center node slightly
+    }
+    const { x, y } = layout;
+    // Organic bezier curve extending horizontally from node, converging vertically at (50, 30)
+    const cp1x = x + (jx - x) * 0.5;
+    const cp1y = y;
+    const cp2x = jx;
+    const cp2y = jy + (y - jy) * 0.5;
+    return `M ${x} ${y} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${jx} ${jy}`;
+  }
   
   if (layout.side === 'bottom') {
     return `M ${layout.x} ${layout.y} C ${layout.x} ${layout.y - 12}, ${jx} ${jy + 15}, ${jx} ${jy}`;

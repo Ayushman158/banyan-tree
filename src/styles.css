@@ -3337,7 +3337,7 @@ footer a:hover { color: var(--gold-deep); }
   }
 
   .mobile-header {
-    display: flex !important;
+    display: none !important;
     position: fixed;
     top: 0;
     left: 0;
