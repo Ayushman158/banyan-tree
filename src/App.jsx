@@ -316,6 +316,19 @@ function App() {
     });
   };
 
+  // Once the visitor reaches the roots (stage 3), free the page so they can
+  // simply scroll down into the deeper content. Returning to the canopy or a
+  // category re-pins the experience to the hero.
+  useE(() => {
+    const inRoots = phase === 'roots' || phase === 'detail';
+    if (inRoots) {
+      setExploreLocked(false);
+    } else {
+      setExploreLocked(true);
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    }
+  }, [phase]);
+
   useE(() => {
     initSoundscape();
     const t = setTimeout(() => setLoaded(true), 1400);
@@ -442,7 +455,7 @@ function App() {
             />
             <div className="splash-overlay" />
             <div className="splash-content">
-              <span className="splash-eyebrow">An atlas of root cause healing</span>
+              <span className="splash-eyebrow">An Atlas of Root-Cause Healing</span>
               <h1 className="splash-title">HIMANSHU GARG</h1>
               <p className="splash-tagline">Every symptom has a deeper root.</p>
               <button
@@ -451,7 +464,8 @@ function App() {
                 onClick={() => setShowSplash(false)}
                 data-hoverable="true"
               >
-                Begin the Journey
+                <span>Enter</span>
+                <span className="splash-btn__arrow">→</span>
               </button>
             </div>
           </motion.div>
@@ -513,33 +527,23 @@ function App() {
           </h1>
         </div>
 
-        {/* Bottom-left tagline (canopy phase only) */}
+        {/* Ground scrim for the hero statement (canopy phase only) */}
+        <div
+          className={`hero-ground-scrim${!showSplash && phase === "canopy" && heroEntered ? " is-visible" : ""}`}
+          aria-hidden="true"
+        />
+
+        {/* Centered hero tagline (canopy phase only) */}
         <div
           className={`hero-tagline${heroEntered ? " is-entered" : ""}`}
           style={{ opacity: !showSplash && phase === "canopy" && heroEntered ? 1 : 0 }}
         >
-
-          
           <span className="hero-eyebrow">An atlas of root cause healing</span>
-          
-          <h1 className="hero-title">
+
+          <h1 className="hero-title hero-title--statement">
             <span>Every symptom</span>
-            <span>has a</span>
-            <span className="gold-italic">deeper root.</span>
+            <span>has a <span className="gold-italic">deeper root.</span></span>
           </h1>
-          
-          <div className="hero-divider" />
-          
-          <p className="hero-description">
-            Trace every symptom to its deeper root.
-          </p>
-          
-          <button className="hero-btn" onClick={() => setShowJournal(true)} data-hoverable="true">
-            <span>Begin the Journey</span>
-            <span className="arrow">→</span>
-          </button>
-          
-          <p className="hero-author">Guided by Himanshu Garg</p>
         </div>
 
 
@@ -605,7 +609,7 @@ function App() {
 
         {/* Underground: bottom-right healing pathways */}
         <div className={`underground-cta ${(phase === 'roots' || phase === 'detail') && rootsReady ? 'is-visible' : ''}`}>
-          <button className="btn btn--ghost underground-cta__btn" onClick={() => goToSection('method')} data-hoverable="true">
+          <button className="btn btn--ghost underground-cta__btn" onClick={() => goToSection('philosophy')} data-hoverable="true">
             View Healing Pathways
             <span className="underground-cta__arrow">→</span>
           </button>
