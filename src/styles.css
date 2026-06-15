@@ -4151,3 +4151,46 @@ footer a:hover { color: var(--gold-deep); }
     padding: 10px 10px !important;
   }
 }
+
+/* Client requested desktop layout on mobile, but scaled down so pills look smaller and premium */
+@media (max-width: 600px) {
+  .category-label {
+    font-size: 8px !important;
+    padding: 6px 12px !important;
+    border-radius: 12px !important;
+    letter-spacing: 0.15em !important;
+  }
+  .category-hotspot {
+    width: 14px !important;
+    height: 14px !important;
+    margin-top: -7px !important;
+    margin-left: -7px !important;
+  }
+  .condition-label {
+    font-size: 8px !important;
+    padding: 6px 12px !important;
+    border-radius: 12px !important;
+  }
+  .condition-hotspot {
+    width: 14px !important;
+    height: 14px !important;
+    margin-top: -7px !important;
+    margin-left: -7px !important;
+  }
+  .root-label {
+    font-size: 8px !important;
+    padding: 6px 12px !important;
+    border-radius: 12px !important;
+  }
+  .root-hotspot {
+    width: 14px !important;
+    height: 14px !important;
+    margin-top: -7px !important;
+    margin-left: -7px !important;
+  }
+  .crumb-container {
+    padding: 8px 16px !important;
+    font-size: 8px !important;
+    border-radius: 16px !important;
+  }
+}
