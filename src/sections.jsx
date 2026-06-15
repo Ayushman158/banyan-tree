@@ -2,9 +2,9 @@
    References: Awwwards editorial layouts · Stripe pricing clarity · v0 minimalism */
 
 import { useEffect as _useEffect, useRef as _useRef } from 'react';
-import functionalMedicineImg from './assets/functional-medicine-method.png';
-import ayurvedaImg from './assets/ayurveda-method.png';
-import beginAtRootBg from './assets/begin-at-root-bg.png';
+import functionalMedicineImg from './assets/functional-medicine-method.jpg';
+import ayurvedaImg from './assets/ayurveda-method.jpg';
+import beginAtRootBg from './assets/begin-at-root-bg.jpg';
 import { 
   Microscope, 
   Droplet, 

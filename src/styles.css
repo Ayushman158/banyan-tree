@@ -55,6 +55,14 @@ html, body {
   overflow-x: hidden;
 }
 
+/* While the hero exploration is active, the page is pinned to the hero —
+   visitors continue via an explicit action (nav link or CTA), which
+   removes this class and smooth-scrolls to the target section. */
+body.explore-locked {
+  overflow: hidden;
+  height: 100vh;
+}
+
 body {
   cursor: none;
   min-height: 100vh;
@@ -163,7 +171,8 @@ body {
   box-shadow: 0 10px 30px rgba(31, 34, 30, 0.06), 0 1px 3px rgba(31, 34, 30, 0.02);
   padding: 6px 12px 6px 24px;
   border-radius: 999px;
-  pointer-events: auto;
+  pointer-events: none;
+  opacity: 0;
   transition: all 0.6s var(--ease);
 }
 .nav-mark {
@@ -235,6 +244,7 @@ body {
   box-shadow: 0 12px 30px rgba(31, 34, 30, 0.1), 0 2px 8px rgba(31, 34, 30, 0.04);
   transform: translateX(-50%) scale(0.96);
   pointer-events: auto;
+  opacity: 1;
 }
 .nav.is-scrolled .nav-mark {
   color: var(--ink);
@@ -695,17 +705,20 @@ body {
 }
 .underground-cta.is-visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
 .underground-cta__btn {
-  background: rgba(247, 245, 240, 0.94) !important;
-  border: 1px solid var(--line-strong) !important;
-  color: var(--deep-forest) !important;
+  background: rgba(31, 56, 40, 0.92) !important;
+  border: 1px solid rgba(200, 169, 107, 0.3) !important;
+  border-radius: 99px !important;
+  color: var(--gold-soft) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
   display: flex; align-items: center; gap: 10px;
-  box-shadow: 0 10px 30px rgba(31, 34, 30, 0.08) !important;
+  box-shadow: 0 8px 32px rgba(31, 56, 40, 0.35) !important;
 }
 .underground-cta__btn:hover {
-  background: var(--moss) !important;
-  border-color: var(--moss) !important;
-  color: var(--paper) !important;
-  box-shadow: 0 10px 30px rgba(80, 101, 78, 0.2) !important;
+  background: rgba(200, 169, 107, 0.28) !important;
+  border-color: var(--gold) !important;
+  color: #fffbdf !important;
+  box-shadow: 0 0 15px rgba(200, 169, 107, 0.3), 0 8px 32px rgba(31, 56, 40, 0.35) !important;
 }
 .underground-cta__arrow {
   font-size: 14px; opacity: 0.9;
@@ -764,8 +777,8 @@ body {
 }
 
 .hero-tagline {
-  position: absolute; left: 4.5vw; top: 22vh; z-index: 20;
-  pointer-events: none; width: 90vw; max-width: 420px;
+  position: absolute; left: 4.5vw; top: 20vh; z-index: 20;
+  pointer-events: none; width: 90vw; max-width: 300px;
   display: flex; flex-direction: column; align-items: flex-start;
   text-align: left;
   transform: translateY(36px);
@@ -806,7 +819,8 @@ body {
 }
 .hero-title .gold-italic {
   font-style: italic;
-  color: #ffffff;
+  color: var(--gold-deep);
+  text-shadow: 0 1px 12px rgba(255, 248, 230, 0.45);
 }
 
 .hero-divider {
@@ -833,10 +847,12 @@ body {
   font-size: 13px;
   letter-spacing: 0.08em;
   color: var(--gold-soft);
-  background: var(--deep-forest);
-  border: 1px solid var(--deep-forest);
+  background: rgba(36, 56, 44, 0.85);
+  border: 1px solid rgba(200, 169, 107, 0.3);
   padding: 14px 28px;
-  border-radius: 6px;
+  border-radius: 99px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   cursor: pointer;
   pointer-events: auto;
   display: flex;
@@ -850,9 +866,9 @@ body {
   transition: transform 0.3s var(--ease);
 }
 .hero-btn:hover {
-  background: var(--moss);
-  border-color: var(--moss);
-  color: #ffffff;
+  background: rgba(200, 169, 107, 0.28);
+  border-color: var(--gold);
+  color: #fffbdf;
   box-shadow: 0 12px 30px rgba(80, 101, 78, 0.35);
 }
 .hero-btn:hover .arrow {
@@ -1479,20 +1495,17 @@ footer a:hover { color: var(--gold-deep); }
 .aerial-bg-wrapper, .aerial-view-container {
   position: absolute;
   inset: auto;
-  top: 54%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  top: 0;
+  left: 0;
+  transform: none;
   width: 100vw;
-  height: calc(100vw / 1.5);
-}
-@media (max-aspect-ratio: 3/2) {
-  .aerial-bg-wrapper, .aerial-view-container {
-    height: 100vh;
-    width: calc(100vh * 1.5);
-  }
+  height: 100vh;
 }
 .aerial-bg-wrapper {
   z-index: 7;
+}
+.aerial-bg {
+  background-size: 100% 100% !important;
 }
 .aerial-view-container {
   z-index: 17;
@@ -1635,6 +1648,10 @@ footer a:hover { color: var(--gold-deep); }
 
 .category-label {
   position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   font-family: var(--sans);
   font-weight: 500;
   font-size: 11px;
@@ -1653,6 +1670,32 @@ footer a:hover { color: var(--gold-deep); }
 .category-label:hover, .category-label.is-hovered, .category-label.is-active {
   color: #fff9e7;
   text-shadow: 0 0 14px var(--gold-soft), 0 1px 4px rgba(0, 0, 0, 0.8);
+}
+
+.pill-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: rgba(200, 169, 107, 0.16);
+  border: 1px solid rgba(200, 169, 107, 0.35);
+  color: var(--gold-soft);
+  transition: all 0.35s var(--ease);
+}
+.pill-icon svg {
+  width: 9px;
+  height: 9px;
+}
+.category-label:hover .pill-icon,
+.category-label.is-hovered .pill-icon,
+.category-label.is-active .pill-icon {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--deep-forest);
+  box-shadow: 0 0 12px rgba(200, 169, 107, 0.5);
 }
 
 /* ── Conditions list sidebar panel ── */
@@ -2208,13 +2251,13 @@ footer a:hover { color: var(--gold-deep); }
 /* Legibility override: premium dark glassmorphic capsules for category labels over cinematic imagery */
 .category-label {
   font-weight: 600 !important;
-  font-size: 10px !important;
-  letter-spacing: 0.24em !important;
+  font-size: 9px !important;
+  letter-spacing: 0.16em !important;
   color: #ffffff !important;
-  background: rgba(10, 24, 18, 0.72) !important; /* Premium deep forest glassmorphism */
-  border: 1px solid rgba(255, 255, 255, 0.16) !important;
-  border-radius: 20px !important;
-  padding: 6px 14px !important;
+  background: rgba(10, 24, 18, 0.80) !important; /* Premium deep forest glassmorphism — matches mobile pills */
+  border: 1px solid rgba(200, 169, 107, 0.22) !important;
+  border-radius: 16px !important;
+  padding: 5px 11px !important;
   backdrop-filter: blur(8px) !important;
   -webkit-backdrop-filter: blur(8px) !important;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4) !important;
@@ -2481,18 +2524,21 @@ footer a:hover { color: var(--gold-deep); }
 .condition-label {
   position: absolute;
   font-family: var(--sans);
-  font-size: 11.5px;
-  font-weight: 500;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   color: rgba(255, 255, 255, 0.98);
-  background: rgba(8, 12, 10, 0.72);
-  padding: 6px 12px;
-  border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(10, 24, 18, 0.80); /* Matches mobile pills */
+  padding: 5px 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(200, 169, 107, 0.22);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.3s var(--ease);
   pointer-events: auto;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
 .condition-label.is-hovered,
@@ -3265,11 +3311,11 @@ footer a:hover { color: var(--gold-deep); }
 
   /* ─── AERIAL ROOTS LAYER (Stage 2) — Full-Screen Immersive ──────────── */
   .aerial-bg-wrapper {
-    height: 100svh;
-    width: 100vw;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+    height: 100svh !important;
+    width: 100vw !important;
+    left: 0 !important;
+    top: 0 !important;
+    transform: none !important;
     -webkit-mask-image: none;
     mask-image: none;
   }
@@ -3278,8 +3324,8 @@ footer a:hover { color: var(--gold-deep); }
     width: 100vw !important;
     max-width: 100vw !important;
     left: 0 !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
+    top: 0 !important;
+    transform: none !important;
   }
 
   /* Hide SVG path lines — conditions use overlay layout on mobile */
@@ -3321,9 +3367,14 @@ footer a:hover { color: var(--gold-deep); }
   }
 
   .canopy-bg {
-    animation: none !important; 
-    transform: none !important; 
+    animation: none !important;
+    /* Scale up and anchor toward the top so the water/reflection band at the
+       bottom of the source image is pushed out of frame and cropped by the
+       wrapper's overflow:hidden */
+    transform: scale(1.35) !important;
+    transform-origin: center 28% !important;
     filter: brightness(1.22) !important; /* Brighten the mobile canopy background to match desktop */
+    background-position: center 15% !important;
   }
 
   /* Remove heavy blur pseudo-element on mobile for GPU savings */
@@ -3337,7 +3388,7 @@ footer a:hover { color: var(--gold-deep); }
   }
 
   .mobile-header {
-    display: none !important;
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
@@ -3351,10 +3402,11 @@ footer a:hover { color: var(--gold-deep); }
     transition: background 0.3s var(--ease), backdrop-filter 0.3s var(--ease);
   }
   
+  /* Client preference: keep focus on the exploration experience —
+     never surface the header on mobile, even after scrolling. */
+  .mobile-header,
   .mobile-header.is-scrolled {
-    background: rgba(10, 24, 18, 0.75);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    display: none !important;
   }
   
   .mobile-header-mark {
@@ -3520,7 +3572,7 @@ footer a:hover { color: var(--gold-deep); }
     left: 0;
     right: 0;
     height: 220px; /* Shortened slightly for more open sky brightness */
-    background: linear-gradient(to bottom, rgba(8, 18, 14, 0.6) 0%, rgba(8, 18, 14, 0.3) 50%, rgba(8, 18, 14, 0.08) 75%, transparent 100%); /* Softer vignette for a brighter background */
+    background: linear-gradient(to bottom, rgba(8, 18, 14, 0.74) 0%, rgba(8, 18, 14, 0.42) 55%, rgba(8, 18, 14, 0.1) 80%, transparent 100%); /* Stronger vignette so hero text holds up against the brighter sky */
     z-index: 10;
     pointer-events: none;
     transition: opacity 0.6s var(--ease);
@@ -3547,9 +3599,10 @@ footer a:hover { color: var(--gold-deep); }
     font-weight: 600;
     letter-spacing: 0.28em;
     text-transform: uppercase;
-    color: var(--gold-deep);
+    color: var(--gold-soft);
+    text-shadow: 0 1px 4px rgba(8, 18, 14, 0.8);
     margin-bottom: 6px;
-    opacity: 0.95;
+    opacity: 1;
   }
   
   .mobile-hero-title {
@@ -3558,6 +3611,7 @@ footer a:hover { color: var(--gold-deep); }
     font-weight: 300;
     line-height: 1.25;
     color: rgba(247, 245, 240, 0.95);
+    text-shadow: 0 2px 10px rgba(8, 18, 14, 0.7);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -3628,18 +3682,19 @@ footer a:hover { color: var(--gold-deep); }
   .mobile-path  { display: block !important; }
 
   .category-label {
-    font-size: 7.5px !important;
+    font-size: 5.5px !important;
     font-weight: 600 !important;
-    padding: 5px 10px !important;
-    letter-spacing: 0.13em !important;
+    padding: 3px 8px !important;
+    gap: 3px !important;
+    letter-spacing: 0.02em !important;
     border-radius: 99px !important;
     left: var(--mobile-x) !important;
     top: var(--mobile-y) !important;
     transform: var(--mobile-transform, translate(-50%, -50%)) !important;
     text-align: center !important;
-    max-width: clamp(84px, 24vw, 102px) !important;
-    white-space: normal !important;
-    line-height: 1.32 !important;
+    max-width: none !important;
+    white-space: nowrap !important;
+    line-height: 1.2 !important;
     /* Dark glassmorphism for high contrast over any background */
     background: rgba(10, 24, 18, 0.80) !important;
     -webkit-backdrop-filter: blur(12px) saturate(140%) !important;
@@ -3656,6 +3711,16 @@ footer a:hover { color: var(--gold-deep); }
   /* Left column (align=right → translate(14px,-50%)) → text left-aligned */
   /* Right column (align=left → translate(calc(-100%-14px),-50%)) → text right-aligned */
   /* These are set via the JSX style, CSS just ensures no override blocks it */
+
+  /* Smaller, tighter icon badge for compact mobile pills */
+  .pill-icon {
+    width: 12px !important;
+    height: 12px !important;
+  }
+  .pill-icon svg {
+    width: 7px !important;
+    height: 7px !important;
+  }
 
   .category-label:active {
     transform: var(--mobile-transform, translate(-50%, -50%)) scale(0.93) !important;
@@ -3690,14 +3755,14 @@ footer a:hover { color: var(--gold-deep); }
 
   /* ─── STAGE 2: CONDITION LABELS — High-Contrast Dark Glass ──────────── */
   .condition-label {
-    font-size: 8.5px !important;
+    font-size: 7.5px !important;
     font-weight: 600 !important;
-    padding: 6px 11px !important;
-    letter-spacing: 0.10em !important;
+    padding: 5px 9px !important;
+    letter-spacing: 0.09em !important;
     border-radius: 99px !important;
     white-space: normal !important;
-    line-height: 1.3 !important;
-    max-width: 120px !important;
+    line-height: 1.28 !important;
+    max-width: 104px !important;
     /* Dark glassmorphism — matches category pills for consistency */
     background: rgba(10, 24, 18, 0.80) !important;
     -webkit-backdrop-filter: blur(12px) saturate(140%) !important;
@@ -3989,6 +4054,7 @@ footer a:hover { color: var(--gold-deep); }
     letter-spacing: 0.14em !important;
     border-radius: 99px !important;
     background: rgba(31, 56, 40, 0.92) !important;
+    border: 1px solid rgba(200, 169, 107, 0.3) !important;
     -webkit-backdrop-filter: blur(12px) !important;
     backdrop-filter: blur(12px) !important;
     box-shadow: 0 8px 32px rgba(31, 56, 40, 0.35) !important;
@@ -4099,11 +4165,13 @@ footer a:hover { color: var(--gold-deep); }
     padding: 8px 14px !important;
   }
 
-  /* Tighter category pills for small screens */
+  /* Tighter category pills for small screens — single-line, sized to content
+     so the background always covers the full label text */
   .category-label {
     font-size: 7px !important;
     padding: 4px 9px !important;
-    max-width: clamp(76px, 21vw, 84px) !important;
+    max-width: none !important;
+    white-space: nowrap !important;
     line-height: 1.3 !important;
   }
 
@@ -4111,7 +4179,7 @@ footer a:hover { color: var(--gold-deep); }
   .condition-label {
     font-size: 7.5px !important;
     padding: 5px 9px !important;
-    max-width: 100px !important;
+    max-width: 110px !important;
   }
 
   /* Root node labels — smaller on very small phones */
@@ -4145,10 +4213,12 @@ footer a:hover { color: var(--gold-deep); }
 /* Client requested desktop layout on mobile, but scaled down so pills look smaller and premium */
 @media (max-width: 600px) {
   .category-label {
-    font-size: 8px !important;
-    padding: 6px 12px !important;
-    border-radius: 12px !important;
-    letter-spacing: 0.15em !important;
+    font-size: 5.5px !important;
+    padding: 3px 8px !important;
+    border-radius: 99px !important;
+    letter-spacing: 0.02em !important;
+    max-width: none !important;
+    white-space: nowrap !important;
   }
   .category-hotspot {
     width: 14px !important;
@@ -4157,9 +4227,9 @@ footer a:hover { color: var(--gold-deep); }
     margin-left: -7px !important;
   }
   .condition-label {
-    font-size: 8px !important;
-    padding: 6px 12px !important;
-    border-radius: 12px !important;
+    font-size: 7.5px !important;
+    padding: 5px 9px !important;
+    border-radius: 99px !important;
   }
   .condition-hotspot {
     width: 14px !important;

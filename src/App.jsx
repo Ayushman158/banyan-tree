@@ -158,7 +158,7 @@ function Loader({ gone }) {
 }
 
 /* ---------- Nav ---------- */
-function Nav({ onOpenJournal }) {
+function Nav({ onOpenJournal, onNavigate }) {
   const [scrolled, setScrolled] = useS(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useS(false);
 
@@ -178,12 +178,12 @@ function Nav({ onOpenJournal }) {
         <div className="nav-mark">Himanshu Garg</div>
         <div className="nav-right">
           <div className="nav-links">
-            <a href="#philosophy" data-hoverable="true">Philosophy</a>
-            <a href="#method" data-hoverable="true">Method</a>
-            <a href="#voices" data-hoverable="true">Voices</a>
+            <a href="#philosophy" onClick={(e) => { e.preventDefault(); onNavigate('philosophy'); }} data-hoverable="true">Philosophy</a>
+            <a href="#method" onClick={(e) => { e.preventDefault(); onNavigate('method'); }} data-hoverable="true">Method</a>
+            <a href="#voices" onClick={(e) => { e.preventDefault(); onNavigate('voices'); }} data-hoverable="true">Voices</a>
             <button className="nav-link-btn" onClick={onOpenJournal} data-hoverable="true">Journal</button>
           </div>
-          <a href="#apply" className="nav-cta" data-hoverable="true">Apply for Consult</a>
+          <a href="#apply" className="nav-cta" onClick={(e) => { e.preventDefault(); onNavigate('apply'); }} data-hoverable="true">Apply for Consult</a>
         </div>
       </nav>
 
@@ -298,6 +298,23 @@ function App() {
   const [showJournal, setShowJournal] = useS(false);
   const [journalAnswers, setJournalAnswers] = useS(null);
   const [showSplash, setShowSplash] = useS(true);
+
+  // Keep visitors inside the interactive hero experience until they
+  // deliberately choose to continue — the page shouldn't scroll past
+  // the hero on its own. Unlocked only via explicit navigation below.
+  const [exploreLocked, setExploreLocked] = useS(true);
+
+  useE(() => {
+    document.body.classList.toggle('explore-locked', exploreLocked);
+    return () => document.body.classList.remove('explore-locked');
+  }, [exploreLocked]);
+
+  const goToSection = (id) => {
+    setExploreLocked(false);
+    requestAnimationFrame(() => {
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    });
+  };
 
   useE(() => {
     initSoundscape();
@@ -441,7 +458,7 @@ function App() {
         )}
       </AnimatePresence>
 
-      {!showSplash && <Nav onOpenJournal={() => setShowJournal(true)} />}
+      {!showSplash && <Nav onOpenJournal={() => setShowJournal(true)} onNavigate={goToSection} />}
 
       <section className={`stage${(phase === 'roots' || phase === 'detail') ? ' is-underground' : ''}`} data-screen-label="01 Hero">
         {!showSplash && (
@@ -514,7 +531,7 @@ function App() {
           <div className="hero-divider" />
           
           <p className="hero-description">
-            Explore symptoms, uncover root causes, and understand the hidden patterns shaping your health.
+            Trace every symptom to its deeper root.
           </p>
           
           <button className="hero-btn" onClick={() => setShowJournal(true)} data-hoverable="true">
@@ -588,7 +605,7 @@ function App() {
 
         {/* Underground: bottom-right healing pathways */}
         <div className={`underground-cta ${(phase === 'roots' || phase === 'detail') && rootsReady ? 'is-visible' : ''}`}>
-          <button className="btn btn--ghost underground-cta__btn" onClick={() => setShowJournal(true)} data-hoverable="true">
+          <button className="btn btn--ghost underground-cta__btn" onClick={() => goToSection('method')} data-hoverable="true">
             View Healing Pathways
             <span className="underground-cta__arrow">→</span>
           </button>

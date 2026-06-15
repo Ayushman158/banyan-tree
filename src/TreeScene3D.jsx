@@ -3,30 +3,28 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { BanyanData } from './data.js';
 import { playHoverSound } from './sound.js';
 import gsap from 'gsap';
-import canopyImg from './assets/new new new hero.jpg';
-import aerialImg from './assets/Aerial Root stage 2.jpg';
+import canopyImg from './assets/Final hero.jpg';
+import aerialImg from './assets/Generated Image June 15, 2026 - 1_36PM.jpg';
 import rootsImg from './assets/roots hd.jpg';
-import mobileCanopyImg from './assets/hero mobile stage 1.png';
-import mobileAerialImg from './assets/hero mobile stage 2.png';
 
-// Coordinates calibrated to 'new new new hero.jpg' — tree is centered (~50% x).
+// Coordinates calibrated to 'Final hero.jpg' — tree is centered (~50% x).
 // Left branch: 20-45%x, Right branch: 55-80%x. Canopy top: ~10%y, trunk: ~70%y.
 // Labels on left-branch nodes point LEFT (align:'left'), right-branch nodes point RIGHT.
 const CATEGORIES = [
   // Right side of canopy (pushed inwards)
-  { id: "mental", name: "Mental Health", x: 58, y: 20, labelX: 63, labelY: 20, align: "left" },
-  { id: "autoimmune", name: "Autoimmune\u00A0& Inflammatory", x: 56, y: 28, labelX: 61, labelY: 28, align: "left" },
-  { id: "cardiovascular", name: "Cardiovascular", x: 54, y: 40, labelX: 59, labelY: 40, align: "left" },
-  { id: "musculoskeletal", name: "Musculoskeletal", x: 53, y: 52, labelX: 58, labelY: 52, align: "left" },
-  { id: "metabolic", name: "Lifestyle\u00A0/ Metabolic", x: 55, y: 64, labelX: 60, labelY: 64, align: "left" },
-  { id: "renal", name: "Renal\u00A0& Urinary", x: 58, y: 75, labelX: 63, labelY: 75, align: "left" },
+  { id: "mental", name: "Mental Health", x: 58, y: 20, labelX: 64, labelY: 20, align: "left" },
+  { id: "autoimmune", name: "Autoimmune\u00A0& Inflammatory", mobileName: "Autoimmune", x: 56, y: 28, labelX: 62, labelY: 28, align: "left" },
+  { id: "cardiovascular", name: "Cardiovascular", x: 54, y: 40, labelX: 60, labelY: 40, align: "left" },
+  { id: "musculoskeletal", name: "Musculoskeletal", x: 53, y: 52, labelX: 59, labelY: 52, align: "left" },
+  { id: "metabolic", name: "Lifestyle\u00A0/ Metabolic", mobileName: "Metabolic", x: 55, y: 64, labelX: 61, labelY: 64, align: "left" },
+  { id: "renal", name: "Renal\u00A0& Urinary", mobileName: "Renal", x: 58, y: 75, labelX: 64, labelY: 75, align: "left" },
   // Left side of canopy (pushed inwards to avoid hero text)
-  { id: "neurological", name: "Neurological", x: 42, y: 20, labelX: 37, labelY: 20, align: "right" },
-  { id: "hormonal", name: "Hormonal\u00A0& Endocrine", x: 44, y: 28, labelX: 39, labelY: 28, align: "right" },
-  { id: "gut", name: "Gut\u00A0& Digestive Health", x: 46, y: 40, labelX: 41, labelY: 40, align: "right" },
-  { id: "respiratory", name: "Respiratory\u00A0& ENT", x: 47, y: 52, labelX: 42, labelY: 52, align: "right" },
-  { id: "skin", name: "Skin\u00A0& Hair", x: 45, y: 64, labelX: 40, labelY: 64, align: "right" },
-  { id: "oral", name: "Oral\u00A0& Dental Health", x: 42, y: 75, labelX: 37, labelY: 75, align: "right" },
+  { id: "neurological", name: "Neurological", x: 42, y: 20, labelX: 42, labelY: 20, align: "right" },
+  { id: "hormonal", name: "Hormonal\u00A0& Endocrine", mobileName: "Hormonal", x: 44, y: 28, labelX: 44, labelY: 28, align: "right" },
+  { id: "gut", name: "Gut\u00A0& Digestive Health", mobileName: "Gut Health", x: 46, y: 40, labelX: 46, labelY: 40, align: "right" },
+  { id: "respiratory", name: "Respiratory\u00A0& ENT", mobileName: "Respiratory", x: 47, y: 52, labelX: 47, labelY: 52, align: "right" },
+  { id: "skin", name: "Skin\u00A0& Hair", x: 45, y: 64, labelX: 45, labelY: 64, align: "right" },
+  { id: "oral", name: "Oral\u00A0& Dental Health", mobileName: "Oral Health", x: 42, y: 75, labelX: 42, labelY: 75, align: "right" },
 ];
 
 // Coordinate configuration for the roots cause nodes
@@ -325,11 +323,7 @@ export default function TreeScene3D({
   // Top 35% = sky + upper canopy — visually identical to Stage 1, so the
   // crossfade is completely seamless. Roots hang from ~35%→75% in the image.
   useEffect(() => {
-    if (aerialBgRef.current) {
-      const val = 'linear-gradient(to bottom, black 0%, black 20%, transparent 35%)';
-      aerialBgRef.current.style.maskImage = val;
-      aerialBgRef.current.style.webkitMaskImage = val;
-    }
+
     if (aerialBgInnerRef.current) {
       // Skip blur/scale on mobile — use simple opacity transitions instead, and explicitly clear any filters
       if (isMobile) {
@@ -344,7 +338,7 @@ export default function TreeScene3D({
         gsap.set(aerialBgInnerRef.current, {
           scaleX: 1.04,
           scaleY: 0.92,
-          filter: 'blur(3px)',
+          filter: 'none',
           transformOrigin: 'center 32%'  // anchor at canopy — where roots emerge
         });
       }
@@ -411,34 +405,20 @@ export default function TreeScene3D({
         }, 0);
       }
 
-      // Fade out Stage 2 wrapper and shrink the mask
+      // Fade out Stage 2 wrapper and slide down
       tl.to(aerialGroupRef.current, { 
         opacity: 0, 
+        y: mobile ? '12vh' : '20vh',
         duration: mobile ? 0.7 : 1.1, 
-        ease: 'power1.inOut', 
+        ease: 'power2.inOut', 
         pointerEvents: 'none' 
-      }, 0);
-
-      const maskObj = { radius: mobile ? 140 : 150 };
-      tl.to(maskObj, {
-        radius: 0,
-        duration: mobile ? 0.7 : 1.1,
-        ease: 'power2.inOut',
-        onUpdate: () => {
-          if (aerialBgRef.current) {
-            const r = maskObj.radius;
-            const val = `radial-gradient(circle ${r}vw at ${selectedCoords.x}% ${selectedCoords.y}%, black 0%, black 65%, transparent 100%)`;
-            aerialBgRef.current.style.maskImage = val;
-            aerialBgRef.current.style.webkitMaskImage = val;
-          }
-        }
       }, 0);
 
       // Stage 1 fades in
       tl.to(canopyGroupRef.current, {
         opacity: 1,
         y: '0vh',
-        filter: mobile ? 'none' : 'blur(0px)',
+        filter: 'none',
         duration: mobile ? 0.8 : 1.2,
         ease: 'power1.inOut',
         pointerEvents: 'auto'
@@ -459,13 +439,8 @@ export default function TreeScene3D({
         tl.to(canopyOverlay, { opacity: 1, duration: mobile ? 0.5 : 0.8, ease: 'power1.inOut', pointerEvents: 'auto' }, 0.15);
       }
 
-      // After aerial is hidden, reset the mask and image state
+      // After aerial is hidden, reset the image state
       tl.call(() => {
-        if (aerialBgRef.current) {
-          const val = 'linear-gradient(to bottom, black 0%, black 2%, transparent 20%)';
-          aerialBgRef.current.style.maskImage = val;
-          aerialBgRef.current.style.webkitMaskImage = val;
-        }
         if (aerialBgInnerRef.current) {
           gsap.set(aerialBgInnerRef.current, mobile ? {
             scaleX: 1.0,
@@ -476,19 +451,13 @@ export default function TreeScene3D({
           } : {
             scaleX: 1.03,
             scaleY: 0.94,
-            filter: 'blur(3px)',
+            filter: 'none',
             transformOrigin: 'center 25%'
           });
         }
-        if (!mobile) {
-          const paths = aerialGroupRef.current?.querySelectorAll('.aerial-path');
-          if (paths && paths.length > 0) {
-            gsap.set(paths, { strokeDashoffset: 140, strokeDasharray: 140 });
-          }
-        }
         const labelGroups = aerialGroupRef.current?.querySelectorAll('.condition-interactive-group');
         if (labelGroups && labelGroups.length > 0) {
-          gsap.set(labelGroups, { opacity: 0, y: mobile ? 8 : 15, scale: 1.0, filter: mobile ? 'none' : 'blur(2px)' });
+          gsap.set(labelGroups, { opacity: 0, y: mobile ? 8 : 15, scale: 1.0, filter: 'none' });
         }
       }, [], mobile ? 0.8 : 1.2);
 
@@ -507,13 +476,23 @@ export default function TreeScene3D({
         }
       }
 
-      // Ensure canopy group is positioned at center and visible at start
+      // Ensure canopy group is positioned at center and visible at start IF coming from canopy
+      // If coming from roots, it's already above viewport, so we just set it up.
       tl.set(canopyGroupRef.current, {
-        opacity: 1,
-        y: '0vh',
+        opacity: prev === 'canopy' ? 1 : 0,
+        y: prev === 'canopy' ? '0vh' : (mobile ? '-30vh' : '-50vh'),
         filter: 'none',
-        pointerEvents: 'auto'
+        pointerEvents: 'none' // Disable clicks immediately
       }, 0);
+      
+      // Cinematic Pan: Slide the entire canopy up as we pan down to the roots (or down if coming from roots)
+      const rootsRevealStart = 0.3;
+      tl.to(canopyGroupRef.current, {
+        opacity: 0,
+        y: mobile ? '-15vh' : '-25vh',
+        duration: mobile ? 1.0 : 1.6,
+        ease: 'power2.inOut'
+      }, rootsRevealStart);
 
       // Dim other categories first
       const categoryGroups = canopyGroupRef.current?.querySelectorAll('.category-interactive-group');
@@ -578,39 +557,28 @@ export default function TreeScene3D({
         }, 0);
       }
 
-      // Prepare Stage 2 at center with full opacity
+      const comingFromRoots = prev === 'roots' || prev === 'detail';
+
+      // Prepare Stage 2 starting lower down (or higher up if coming from roots)
       tl.set(aerialGroupRef.current, {
-        opacity: 1,
-        y: '0vh',
+        opacity: 0,
+        y: comingFromRoots ? (mobile ? '-15vh' : '-25vh') : (mobile ? '15vh' : '25vh'),
         filter: 'none',
-        pointerEvents: 'auto'
+        pointerEvents: 'none'
       }, 0);
 
-      // Start the radial mask reveal from selectedCoords
-      const rootsRevealStart = 0.45;
+      // Start the reveal
       const rootsRevealDuration = mobile ? 1.1 : 1.8;
-      const maxRadius = mobile ? 140 : 150;
-      const maskObj = { radius: 0 };
 
-      tl.fromTo(maskObj,
-        { radius: 0 },
-        {
-          radius: maxRadius,
-          duration: rootsRevealDuration,
-          ease: 'power2.out',
-          onUpdate: () => {
-            if (aerialBgRef.current) {
-              const r = maskObj.radius;
-              const val = `radial-gradient(circle ${r}vw at ${selectedCoords.x}% ${selectedCoords.y}%, black 0%, black 65%, transparent 100%)`;
-              aerialBgRef.current.style.maskImage = val;
-              aerialBgRef.current.style.webkitMaskImage = val;
-            }
-          }
-        },
-        rootsRevealStart
-      );
+      tl.to(aerialGroupRef.current, {
+        opacity: 1,
+        y: '0vh',
+        duration: rootsRevealDuration,
+        ease: 'power2.inOut',
+        pointerEvents: 'auto'
+      }, rootsRevealStart);
 
-      // Depth of field: background comes into focus as roots reveal
+      // Depth of field: background comes into focus
       if (aerialBgInnerRef.current) {
         if (mobile) {
           tl.fromTo(aerialBgInnerRef.current,
@@ -623,34 +591,17 @@ export default function TreeScene3D({
             {
               scaleX: 1.04,
               scaleY: 0.92,
-              filter: 'blur(3px)',
+              filter: 'none',
               transformOrigin: 'center 32%'
             },
             {
               scaleX: 1.0,
               scaleY: 1.0,
-              filter: 'blur(0px)',
+              filter: 'none',
               duration: rootsRevealDuration + 0.2,
               ease: 'sine.out'
             },
             rootsRevealStart
-          );
-        }
-      }
-
-      // Draw SVG root lines (desktop only)
-      if (!mobile) {
-        const paths = aerialGroupRef.current?.querySelectorAll('.aerial-path');
-        if (paths && paths.length > 0) {
-          tl.fromTo(paths,
-            { strokeDasharray: 140, strokeDashoffset: 140 },
-            {
-              strokeDashoffset: 0,
-              duration: 1.6,
-              ease: 'sine.inOut',
-              stagger: 0.15
-            },
-            rootsRevealStart + 0.2
           );
         }
       }
@@ -670,13 +621,13 @@ export default function TreeScene3D({
           {
             opacity: 0,
             y: mobile ? 8 : 12,
-            filter: mobile ? 'none' : 'blur(3px)',
+            filter: 'none',
             scale: 1.0
           },
           {
             opacity: 1,
             y: 0,
-            filter: mobile ? 'none' : 'blur(0px)',
+            filter: 'none',
             scale: 1.0,
             duration: mobile ? 0.8 : 1.2,
             ease: 'power2.out',
@@ -697,21 +648,21 @@ export default function TreeScene3D({
         tl.to(stageFrameRef.current, { scale: 1.0, duration: mobile ? 0.6 : 1.0, ease: 'power2.inOut' }, 0);
       }
 
-      // Canopy slides gently upward and fades (no blur on mobile)
+      // Canopy slides further upward out of view
       tl.to(canopyGroupRef.current, {
-        opacity: 0, y: mobile ? '-6vh' : '-12vh', filter: mobile ? 'none' : 'blur(3px)',
+        opacity: 0, y: mobile ? '-25vh' : '-40vh', filter: 'none',
         duration: mobile ? 0.7 : 1.2, ease: 'power2.inOut', pointerEvents: 'none'
       }, 0);
 
-      // Aerial slides up and fades (no blur on mobile)
+      // Aerial slides up out of view
       tl.to(aerialGroupRef.current, {
-        opacity: 0, y: mobile ? '-6vh' : '-12vh', filter: mobile ? 'none' : 'blur(3px)',
+        opacity: 0, y: mobile ? '-15vh' : '-25vh', filter: 'none',
         duration: mobile ? 0.6 : 1.0, ease: 'power2.inOut', pointerEvents: 'none'
       }, 0);
 
-      // Roots rises gracefully from below (faster on mobile)
+      // Roots rises gracefully from below
       tl.fromTo(rootsGroupRef.current,
-        { opacity: 0, y: mobile ? '10vh' : '18vh' },
+        { opacity: 0, y: mobile ? '15vh' : '25vh' },
         { opacity: 1, y: '0vh', duration: mobile ? 1.0 : 1.8, ease: 'power2.out', pointerEvents: 'auto' },
         mobile ? 0.15 : 0.25
       );
@@ -844,7 +795,12 @@ export default function TreeScene3D({
                   onMouseLeave={() => setHoverCategory(null)}
                   data-hoverable="true"
                 >
-                  {cat.name}
+                  {BanyanData.categories[resolvedClickIdx]?.icon && (
+                    <span className="pill-icon">
+                      <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" dangerouslySetInnerHTML={{ __html: BanyanData.categories[resolvedClickIdx].icon }} />
+                    </span>
+                  )}
+                  {isMobile ? (cat.mobileName || cat.name) : cat.name}
                 </button>
               </div>
             );
@@ -871,49 +827,7 @@ export default function TreeScene3D({
         </div>
         
         <div className="view-overlay aerial-view-container">
-          <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="aerial-svg">
-            <defs>
-              <filter id="aerial-glow" x="-20%" y="-20%" width="140%" height="140%">
-                <feGaussianBlur stdDeviation="1.2" result="blur" />
-                <feComposite in="SourceGraphic" in2="blur" operator="over" />
-              </filter>
-            </defs>
 
-            {Array.from({ length: 7 }).map((_, i) => {
-              const conditionIndex = activeCatObj?.conditions?.findIndex(c => c.id === hoverCondition) ?? -1;
-              const hoveredPathIdx = conditionIndex !== -1 ? conditionIndex % 7 : null;
-              
-              const selectedConditionIndex = activeCatObj?.conditions?.findIndex(c => c.id === selectedCondition) ?? -1;
-              const selectedPathIdx = selectedConditionIndex !== -1 ? selectedConditionIndex % 7 : null;
-
-              const isPathActive = (selectedPathIdx === i) || (selectedCondition == null && hoveredPathIdx === i);
-              const isPathDimmed = (selectedCondition != null && selectedPathIdx !== i) || (selectedCondition == null && hoverCondition != null && hoveredPathIdx !== i);
-
-              return (
-                <g key={`aerial-path-group-${i}`}>
-                  <path
-                    d={getSvgPath(i)}
-                    stroke={isPathActive ? "var(--gold)" : "rgba(255, 255, 255, 0.32)"}
-                    strokeWidth={isPathActive ? 2.2 : 1.1}
-                    fill="none"
-                    vectorEffect="non-scaling-stroke"
-                    className={`aerial-path ${isPathActive ? 'is-active' : ''}`}
-                    style={{
-                      opacity: isPathActive ? 0.95 : (isPathDimmed ? 0.18 : 0.65),
-                      filter: isPathActive ? 'url(#aerial-glow)' : 'none',
-                      transition: 'stroke 0.4s var(--ease), stroke-width 0.4s var(--ease), opacity 0.4s var(--ease)'
-                    }}
-                  />
-                  {isPathActive && (
-                    <path
-                      d={getSvgPath(i)}
-                      className="aerial-path-cue"
-                    />
-                  )}
-                </g>
-              );
-            })}
-          </svg>
 
           {activeCatObj?.conditions?.map((cond, idx) => {
             const total = activeCatObj.conditions.length;
