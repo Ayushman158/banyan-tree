@@ -434,7 +434,7 @@ function App() {
                 onClick={() => setShowSplash(false)}
                 data-hoverable="true"
               >
-                Enter the Canopy
+                Begin the Journey
               </button>
             </div>
           </motion.div>
