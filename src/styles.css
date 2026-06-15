@@ -3321,19 +3321,9 @@ footer a:hover { color: var(--gold-deep); }
   }
 
   .canopy-bg {
-    background-size: auto 135% !important; /* Scale height further to tightly crop reflection and focus on tree trunk */
-    background-position: center 0% !important; /* Align to top to push reflection off the bottom edge */
     animation: none !important; 
     transform: none !important; 
     filter: brightness(1.22) !important; /* Brighten the mobile canopy background to match desktop */
-  }
-
-  .aerial-bg {
-    background-position: center 35% !important;
-  }
-
-  .roots-bg {
-    background-position: center center !important;
   }
 
   /* Remove heavy blur pseudo-element on mobile for GPU savings */
