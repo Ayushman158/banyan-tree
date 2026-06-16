@@ -6,3 +6,6 @@ dist-ssr
 Thumbs.db
 diagnose_mobile.js
 mobile_*.png
+
+scratch/
+scratch_*.js

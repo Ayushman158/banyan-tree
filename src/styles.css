@@ -3676,7 +3676,7 @@ footer a:hover { color: var(--gold-deep); }
     /* Soft pool of shadow that hugs only the hero text block — centred on the
        trunk (52.5%) and the text's vertical zone, leaving the rest bright */
     height: 38%;
-    background: radial-gradient(ellipse 42% 52% at 52.5% 46%,
+    background: radial-gradient(ellipse 42% 44% at 52.5% 60%,
       rgba(8, 18, 14, 0.9) 0%,
       rgba(8, 18, 14, 0.7) 42%,
       rgba(8, 18, 14, 0.3) 70%,
