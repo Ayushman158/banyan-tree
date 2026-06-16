@@ -49,26 +49,25 @@ const getCategoryCoords = (cat, isMobile) => {
   }
   // Mobile: Spaced and adjusted curve around the canopy
   // Top and bottom rows point outward to avoid middle overlap, middle rows point inward to avoid screen edges
-  // Pills frame the trunk in two mirrored arcs. Rows share an exact 7%
-  // vertical step (equal optical rhythm) and matching left/right baselines.
-  // The x arc is gentle (±3) — inward at top/bottom, outward at the middle —
-  // so it follows the branch silhouette without looking mechanical.
-  // x = left-edge of pill (translate(0,-50%) applied), y = vertical centre.
+  // y values are set ~10% lower than they visually render on iOS Safari
+  // (100svh includes browser chrome). Empirically calibrated from iPhone 15
+  // screenshot: y=46 rendered at ~56%, so y=40 → ~50% visible, step of 7.
+  // x = left-edge (translate(0,-50%) applied). Subtle arc: wider at middle.
   const mobileCoords = {
-    // Right side — left edges clear the trunk axis (52.5%)
-    "mental":          { x: 54, y: 46 },
-    "cardiovascular":  { x: 56, y: 53 },
-    "autoimmune":      { x: 57, y: 60 },
-    "metabolic":       { x: 57, y: 67 },
-    "musculoskeletal": { x: 56, y: 74 },
-    "renal":           { x: 54, y: 81 },
-    // Left side — mirror amplitude, same baselines
-    "neurological":    { x: 8,  y: 46 },
-    "hormonal":        { x: 6,  y: 53 },
-    "gut":             { x: 5,  y: 60 },
-    "skin":            { x: 5,  y: 67 },
-    "respiratory":     { x: 6,  y: 74 },
-    "oral":            { x: 8,  y: 81 },
+    // Right column — left edges sit just past trunk centre (52.5%)
+    "mental":          { x: 53, y: 40 },
+    "cardiovascular":  { x: 55, y: 47 },
+    "autoimmune":      { x: 57, y: 54 },
+    "metabolic":       { x: 57, y: 61 },
+    "musculoskeletal": { x: 55, y: 68 },
+    "renal":           { x: 53, y: 75 },
+    // Left column — mirror arc, same baselines
+    "neurological":    { x: 9,  y: 40 },
+    "hormonal":        { x: 7,  y: 47 },
+    "gut":             { x: 5,  y: 54 },
+    "skin":            { x: 5,  y: 61 },
+    "respiratory":     { x: 7,  y: 68 },
+    "oral":            { x: 9,  y: 75 },
   };
   const mc = mobileCoords[cat.id];
   if (!mc) return { x: cat.x, y: cat.y, labelX: cat.x, labelY: cat.y };

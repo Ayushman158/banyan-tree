@@ -534,12 +534,12 @@ function App() {
             <span>has a</span>
             <span className="gold-italic">deeper root.</span>
           </h1>
+          <p className="mobile-hero-subtitle">Select a condition to begin exploring.</p>
           <div className="mobile-hero-divider" aria-hidden="true">
             <span className="mobile-hero-divider__line" />
             <span className="mobile-hero-divider__ornament">❧</span>
             <span className="mobile-hero-divider__line" />
           </div>
-          <p className="mobile-hero-subtitle">Select a condition to begin exploring.</p>
         </div>
 
         {/* Ground scrim for the hero statement (canopy phase only) */}
