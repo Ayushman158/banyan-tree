@@ -3836,7 +3836,11 @@ footer a:hover { color: var(--gold-deep); }
     left: var(--mobile-x) !important;
     top: var(--mobile-y) !important;
     transform: var(--mobile-transform, translate(-50%, -50%)) !important;
-    text-align: center !important;
+    /* Uniform capsule width so both columns read as clean, even arcs
+       (icon hard-left, label fills the rest) — matches the reference design */
+    min-width: 112px !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
     max-width: none !important;
     white-space: nowrap !important;
     line-height: 1.2 !important;
