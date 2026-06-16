@@ -1685,8 +1685,8 @@ footer a:hover { color: var(--gold-deep); }
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 25px;
-  height: 25px;
+  width: 22px;
+  height: 22px;
   flex-shrink: 0;
   border-radius: 50%;
   background: radial-gradient(circle at 35% 28%, rgba(255, 252, 244, 0.98), rgba(243, 230, 202, 0.92));
@@ -1718,8 +1718,8 @@ footer a:hover { color: var(--gold-deep); }
   60%, 100% { transform: scale(1.55); opacity: 0; }
 }
 .pill-icon svg {
-  width: 14.5px;
-  height: 14.5px;
+  width: 12px;
+  height: 12px;
 }
 .category-label:hover .pill-icon,
 .category-label.is-hovered .pill-icon,
@@ -2264,15 +2264,15 @@ footer a:hover { color: var(--gold-deep); }
 .category-label {
   font-family: var(--sans) !important;
   font-weight: 600 !important;
-  font-size: 10px !important;
+  font-size: 9px !important;
   letter-spacing: 0.015em !important;
   text-transform: none !important;
   color: var(--deep-forest) !important;
   background: linear-gradient(155deg, rgba(253, 251, 246, 0.97), rgba(246, 239, 225, 0.93)) !important;
   border: 1px solid rgba(200, 169, 107, 0.42) !important;
   border-radius: 99px !important;
-  padding: 4px 17px 4px 4px !important;
-  gap: 9px !important;
+  padding: 3px 14px 3px 3px !important;
+  gap: 7px !important;
   backdrop-filter: blur(12px) saturate(125%) !important;
   -webkit-backdrop-filter: blur(12px) saturate(125%) !important;
   text-shadow: none !important;
@@ -3832,10 +3832,10 @@ footer a:hover { color: var(--gold-deep); }
   .mobile-path  { display: block !important; }
 
   .category-label {
-    font-size: 10px !important;
+    font-size: 9px !important;
     font-weight: 500 !important;
-    padding: 7px 18px !important;
-    gap: 8px !important;
+    padding: 5px 13px !important;
+    gap: 6px !important;
     letter-spacing: 0.02em !important;
     border-radius: 99px !important;
     left: var(--mobile-x) !important;
@@ -3864,12 +3864,12 @@ footer a:hover { color: var(--gold-deep); }
 
   /* Smaller, tighter icon badge for compact mobile pills */
   .pill-icon {
-    width: 14px !important;
-    height: 14px !important;
+    width: 12px !important;
+    height: 12px !important;
   }
   .pill-icon svg {
-    width: 8px !important;
-    height: 8px !important;
+    width: 7px !important;
+    height: 7px !important;
   }
 
   .category-label:active {
