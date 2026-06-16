@@ -3827,10 +3827,10 @@ footer a:hover { color: var(--gold-deep); }
   .mobile-path  { display: block !important; }
 
   .category-label {
-    font-size: 7.5px !important;
+    font-size: 7px !important;
     font-weight: 500 !important;
-    padding: 4px 12px !important;
-    gap: 5px !important;
+    padding: 3.5px 11px !important;
+    gap: 4.5px !important;
     letter-spacing: 0.02em !important;
     border-radius: 99px !important;
     left: var(--mobile-x) !important;
@@ -3838,7 +3838,7 @@ footer a:hover { color: var(--gold-deep); }
     transform: var(--mobile-transform, translate(-50%, -50%)) !important;
     /* Uniform capsule width so both columns read as clean, even arcs
        (icon hard-left, label fills the rest) — matches the reference design */
-    min-width: 112px !important;
+    min-width: 102px !important;
     justify-content: flex-start !important;
     text-align: left !important;
     max-width: none !important;
@@ -3863,12 +3863,12 @@ footer a:hover { color: var(--gold-deep); }
 
   /* Smaller, tighter icon badge for compact mobile pills */
   .pill-icon {
-    width: 9px !important;
-    height: 9px !important;
+    width: 8px !important;
+    height: 8px !important;
   }
   .pill-icon svg {
-    width: 5.5px !important;
-    height: 5.5px !important;
+    width: 5px !important;
+    height: 5px !important;
   }
 
   .category-label:active {
