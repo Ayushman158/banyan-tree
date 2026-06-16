@@ -5,20 +5,26 @@ import { useEffect as _useEffect, useRef as _useRef } from 'react';
 import functionalMedicineImg from './assets/functional-medicine-method.jpg';
 import ayurvedaImg from './assets/ayurveda-method.jpg';
 import beginAtRootBg from './assets/begin-at-root-bg.jpg';
-import { 
-  Microscope, 
-  Droplet, 
-  Shield, 
-  Sparkles, 
-  Compass, 
-  Scale, 
-  Heart, 
+import {
+  Microscope,
+  Droplet,
+  Shield,
+  Sparkles,
+  Compass,
+  Scale,
+  Heart,
   Flame,
   Check,
   X,
   Calendar,
   BookOpen,
-  ArrowRight
+  ArrowRight,
+  ArrowDown,
+  Search,
+  Activity,
+  Orbit,
+  Leaf,
+  Flower2
 } from 'lucide-react';
 
 function useReveal() {
@@ -134,136 +140,95 @@ function StatsStrip() {
 /* ── II — Method ─────────────────────────────────────────────────────────── */
 function Methodology() {
   const ref = useReveal();
+  const fmSteps = [
+    { Icon: Search,    label: "Root Cause Analysis",      desc: "Identify why symptoms exist" },
+    { Icon: Droplet,   label: "Fix Nutrient Deficiencies", desc: "Restore vitamins, minerals, amino acids & cofactors" },
+    { Icon: Activity,  label: "Heal Gut & Liver",          desc: "Improve digestion, absorption & detox capacity" },
+    { Icon: Sparkles,  label: "Enhance Detoxification",    desc: "Activate gentle, safe detox pathways" },
+  ];
+  const aySteps = [
+    { Icon: Compass, label: "Prakriti Analysis",            desc: "Understand your unique constitution" },
+    { Icon: Orbit,   label: "Optimise the Five Elements",   desc: "Balance Earth, Water, Fire, Air & Ether" },
+    { Icon: Scale,   label: "Balance the Doshas",           desc: "Harmonise Vata, Pitta & Kapha" },
+    { Icon: Flame,   label: "Strengthen Digestion (Agni)",  desc: "Prevent toxin buildup, fuel transformation" },
+  ];
   return (
-    <section className="spread method-section" id="method" ref={ref}>
-      {/* Header row */}
-      <div className="method-header-row">
-        <div>
-          <div className="section-tag reveal"><span>II · The Method</span></div>
-          <h2 className="section-h reveal">
-            Science-led.<br/>
-            <em>Traditionally grounded.</em>
-          </h2>
-        </div>
-        <p className="method-intro reveal delay-1">
-          Root-cause healing draws from two complete systems of medicine,
-          each powerful alone, transformative together.
+    <section className="spread method-section method-process" id="method" ref={ref}>
+      <div className="method-process__aura" aria-hidden="true" />
+
+      {/* Header */}
+      <header className="method-process__head">
+        <div className="section-tag reveal"><span>II · The Method</span></div>
+        <h2 className="section-h method-process__title reveal">
+          My approach:<br/><em>Integrative Healing.</em>
+        </h2>
+        <p className="method-process__lede reveal delay-1">
+          Science-led. Traditionally grounded. Root-cause focused.
         </p>
-      </div>
+        <p className="method-process__intro reveal delay-1">
+          I combine modern Functional Medicine with the wisdom of Ayurveda to
+          build personalised healing plans, targeting the root causes of
+          imbalance on the physical, mental, and emotional level.
+        </p>
+      </header>
 
-      {/* Split panel 1 — Functional Medicine + image */}
-      <div className="method-split reveal delay-1">
-        <div className="method-split__text">
-          <div className="pillar__eyebrow">Functional Medicine</div>
-          <h3 className="pillar__title">Fix the physiology first.</h3>
-          <p className="pillar__body">
-            We run comprehensive labs to find what's actually off, not just
-            what's flagged as abnormal. Nutrients, hormones, gut ecology,
-            inflammation markers, detox capacity.
-          </p>
-          <ul className="pillar__list">
-            <li>
-              <span className="pillar__list-icon">
-                <Microscope size={20} />
-              </span>
-              <div className="pillar__list-content">
-                <span className="pillar__list-label">Root Cause Analysis</span>
-                <span className="pillar__list-desc">Identify the underlying drivers, not just presenting symptoms</span>
-              </div>
-            </li>
-            <li>
-              <span className="pillar__list-icon">
-                <Droplet size={20} />
-              </span>
-              <div className="pillar__list-content">
-                <span className="pillar__list-label">Nutrient Restoration</span>
-                <span className="pillar__list-desc">Rebuild vitamins, minerals, amino acids, and cellular cofactors</span>
-              </div>
-            </li>
-            <li>
-              <span className="pillar__list-icon">
-                <Shield size={20} />
-              </span>
-              <div className="pillar__list-content">
-                <span className="pillar__list-label">Gut & Liver Healing</span>
-                <span className="pillar__list-desc">Microbiome balance, absorption, and safe detox pathways</span>
-              </div>
-            </li>
-            <li>
-              <span className="pillar__list-icon">
-                <Sparkles size={20} />
-              </span>
-              <div className="pillar__list-content">
-                <span className="pillar__list-label">Detoxification</span>
-                <span className="pillar__list-desc">Gentle, staged clearance. Not aggressive flushes.</span>
-              </div>
-            </li>
-          </ul>
+      {/* Two-column process with central ampersand */}
+      <div className="method-flow reveal delay-2">
+        {/* Functional Medicine */}
+        <div className="method-flow__col method-flow__col--fm">
+          <div className="method-flow__head">
+            <span className="method-flow__crest"><Leaf size={22} strokeWidth={1.5} /></span>
+            <h3 className="method-flow__name">Functional Medicine</h3>
+            <span className="method-flow__sub">Fix the physiology first</span>
+          </div>
+          <ol className="method-flow__steps">
+            {fmSteps.map(({ Icon, label, desc }, i) => (
+              <li className="method-node" key={label}>
+                <span className="method-node__icon"><Icon size={20} strokeWidth={1.6} /></span>
+                <span className="method-node__body">
+                  <span className="method-node__label">{label}</span>
+                  <span className="method-node__desc">{desc}</span>
+                </span>
+                {i < fmSteps.length - 1 && (
+                  <span className="method-node__link" aria-hidden="true"><ArrowDown size={15} strokeWidth={2} /></span>
+                )}
+              </li>
+            ))}
+          </ol>
         </div>
-        <div className="method-split__image" style={{ overflow: "hidden" }}>
-          <Parallax speed={-0.03} style={{ height: "100%", width: "100%" }}>
-            <img src={functionalMedicineImg} alt="Functional Medicine" loading="lazy" style={{ height: "115%", width: "100%", objectFit: "cover" }} />
-          </Parallax>
-        </div>
-      </div>
 
-      {/* Split panel 2 — image + Ayurveda (reversed) */}
-      <div className="method-split method-split--rev reveal delay-2">
-        <div className="method-split__image" style={{ overflow: "hidden" }}>
-          <Parallax speed={0.03} style={{ height: "100%", width: "100%" }}>
-            <img src={ayurvedaImg} alt="Ayurveda" loading="lazy" style={{ height: "115%", width: "100%", objectFit: "cover" }} />
-          </Parallax>
+        {/* Central connector */}
+        <div className="method-flow__amp" aria-hidden="true">
+          <span className="method-flow__amp-line method-flow__amp-line--t" />
+          <span className="method-flow__amp-mark">&amp;</span>
+          <span className="method-flow__amp-line method-flow__amp-line--b" />
         </div>
-        <div className="method-split__text">
-          <div className="pillar__eyebrow">Ayurveda</div>
-          <h3 className="pillar__title">Restore balance and rhythm.</h3>
-          <p className="pillar__body">
-            Understanding your constitution tells us which environments,
-            foods, and rhythms your body is built to thrive in, and which
-            quietly deplete it.
-          </p>
-          <ul className="pillar__list">
-            <li>
-              <span className="pillar__list-icon">
-                <Compass size={20} />
-              </span>
-              <div className="pillar__list-content">
-                <span className="pillar__list-label">Prakriti Analysis</span>
-                <span className="pillar__list-desc">Understand your unique constitutional blueprint</span>
-              </div>
-            </li>
-            <li>
-              <span className="pillar__list-icon">
-                <Scale size={20} />
-              </span>
-              <div className="pillar__list-content">
-                <span className="pillar__list-label">Elemental Balance</span>
-                <span className="pillar__list-desc">Harmonise Earth, Water, Fire, Air and Ether</span>
-              </div>
-            </li>
-            <li>
-              <span className="pillar__list-icon">
-                <Heart size={20} />
-              </span>
-              <div className="pillar__list-content">
-                <span className="pillar__list-label">Dosha Harmonisation</span>
-                <span className="pillar__list-desc">Stabilise Vata, Pitta and Kapha for lasting vitality</span>
-              </div>
-            </li>
-            <li>
-              <span className="pillar__list-icon">
-                <Flame size={20} />
-              </span>
-              <div className="pillar__list-content">
-                <span className="pillar__list-label">Digestive Fire (Agni)</span>
-                <span className="pillar__list-desc">Strengthen metabolism and prevent toxin accumulation</span>
-              </div>
-            </li>
-          </ul>
+
+        {/* Ayurveda */}
+        <div className="method-flow__col method-flow__col--ay">
+          <div className="method-flow__head">
+            <span className="method-flow__crest"><Flower2 size={22} strokeWidth={1.5} /></span>
+            <h3 className="method-flow__name">Ayurveda</h3>
+            <span className="method-flow__sub">Restore balance &amp; rhythm</span>
+          </div>
+          <ol className="method-flow__steps">
+            {aySteps.map(({ Icon, label, desc }, i) => (
+              <li className="method-node" key={label}>
+                <span className="method-node__icon"><Icon size={20} strokeWidth={1.6} /></span>
+                <span className="method-node__body">
+                  <span className="method-node__label">{label}</span>
+                  <span className="method-node__desc">{desc}</span>
+                </span>
+                {i < aySteps.length - 1 && (
+                  <span className="method-node__link" aria-hidden="true"><ArrowDown size={15} strokeWidth={2} /></span>
+                )}
+              </li>
+            ))}
+          </ol>
         </div>
       </div>
 
-      <p className="method-bridge reveal">
+      <p className="method-process__foot reveal">
         This is not symptom management.<br/>
         <em>This is cellular repair, digestive healing, and lifestyle realignment.</em>
       </p>

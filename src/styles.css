@@ -3269,47 +3269,149 @@ footer a:hover { color: var(--gold-deep); }
 
 .method-section { padding-bottom: 10vh; }
 
-.method-header-row {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 64px; align-items: end;
-  margin-bottom: 72px;
-}
-
-.method-split {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 0; margin-bottom: 4px;
+/* ── II · The Method — Integrative Healing process ──────────────────────────
+   A dark, premium two-column flow (Functional Medicine ↔ Ayurveda) joined by a
+   central ampersand. Stays side-by-side on every viewport because it reads as
+   a single connected process, not two independent lists. */
+section.spread.method-process {
+  position: relative;
+  background: radial-gradient(125% 95% at 50% -5%, #30493a 0%, #213328 52%, #16241c 100%);
+  color: var(--text-primary);
   overflow: hidden;
-  border-radius: 4px;
+  padding-top: 15vh;
+  padding-bottom: 13vh;
+  border-top: none;
 }
-.method-split--rev { }
+.method-process__aura {
+  position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(55% 38% at 50% 10%, rgba(200, 169, 107, 0.12), transparent 70%),
+    radial-gradient(42% 34% at 8% 72%, rgba(80, 101, 78, 0.22), transparent 72%),
+    radial-gradient(42% 34% at 92% 72%, rgba(80, 101, 78, 0.22), transparent 72%);
+}
+.method-process > *:not(.method-process__aura) { position: relative; z-index: 1; }
 
-.method-split__image {
-  position: relative; overflow: hidden;
-  min-height: 480px;
+/* Header */
+.method-process__head { text-align: center; max-width: 780px; margin: 0 auto clamp(48px, 7vw, 80px); }
+.method-process__head .section-tag { justify-content: center; color: var(--gold-soft); margin-bottom: 28px; }
+.method-process__head .section-tag::before { background: var(--gold); }
+.method-process__head .section-tag::after { content: ""; width: 36px; height: 1px; background: var(--gold); }
+.method-process__title { color: var(--text-primary); max-width: none; margin: 0 auto; }
+.method-process__title em { color: var(--gold); font-style: italic; font-weight: 300; }
+.method-process__lede {
+  font-family: var(--serif); font-style: italic;
+  font-size: clamp(18px, 2.4vw, 22px); color: var(--gold-soft);
+  margin: 20px auto 0; letter-spacing: 0.01em;
 }
-.method-split__image img {
-  width: 100%; height: 100%;
-  object-fit: cover; object-position: center;
-  display: block;
-  transition: transform 0.8s var(--ease);
-}
-.method-split:hover .method-split__image img {
-  transform: scale(1.03);
-}
-
-.method-split__text {
-  background: hsla(42, 34%, 93%, 1);
-  padding: 52px 48px;
-  display: flex; flex-direction: column; justify-content: center; gap: 24px;
-}
-.method-split--rev .method-split__text {
-  background: hsla(38, 28%, 90%, 1);
+.method-process__intro {
+  font-family: var(--sans); font-size: 15px; line-height: 1.72;
+  color: var(--text-secondary); margin: 18px auto 0; max-width: 58ch;
 }
 
-/* Ensure pillar content inside split panels renders correctly */
-.method-split .pillar__eyebrow { margin-bottom: 0; }
-.method-split .pillar__title { margin-bottom: 0; }
-.method-split .pillar__body { margin-bottom: 0; }
+/* Two-column flow grid */
+.method-flow {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: stretch;
+  gap: clamp(10px, 3vw, 44px);
+  max-width: 1080px; margin: 0 auto;
+}
+.method-flow__col { display: flex; flex-direction: column; min-width: 0; }
+
+.method-flow__head { text-align: center; margin-bottom: clamp(20px, 3vw, 30px); }
+.method-flow__crest {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 56px; height: 56px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 28%, rgba(248, 233, 200, 0.24), rgba(200, 169, 107, 0.10));
+  border: 1px solid rgba(200, 169, 107, 0.45);
+  color: var(--gold-soft);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  margin-bottom: 16px;
+}
+.method-flow__name {
+  font-family: var(--serif); font-weight: 400;
+  font-size: clamp(17px, 2.3vw, 23px); letter-spacing: 0.05em;
+  color: var(--text-primary); text-transform: uppercase; margin: 0;
+}
+.method-flow__sub {
+  display: block; font-family: var(--sans); font-size: clamp(11px, 1.4vw, 12.5px);
+  letter-spacing: 0.04em; color: var(--gold-soft); opacity: 0.82; margin-top: 7px;
+}
+
+/* Step nodes */
+.method-flow__steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.method-node {
+  position: relative;
+  display: flex; align-items: flex-start; gap: clamp(9px, 1.4vw, 14px);
+  background: linear-gradient(158deg, #faf7f0 0%, #efe6d4 100%);
+  border: 1px solid rgba(200, 169, 107, 0.38);
+  border-radius: 16px;
+  padding: clamp(13px, 1.8vw, 17px) clamp(13px, 1.8vw, 19px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.65);
+  margin-bottom: clamp(26px, 3.4vw, 36px);
+  transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease);
+}
+.method-node:last-child { margin-bottom: 0; }
+.method-node:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.36), inset 0 1px 0 rgba(255, 255, 255, 0.75);
+}
+.method-node__icon {
+  flex: none; width: clamp(32px, 4vw, 40px); height: clamp(32px, 4vw, 40px);
+  border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+  background: radial-gradient(circle at 35% 30%, rgba(80, 101, 78, 0.18), rgba(200, 169, 107, 0.14));
+  border: 1px solid rgba(141, 117, 85, 0.32);
+  color: var(--moss);
+}
+.method-node__icon svg { width: clamp(16px, 2.2vw, 20px); height: auto; }
+.method-node__body { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.method-node__label {
+  font-family: var(--sans); font-weight: 600;
+  font-size: clamp(12.5px, 1.6vw, 14.5px); color: var(--ink); letter-spacing: 0.01em;
+  line-height: 1.25;
+}
+.method-node__desc {
+  font-family: var(--sans); font-size: clamp(10.5px, 1.4vw, 12.5px);
+  line-height: 1.45; color: var(--ink-soft);
+}
+/* Connector arrow between consecutive nodes */
+.method-node__link {
+  position: absolute; left: 50%; bottom: calc(-1 * clamp(26px, 3.4vw, 36px) / 2 - 13px);
+  transform: translateX(-50%);
+  width: 26px; height: 26px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--gold-soft);
+  background: rgba(18, 28, 21, 0.72);
+  border: 1px solid rgba(200, 169, 107, 0.45);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* Central ampersand connector */
+.method-flow__amp {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 14px; padding: clamp(70px, 9vw, 96px) 0 0;
+}
+.method-flow__amp-line {
+  width: 1px; flex: 1; min-height: 48px;
+  background: linear-gradient(to bottom, transparent, rgba(200, 169, 107, 0.55), transparent);
+}
+.method-flow__amp-mark {
+  flex: none;
+  font-family: var(--serif); font-style: italic; font-weight: 400;
+  font-size: clamp(22px, 3vw, 32px); color: var(--gold-deep);
+  width: clamp(44px, 5.5vw, 62px); height: clamp(44px, 5.5vw, 62px); border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: radial-gradient(circle at 35% 28%, #faf7f0, #e7dac1);
+  border: 1px solid rgba(200, 169, 107, 0.6);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.method-process__foot {
+  text-align: center; font-family: var(--serif);
+  font-size: clamp(18px, 2.6vw, 27px); line-height: 1.5;
+  color: var(--text-secondary); margin: clamp(48px, 7vw, 76px) auto 0; max-width: 32ch;
+}
+.method-process__foot em { font-style: italic; color: var(--gold-soft); }
 
 
 
@@ -3320,11 +3422,12 @@ footer a:hover { color: var(--gold-deep); }
   .stats-strip__item:nth-child(2n) { border-right: none; }
   .stats-strip__item:nth-child(odd) { border-right: 1px solid rgba(200, 169, 107, 0.2); }
   .stats-strip__item:nth-child(3), .stats-strip__item:nth-child(4) { border-bottom: none; }
-  .method-header-row { grid-template-columns: 1fr; gap: 20px; margin-bottom: 40px; }
-  .method-split { grid-template-columns: 1fr; }
-  .method-split__image { min-height: 260px; }
-  .method-split--rev .method-split__image { order: -1; }
-  .method-split__text { padding: 32px 24px; }
+  /* Method process stays two-column (it's a single connected flow) but tightens
+     up: smaller gap, compact cards, lighter arrows. */
+  .method-flow { gap: 8px; }
+  .method-flow__amp { padding-top: 64px; }
+  .method-node { gap: 8px; padding: 11px 11px; border-radius: 13px; }
+  .method-node__icon { width: 30px; height: 30px; }
   .wave-in svg, .wave-out svg { height: 50px; }
 }
 
