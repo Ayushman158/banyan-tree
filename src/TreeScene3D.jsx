@@ -1048,20 +1048,6 @@ export default function TreeScene3D({
               >
                 <span>←</span> Back to {activeCatObj?.name || 'Tree'}
               </button>
-              
-              <button 
-                type="button"
-                className={`roots-explore-btn ${connectionsGlowing ? 'is-active' : ''}`}
-                onClick={() => {
-                  setConnectionsGlowing(prev => !prev);
-                  playHoverSound();
-                }}
-                onMouseEnter={playHoverSound}
-                data-hoverable="true"
-              >
-                <span className="btn-glow" />
-                {connectionsGlowing ? 'Hide System Network' : 'Explore the Connections'}
-              </button>
             </motion.div>
           )}
         </AnimatePresence>
