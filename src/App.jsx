@@ -464,6 +464,7 @@ function App() {
               playsInline
               preload="auto"
               fetchPriority="high"
+              poster="/splash-poster.jpg"
             />
             <div className="splash-overlay" />
             <div className="splash-content">

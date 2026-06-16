@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Himanshu Garg — Every symptom has a deeper root</title>
 
-  <!-- Preload splash video during HTML parse so it's ready before React mounts -->
+  <!-- Poster loads in ~200ms; video streams behind it — splash feels instant -->
+  <link rel="preload" as="image" href="/splash-poster.jpg" />
   <link rel="preload" as="video" type="video/mp4" href="/splash.mp4" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
