@@ -3463,12 +3463,15 @@ footer a:hover { color: var(--gold-deep); }
 
   .canopy-bg {
     animation: none !important;
-    /* Keep the sky anchored at the top; ease off the zoom just enough to let a
-       sliver of the water/reflection band reappear at the bottom of the frame */
-    transform: scale(1.04) !important;
-    transform-origin: center top !important;
-    filter: brightness(1.22) !important; /* Brighten the mobile canopy background to match desktop */
-    background-position: 52.5% top !important; /* Shifted slightly to perfectly center the physical tree trunk */
+    /* Zoom in to make the tree fill the frame the way the reference does.
+       Anchor at 52.5% (trunk centre) × 22% (upper-trunk / canopy junction)
+       so the zoom expands outward from the tree's visual heart —
+       trimming sky at the top and horizontal padding at the sides. */
+    transform: scale(1.16) !important;
+    transform-origin: 52.5% 22% !important;
+    filter: brightness(1.15) !important;
+    /* Shift 12% from top to trim the empty sky band and reveal more trunk */
+    background-position: 52.5% 12% !important;
   }
 
   /* Remove heavy blur pseudo-element on mobile for GPU savings */
