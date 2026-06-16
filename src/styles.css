@@ -3827,9 +3827,9 @@ footer a:hover { color: var(--gold-deep); }
   .mobile-path  { display: block !important; }
 
   .category-label {
-    font-size: 8px !important;
+    font-size: 7.5px !important;
     font-weight: 500 !important;
-    padding: 4px 11px !important;
+    padding: 4px 12px !important;
     gap: 5px !important;
     letter-spacing: 0.02em !important;
     border-radius: 99px !important;
@@ -3859,12 +3859,12 @@ footer a:hover { color: var(--gold-deep); }
 
   /* Smaller, tighter icon badge for compact mobile pills */
   .pill-icon {
-    width: 10px !important;
-    height: 10px !important;
+    width: 9px !important;
+    height: 9px !important;
   }
   .pill-icon svg {
-    width: 6px !important;
-    height: 6px !important;
+    width: 5.5px !important;
+    height: 5.5px !important;
   }
 
   .category-label:active {
