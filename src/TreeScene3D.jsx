@@ -57,8 +57,8 @@ const getCategoryCoords = (cat, isMobile) => {
     // Right column — arcs outward from row 1→3, back in by row 6.
     // Musculoskeletal (longest pill) anchors row 2 centred; Cardiovascular
     // fills its old row-5 slot so the right column stays complete.
-    "mental":          { x: 57, y: 40 },
-    "musculoskeletal": { x: 50, y: 47, centered: true },
+    "mental":          { x: 55, y: 40 },
+    "musculoskeletal": { x: 53, y: 47, centered: true },
     "autoimmune":      { x: 60, y: 54 },
     "metabolic":       { x: 60, y: 61 },
     "cardiovascular":  { x: 59, y: 68 },
