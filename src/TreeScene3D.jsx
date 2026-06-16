@@ -49,21 +49,24 @@ const getCategoryCoords = (cat, isMobile) => {
   }
   // Mobile: Spaced and adjusted curve around the canopy
   // Top and bottom rows point outward to avoid middle overlap, middle rows point inward to avoid screen edges
+  // Pills arc around the trunk — top/bottom rows curve inward (closer to trunk),
+  // middle rows spread outward following the branch silhouette.
+  // x = left-edge of pill (translate(0,-50%) is applied), y = vertical centre.
   const mobileCoords = {
-    // Right column — left edge at 54%, y=48–82% (safe on iPhone 15)
-    "mental":          { x: 54, y: 48 },
+    // Right side — arc: inward at top/bottom, outward at middle
+    "mental":          { x: 52, y: 48 },   // top — closest to trunk
     "cardiovascular":  { x: 54, y: 55 },
-    "autoimmune":      { x: 54, y: 62 },
-    "metabolic":       { x: 54, y: 69 },
-    "musculoskeletal": { x: 54, y: 76 },
-    "renal":           { x: 54, y: 82 },
-    // Left column — left edge at 7%, y=48–82% (safe on iPhone 15)
-    "neurological":    { x: 7,  y: 48 },
+    "autoimmune":      { x: 57, y: 62 },   // middle — widest point
+    "metabolic":       { x: 55, y: 69 },
+    "musculoskeletal": { x: 52, y: 76 },
+    "renal":           { x: 49, y: 82 },   // bottom — back toward trunk
+    // Left side — mirror arc: inward at top/bottom, outward at middle
+    "neurological":    { x: 11, y: 48 },   // top — closest to trunk
     "hormonal":        { x: 7,  y: 55 },
-    "gut":             { x: 7,  y: 62 },
-    "skin":            { x: 7,  y: 69 },
-    "respiratory":     { x: 7,  y: 76 },
-    "oral":            { x: 7,  y: 82 },
+    "gut":             { x: 4,  y: 62 },   // middle — widest point
+    "skin":            { x: 6,  y: 69 },
+    "respiratory":     { x: 9,  y: 76 },
+    "oral":            { x: 12, y: 82 },   // bottom — back toward trunk
   };
   const mc = mobileCoords[cat.id];
   if (!mc) return { x: cat.x, y: cat.y, labelX: cat.x, labelY: cat.y };
