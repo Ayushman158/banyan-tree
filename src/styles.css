@@ -3325,14 +3325,18 @@ footer a:hover { color: var(--gold-deep); }
 
   .splash-video {
     object-fit: cover;
-    object-position: 58% 45%;
+    /* Widen the element to 178vw (centred via left:-39vw) so only ~46% of the
+       landscape video frame is cropped instead of 74%. This replicates the
+       desktop-mode composition the client approved: tree visible on the right,
+       sky left, water reflection below. */
+    width: 178vw;
+    min-width: unset;
+    height: 100%;
+    min-height: 100%;
     position: absolute;
     top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    min-width: 100%;
-    min-height: 100%;
+    left: -39vw;            /* (178-100)/2 = 39vw to keep it centred */
+    object-position: 54% 45%;
     transform: none;
     z-index: 1;
     -webkit-mask-image: linear-gradient(to bottom, black 0%, black 80%, transparent 100%);
