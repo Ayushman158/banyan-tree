@@ -57,19 +57,19 @@ const getCategoryCoords = (cat, isMobile) => {
     // Right column — arcs outward from row 1→3, back in by row 6.
     // Musculoskeletal (longest pill) anchors row 2 centred; Cardiovascular
     // fills its old row-5 slot so the right column stays complete.
-    "mental":          { x: 57, y: 38 },
-    "cardiovascular":  { x: 62, y: 44 },
-    "autoimmune":      { x: 65, y: 50 },
-    "metabolic":       { x: 65, y: 56 },
-    "musculoskeletal": { x: 62, y: 62 },
-    "renal":           { x: 57, y: 68 },
+    "mental":          { x: 57, y: 44 },
+    "cardiovascular":  { x: 62, y: 50 },
+    "autoimmune":      { x: 65, y: 56 },
+    "metabolic":       { x: 65, y: 62 },
+    "musculoskeletal": { x: 62, y: 68 },
+    "renal":           { x: 57, y: 74 },
     // Left column — mirror arc, min x=4 to keep margin from bleed
-    "neurological":    { x: 9,  y: 38 },
-    "hormonal":        { x: 5,  y: 44 },
-    "gut":             { x: 4,  y: 50 },
-    "skin":            { x: 4,  y: 56 },
-    "respiratory":     { x: 5,  y: 62 },
-    "oral":            { x: 9,  y: 68 },
+    "neurological":    { x: 9,  y: 44 },
+    "hormonal":        { x: 5,  y: 50 },
+    "gut":             { x: 4,  y: 56 },
+    "skin":            { x: 4,  y: 62 },
+    "respiratory":     { x: 5,  y: 68 },
+    "oral":            { x: 9,  y: 74 },
   };
   const mc = mobileCoords[cat.id];
   if (!mc) return { x: cat.x, y: cat.y, labelX: cat.x, labelY: cat.y };

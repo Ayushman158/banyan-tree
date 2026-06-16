@@ -3673,11 +3673,12 @@ footer a:hover { color: var(--gold-deep); }
     top: 0;
     left: 0;
     right: 0;
-    height: 52%;
+    /* Only covers the hero text zone — gone well before the pills start at ~44% */
+    height: 38%;
     background: linear-gradient(to bottom,
-      rgba(8, 18, 14, 0.82) 0%,
-      rgba(8, 18, 14, 0.68) 40%,
-      rgba(8, 18, 14, 0.32) 72%,
+      rgba(8, 18, 14, 0.78) 0%,
+      rgba(8, 18, 14, 0.60) 45%,
+      rgba(8, 18, 14, 0.18) 78%,
       transparent 100%);
     z-index: 10;
     pointer-events: none;
@@ -3690,7 +3691,7 @@ footer a:hover { color: var(--gold-deep); }
     align-items: center;
     text-align: center;
     position: absolute;
-    top: calc(84px + env(safe-area-inset-top));
+    top: calc(72px + env(safe-area-inset-top));
     /* Optically centred on the trunk (bg sits at 52.5%), not the viewport */
     left: 52.5%;
     transform: translateX(-50%);
