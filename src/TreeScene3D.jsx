@@ -54,20 +54,22 @@ const getCategoryCoords = (cat, isMobile) => {
   // screenshot: y=46 rendered at ~56%, so y=40 → ~50% visible, step of 7.
   // x = left-edge (translate(0,-50%) applied). Subtle arc: wider at middle.
   const mobileCoords = {
-    // Right column — uniform left edge at 57% (~224px), clean margin from trunk
+    // Right column — arcs outward from row 1→3, back in by row 6.
+    // Musculoskeletal (longest pill) anchors row 2 centred; Cardiovascular
+    // fills its old row-5 slot so the right column stays complete.
     "mental":          { x: 57, y: 40 },
-    "cardiovascular":  { x: 57, y: 47 },
-    "autoimmune":      { x: 57, y: 54 },
-    "metabolic":       { x: 57, y: 61 },
-    "musculoskeletal": { x: 50, y: 68, centered: true },
-    "renal":           { x: 57, y: 75 },
-    // Left column — uniform left edge at 6% (~24px), clean margin from screen edge
-    "neurological":    { x: 6,  y: 40 },
-    "hormonal":        { x: 6,  y: 47 },
-    "gut":             { x: 6,  y: 54 },
-    "skin":            { x: 6,  y: 61 },
-    "respiratory":     { x: 6,  y: 68 },
-    "oral":            { x: 6,  y: 75 },
+    "musculoskeletal": { x: 50, y: 47, centered: true },
+    "autoimmune":      { x: 59, y: 54 },
+    "metabolic":       { x: 59, y: 61 },
+    "cardiovascular":  { x: 57, y: 68 },
+    "renal":           { x: 56, y: 75 },
+    // Left column — matching arc, tapers in at top & bottom rows
+    "neurological":    { x: 7,  y: 40 },
+    "hormonal":        { x: 5,  y: 47 },
+    "gut":             { x: 4,  y: 54 },
+    "skin":            { x: 4,  y: 61 },
+    "respiratory":     { x: 5,  y: 68 },
+    "oral":            { x: 7,  y: 75 },
   };
   const mc = mobileCoords[cat.id];
   if (!mc) return { x: cat.x, y: cat.y, labelX: cat.x, labelY: cat.y };
