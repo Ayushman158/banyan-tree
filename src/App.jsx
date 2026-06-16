@@ -531,8 +531,15 @@ function App() {
           <span className="mobile-hero-eyebrow">An atlas of root cause healing</span>
           <h1 className="mobile-hero-title">
             <span>Every symptom</span>
-            <span>has a <span className="gold-italic">deeper root.</span></span>
+            <span>has a</span>
+            <span className="gold-italic">deeper root.</span>
           </h1>
+          <div className="mobile-hero-divider" aria-hidden="true">
+            <span className="mobile-hero-divider__line" />
+            <span className="mobile-hero-divider__ornament">❧</span>
+            <span className="mobile-hero-divider__line" />
+          </div>
+          <p className="mobile-hero-subtitle">Select a condition to begin exploring.</p>
         </div>
 
         {/* Ground scrim for the hero statement (canopy phase only) */}

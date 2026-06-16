@@ -51,19 +51,20 @@ const getCategoryCoords = (cat, isMobile) => {
   // Top and bottom rows point outward to avoid middle overlap, middle rows point inward to avoid screen edges
   const mobileCoords = {
     // Right column - scattered around the branch line for an organic feel
-    "mental":          { x: 68, y: 26 },
-    "autoimmune":      { x: 60, y: 45 },
-    "cardiovascular":  { x: 74, y: 36 },
-    "musculoskeletal": { x: 62, y: 60 },
-    "metabolic":       { x: 70, y: 52 },
-    "renal":           { x: 55, y: 68 },
-    // Left column - scattered around the branch line for an organic feel
-    "neurological":    { x: 32, y: 27 },
-    "hormonal":        { x: 40, y: 38 },
-    "gut":             { x: 30, y: 48 },
-    "respiratory":     { x: 38, y: 58 },
-    "skin":            { x: 30, y: 53 },
-    "oral":            { x: 44, y: 68 },
+    // Right column — evenly spaced, flanking right side of trunk
+    "mental":          { x: 73, y: 47 },
+    "cardiovascular":  { x: 73, y: 56 },
+    "autoimmune":      { x: 73, y: 65 },
+    "metabolic":       { x: 73, y: 73 },
+    "musculoskeletal": { x: 73, y: 81 },
+    "renal":           { x: 73, y: 89 },
+    // Left column — evenly spaced, flanking left side of trunk
+    "neurological":    { x: 27, y: 47 },
+    "hormonal":        { x: 27, y: 56 },
+    "gut":             { x: 27, y: 65 },
+    "skin":            { x: 27, y: 73 },
+    "respiratory":     { x: 27, y: 81 },
+    "oral":            { x: 27, y: 89 },
   };
   const mc = mobileCoords[cat.id];
   if (!mc) return { x: cat.x, y: cat.y, labelX: cat.x, labelY: cat.y };
