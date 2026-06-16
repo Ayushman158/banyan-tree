@@ -614,6 +614,14 @@ function App() {
           <span className="soil-story__path soil-story__path--three" />
         </div>
 
+        {/* Underground: bottom-right healing pathways */}
+        <div className={`underground-cta ${(phase === 'roots' || phase === 'detail') && rootsReady ? 'is-visible' : ''}`}>
+          <button className="btn btn--ghost underground-cta__btn" onClick={() => goToSection('philosophy')} data-hoverable="true">
+            View Healing Pathways
+            <span className="underground-cta__arrow">→</span>
+          </button>
+        </div>
+
       </section>
 
 

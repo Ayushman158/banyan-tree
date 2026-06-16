@@ -699,6 +699,34 @@ body {
 }
 .underground-scroll.is-visible { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+.underground-cta {
+  position: absolute; bottom: 36px; right: 36px; z-index: 26;
+  opacity: 0; pointer-events: none;
+  transform: translateY(8px);
+  transition: opacity 0.8s var(--ease) 0.7s, transform 0.8s var(--ease) 0.7s;
+}
+.underground-cta.is-visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.underground-cta__btn {
+  background: rgba(31, 56, 40, 0.92) !important;
+  border: 1px solid rgba(200, 169, 107, 0.3) !important;
+  border-radius: 99px !important;
+  color: var(--gold-soft) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  display: flex; align-items: center; gap: 10px;
+  box-shadow: 0 8px 32px rgba(31, 56, 40, 0.35) !important;
+}
+.underground-cta__btn:hover {
+  background: rgba(200, 169, 107, 0.28) !important;
+  border-color: var(--gold) !important;
+  color: #fffbdf !important;
+  box-shadow: 0 0 15px rgba(200, 169, 107, 0.3), 0 8px 32px rgba(31, 56, 40, 0.35) !important;
+}
+.underground-cta__arrow {
+  font-size: 14px; opacity: 0.9;
+  transition: transform 0.3s var(--ease);
+}
+.underground-cta__btn:hover .underground-cta__arrow { transform: translateX(4px); opacity: 1; }
 
 .soil-story {
   position: absolute; inset: 0; z-index: 7; pointer-events: none;
@@ -1358,7 +1386,7 @@ footer a:hover { color: var(--gold-deep); }
   .panel-meta { grid-template-columns: 1fr; gap: 16px; }
   .ol-cat__name { font-size: 13px; }
   .underground-insight { bottom: 20px; left: 16px; max-width: 170px; font-size: 12px; padding: 10px 14px; }
-
+  .underground-cta { bottom: 20px; right: 16px; }
   .underground-scroll { display: none; }
   .ol-root__name { font-size: 13px; }
   .ol-root__subtitle { font-size: 8px; letter-spacing: 0.28em; }
@@ -4056,6 +4084,34 @@ footer a:hover { color: var(--gold-deep); }
   /* ─── STAGE 3: UNDERGROUND INSIGHT ─────────────────────────────────── */
   .underground-insight {
     display: none !important; /* Hide to save vertical space on mobile Stage 3 */
+  }
+
+  /* ─── STAGE 3: UNDERGROUND CTA ──────────────────────────────────────── */
+  .underground-cta {
+    position: fixed !important;
+    left: 16px !important;
+    right: 16px !important;
+    bottom: calc(14px + env(safe-area-inset-bottom, 0px)) !important;
+    width: auto !important;
+    z-index: 45 !important;
+    display: flex !important;
+    justify-content: center !important;
+  }
+
+  .underground-cta__btn {
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 14px 24px !important;
+    font-size: 10px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.14em !important;
+    border-radius: 99px !important;
+    background: rgba(31, 56, 40, 0.92) !important;
+    border: 1px solid rgba(200, 169, 107, 0.3) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    backdrop-filter: blur(12px) !important;
+    box-shadow: 0 8px 32px rgba(31, 56, 40, 0.35) !important;
+    color: var(--gold-soft) !important;
   }
 
   .root-node-subtitle {
