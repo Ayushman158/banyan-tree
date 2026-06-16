@@ -3690,7 +3690,7 @@ footer a:hover { color: var(--gold-deep); }
     align-items: center;
     text-align: center;
     position: absolute;
-    top: calc(30px + env(safe-area-inset-top));
+    top: calc(44px + env(safe-area-inset-top));
     /* Optically centred on the trunk (bg sits at 52.5%), not the viewport */
     left: 52.5%;
     transform: translateX(-50%);

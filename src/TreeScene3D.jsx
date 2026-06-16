@@ -54,20 +54,22 @@ const getCategoryCoords = (cat, isMobile) => {
   // screenshot: y=46 rendered at ~56%, so y=40 → ~50% visible, step of 7.
   // x = left-edge (translate(0,-50%) applied). Subtle arc: wider at middle.
   const mobileCoords = {
-    // Right column — left edges sit just past trunk centre (52.5%)
-    "mental":          { x: 53, y: 40 },
-    "cardiovascular":  { x: 55, y: 47 },
-    "autoimmune":      { x: 57, y: 54 },
-    "metabolic":       { x: 57, y: 61 },
-    "musculoskeletal": { x: 55, y: 68 },
-    "renal":           { x: 53, y: 75 },
-    // Left column — mirror arc, same baselines
-    "neurological":    { x: 9,  y: 40 },
-    "hormonal":        { x: 7,  y: 47 },
-    "gut":             { x: 5,  y: 54 },
-    "skin":            { x: 5,  y: 61 },
-    "respiratory":     { x: 7,  y: 68 },
-    "oral":            { x: 9,  y: 75 },
+    // Right column — left edges pushed out so the trunk (52.5%) gets an even
+    // channel on both sides; columns bulge outward at the centre rows for a
+    // gentle arc that mirrors the canopy silhouette.
+    "mental":          { x: 57, y: 40 },
+    "cardiovascular":  { x: 59, y: 47 },
+    "autoimmune":      { x: 61, y: 54 },
+    "metabolic":       { x: 61, y: 61 },
+    "musculoskeletal": { x: 59, y: 68 },
+    "renal":           { x: 57, y: 75 },
+    // Left column — mirror arc, pulled outward to match the channel width
+    "neurological":    { x: 7,  y: 40 },
+    "hormonal":        { x: 5,  y: 47 },
+    "gut":             { x: 3,  y: 54 },
+    "skin":            { x: 3,  y: 61 },
+    "respiratory":     { x: 5,  y: 68 },
+    "oral":            { x: 7,  y: 75 },
   };
   const mc = mobileCoords[cat.id];
   if (!mc) return { x: cat.x, y: cat.y, labelX: cat.x, labelY: cat.y };
