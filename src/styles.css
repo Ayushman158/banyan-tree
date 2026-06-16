@@ -3362,9 +3362,10 @@ footer a:hover { color: var(--gold-deep); }
   .splash-overlay {
     background: linear-gradient(
       to bottom,
-      rgba(0, 0, 0, 0.04) 0%,
-      rgba(0, 0, 0, 0.04) 40%,
-      rgba(0, 0, 0, 0.72) 78%,
+      rgba(0, 0, 0, 0.18) 0%,
+      rgba(0, 0, 0, 0.32) 30%,
+      rgba(0, 0, 0, 0.48) 55%,
+      rgba(0, 0, 0, 0.75) 78%,
       rgba(0, 0, 0, 0.95) 100%
     ) !important;
   }
@@ -3378,14 +3379,14 @@ footer a:hover { color: var(--gold-deep); }
   }
 
   .splash-title {
-    text-shadow: 0 4px 32px rgba(0, 0, 0, 0.95), 0 2px 8px rgba(0, 0, 0, 0.8);
+    text-shadow: 0 0 40px rgba(0, 0, 0, 0.9), 0 4px 32px rgba(0, 0, 0, 0.98), 0 2px 8px rgba(0, 0, 0, 0.9);
     color: #FBF1D4;
   }
 
   .splash-tagline {
     font-size: 16px;
-    color: rgba(252, 251, 247, 0.96);
-    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.95), 0 1px 6px rgba(0, 0, 0, 0.8);
+    color: rgba(252, 251, 247, 0.98);
+    text-shadow: 0 0 24px rgba(0, 0, 0, 0.9), 0 2px 20px rgba(0, 0, 0, 0.98), 0 1px 6px rgba(0, 0, 0, 0.9);
     margin-bottom: 40px;
   }
 

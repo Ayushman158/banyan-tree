@@ -11,7 +11,7 @@ import { initSoundscape } from './sound.js';
 // code-split them out of the initial bundle.
 const SoilJournal = lazy(() => import('./SoilJournal.jsx'));
 const SoilProfile = lazy(() => import('./SoilProfile.jsx'));
-import splashVideo from './assets/kling_20260603_作品__4501_0.mp4';
+const splashVideo = '/splash.mp4';
 
 /* ---------- Subtle drifting dust motes ---------- */
 function Particles({ count = 28 }) {
@@ -451,6 +451,7 @@ function App() {
                 loop
                 muted
                 playsInline
+                preload="auto"
                 aria-hidden="true"
               />
             )}
@@ -461,6 +462,8 @@ function App() {
               loop
               muted
               playsInline
+              preload="auto"
+              fetchPriority="high"
             />
             <div className="splash-overlay" />
             <div className="splash-content">
