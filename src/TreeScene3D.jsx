@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Icon } from '@iconify/react';
 import { BanyanData } from './data.js';
 import { playHoverSound } from './sound.js';
 import gsap from 'gsap';
@@ -11,20 +12,20 @@ import rootsImg from './assets/roots hd.jpg';
 // Left branch: 20-45%x, Right branch: 55-80%x. Canopy top: ~10%y, trunk: ~70%y.
 // Labels on left-branch nodes point LEFT (align:'left'), right-branch nodes point RIGHT.
 const CATEGORIES = [
-  // Right side of canopy (pushed inwards)
-  { id: "mental", name: "Mental Health", x: 58, y: 20, labelX: 64, labelY: 20, align: "left" },
-  { id: "autoimmune", name: "Autoimmune\u00A0& Inflammatory", mobileName: "Autoimmune", x: 56, y: 28, labelX: 62, labelY: 28, align: "left" },
-  { id: "cardiovascular", name: "Cardiovascular", x: 54, y: 40, labelX: 60, labelY: 40, align: "left" },
-  { id: "musculoskeletal", name: "Musculoskeletal", x: 53, y: 52, labelX: 59, labelY: 52, align: "left" },
-  { id: "metabolic", name: "Lifestyle\u00A0/ Metabolic", mobileName: "Metabolic", x: 55, y: 64, labelX: 61, labelY: 64, align: "left" },
-  { id: "renal", name: "Renal\u00A0& Urinary", mobileName: "Renal", x: 58, y: 75, labelX: 64, labelY: 75, align: "left" },
-  // Left side of canopy (pushed inwards to avoid hero text)
-  { id: "neurological", name: "Neurological", x: 42, y: 20, labelX: 42, labelY: 20, align: "right" },
-  { id: "hormonal", name: "Hormonal\u00A0& Endocrine", mobileName: "Hormonal", x: 44, y: 28, labelX: 44, labelY: 28, align: "right" },
-  { id: "gut", name: "Gut\u00A0& Digestive Health", mobileName: "Gut Health", x: 46, y: 40, labelX: 46, labelY: 40, align: "right" },
-  { id: "respiratory", name: "Respiratory\u00A0& ENT", mobileName: "Respiratory", x: 47, y: 52, labelX: 47, labelY: 52, align: "right" },
-  { id: "skin", name: "Skin\u00A0& Hair", x: 45, y: 64, labelX: 45, labelY: 64, align: "right" },
-  { id: "oral", name: "Oral\u00A0& Dental Health", mobileName: "Oral Health", x: 42, y: 75, labelX: 42, labelY: 75, align: "right" },
+  // Right side of canopy (pushed inwards, scattered around the branch line for a more organic feel)
+  { id: "mental", name: "Mental Health", x: 63, y: 13, labelX: 69, labelY: 13, align: "left" },
+  { id: "autoimmune", name: "Autoimmune\u00A0& Inflammatory", mobileName: "Autoimmune", x: 49, y: 26, labelX: 55, labelY: 26, align: "left" },
+  { id: "cardiovascular", name: "Cardiovascular", x: 64, y: 34, labelX: 70, labelY: 34, align: "left" },
+  { id: "musculoskeletal", name: "Musculoskeletal", x: 60, y: 45, labelX: 66, labelY: 45, align: "left" },
+  { id: "metabolic", name: "Lifestyle\u00A0/ Metabolic", mobileName: "Metabolic", x: 52, y: 58, labelX: 58, labelY: 58, align: "left" },
+  { id: "renal", name: "Renal\u00A0& Urinary", mobileName: "Renal", x: 50, y: 80, labelX: 56, labelY: 80, align: "left" },
+  // Left side of canopy (pushed inwards to avoid hero text, scattered for an organic feel)
+  { id: "neurological", name: "Neurological", x: 37, y: 24, labelX: 37, labelY: 24, align: "right" },
+  { id: "hormonal", name: "Hormonal\u00A0& Endocrine", mobileName: "Hormonal", x: 48, y: 15, labelX: 48, labelY: 15, align: "right" },
+  { id: "gut", name: "Gut\u00A0& Digestive Health", mobileName: "Gut Health", x: 38, y: 38, labelX: 38, labelY: 38, align: "right" },
+  { id: "respiratory", name: "Respiratory\u00A0& ENT", mobileName: "Respiratory", x: 40, y: 50, labelX: 40, labelY: 50, align: "right" },
+  { id: "skin", name: "Skin\u00A0& Hair", x: 46, y: 63, labelX: 46, labelY: 63, align: "right" },
+  { id: "oral", name: "Oral\u00A0& Dental Health", mobileName: "Oral Health", x: 44, y: 75, labelX: 44, labelY: 75, align: "right" },
 ];
 
 // Coordinate configuration for the roots cause nodes
@@ -49,31 +50,31 @@ const getCategoryCoords = (cat, isMobile) => {
   // Mobile: Spaced and adjusted curve around the canopy
   // Top and bottom rows point outward to avoid middle overlap, middle rows point inward to avoid screen edges
   const mobileCoords = {
-    // Right column - aligned with canopy/trunk structure
-    "mental":          { x: 62, y: 32 },
-    "autoimmune":      { x: 66, y: 40 },
-    "cardiovascular":  { x: 70, y: 48 },
-    "musculoskeletal": { x: 68, y: 56 },
-    "metabolic":       { x: 64, y: 64 },
-    "renal":           { x: 60, y: 72 },
-    // Left column - aligned with canopy/trunk structure
-    "neurological":    { x: 38, y: 32 },
-    "hormonal":        { x: 34, y: 40 },
-    "gut":             { x: 30, y: 48 },
-    "respiratory":     { x: 32, y: 56 },
-    "skin":            { x: 36, y: 64 },
-    "oral":            { x: 40, y: 72 },
+    // Right column - scattered around the branch line for an organic feel
+    "mental":          { x: 68, y: 26 },
+    "autoimmune":      { x: 60, y: 48 },
+    "cardiovascular":  { x: 74, y: 38 },
+    "musculoskeletal": { x: 62, y: 66 },
+    "metabolic":       { x: 70, y: 56 },
+    "renal":           { x: 55, y: 75 },
+    // Left column - scattered around the branch line for an organic feel
+    "neurological":    { x: 32, y: 28 },
+    "hormonal":        { x: 40, y: 40 },
+    "gut":             { x: 30, y: 52 },
+    "respiratory":     { x: 38, y: 64 },
+    "skin":            { x: 30, y: 58 },
+    "oral":            { x: 44, y: 75 },
   };
   const mc = mobileCoords[cat.id];
   if (!mc) return { x: cat.x, y: cat.y, labelX: cat.x, labelY: cat.y };
   return { x: mc.x, y: mc.y, labelX: mc.x, labelY: mc.y };
 };
 
-// On mobile: Alternate conditions tightly around the trunk to prevent label overflow
+// On mobile: two balanced columns flanking the trunk. Pills are centred on these
+// anchors (nodes removed), so the columns sit well clear of the centre.
 const getMobileConditionCoords = (idx, total) => {
-  // Mobile tree trunk is centered. Place dots right on the edge of the trunk (42 and 58)
-  const x = total <= 1 ? 50 : (idx % 2 === 0 ? 42 : 58);
-  
+  const x = total <= 1 ? 50 : (idx % 2 === 0 ? 26 : 74);
+
   // Y coordinates cascade from 32% to 75% to avoid top header and bottom UI
   const yPad = 32;
   const yRange = 43;
@@ -83,40 +84,24 @@ const getMobileConditionCoords = (idx, total) => {
 };
 
 const getConditionLabelStyle = (x, y, isMobile) => {
-  const align = x < 50 ? 'right' : 'left';
-  const desktopTransform = align === 'left' ? 'translate(14px, -50%)' : 'translate(-100%, -50%) translate(-14px, 0)';
-  const desktopTextAlign = align === 'left' ? 'left' : 'right';
-
+  // Circular nodes removed — each pill is centered directly on its anchor point
+  // with its text centre-aligned for a cleaner, more premium balance.
   if (!isMobile) {
     return {
       left: `${x}%`,
       top: `${y}%`,
-      textAlign: desktopTextAlign,
-      transform: desktopTransform
+      textAlign: 'center',
+      transform: 'translate(-50%, -50%)'
     };
   }
-  
-  // Mobile: Alternate text alignment (left/right) to utilize empty side space
-  let transform = 'translate(-50%, 0)';
-  let textAlign = 'center';
-  let leftPos = `${x}%`;
-  
-  if (x < 50) {
-    // Left side of trunk, label points to the left edge
-    transform = 'translate(-100%, -50%) translate(-12px, 0)';
-    textAlign = 'right';
-  } else {
-    // Right side of trunk, label points to the right edge
-    transform = 'translate(12px, -50%)';
-    textAlign = 'left';
-  }
-  
+
+  const transform = 'translate(-50%, -50%)';
   return {
-    left: leftPos,
+    left: `${x}%`,
     top: `${y}%`,
-    transform: transform,
+    transform,
     '--mobile-transform': transform,
-    textAlign: textAlign,
+    textAlign: 'center',
     maxWidth: '120px',
     whiteSpace: 'normal',
     lineHeight: '1.25'
@@ -130,20 +115,20 @@ const getRootCoords = (id, layout, isMobile) => {
   // Mobile: 6 on left, 5 on right side-by-side layout
   // Nodes placed at x: 12 and x: 88, with labels extending inwards
   const mobilePositions = {
-    // Left Column
-    "gut-dysfunction":      { x: 12, y: 35 },
-    "poor-sleep":           { x: 12, y: 43 },
-    "hidden-infections":    { x: 12, y: 51 },
-    "mitochondrial-dysfunction": { x: 12, y: 59 },
-    "dosha-imbalance":      { x: 12, y: 67 },
-    "poor-detoxification":  { x: 12, y: 75 },
-    
+    // Left Column (pills are centred on the anchor, so columns sit inset from the edge)
+    "gut-dysfunction":      { x: 27, y: 35 },
+    "poor-sleep":           { x: 27, y: 43 },
+    "hidden-infections":    { x: 27, y: 51 },
+    "mitochondrial-dysfunction": { x: 27, y: 59 },
+    "dosha-imbalance":      { x: 27, y: 67 },
+    "poor-detoxification":  { x: 27, y: 75 },
+
     // Right Column
-    "hormonal-imbalance":   { x: 88, y: 38 },
-    "environmental-toxins": { x: 88, y: 47 },
-    "nutrients-deficiency": { x: 88, y: 56 },
-    "chronic-stress":       { x: 88, y: 65 },
-    "inflammation":         { x: 88, y: 74 },
+    "hormonal-imbalance":   { x: 73, y: 38 },
+    "environmental-toxins": { x: 73, y: 47 },
+    "nutrients-deficiency": { x: 73, y: 56 },
+    "chronic-stress":       { x: 73, y: 65 },
+    "inflammation":         { x: 73, y: 74 },
   };
   const pos = mobilePositions[id];
   if (!pos) return layout;
@@ -151,63 +136,20 @@ const getRootCoords = (id, layout, isMobile) => {
 };
 
 const getRootLabelStyle = (id, layout, isMobile) => {
-  const isRightSide = layout.side === 'right';
-  const isLeftSide = layout.side === 'left';
-  const systemicIndex = ["gut-dysfunction", "environmental-toxins", "nutrients-deficiency", "hormonal-imbalance", "mitochondrial-dysfunction", "dosha-imbalance"].indexOf(id);
-  const isEven = systemicIndex % 2 === 0;
-  
+  // Circular nodes removed — each root pill is centred directly on its anchor
+  // point with centre-aligned text, for a balanced, premium layout.
   if (!isMobile) {
-    let labelTransform;
-    let left;
-    let textAlign;
-
-    if (isRightSide) {
-      labelTransform = 'translate(0%, -50%)';
-      left = '20px';
-      textAlign = 'left';
-    } else if (isLeftSide) {
-      labelTransform = 'translate(-100%, -50%)';
-      left = '-20px';
-      textAlign = 'right';
-    } else {
-      labelTransform = isEven ? 'translate(-50%, 15px)' : 'translate(-50%, -48px)';
-      left = '0px';
-      textAlign = 'center';
-    }
-
     return {
-      left,
-      transform: labelTransform,
-      textAlign,
+      left: '0px',
+      transform: 'translate(-50%, -50%)',
+      textAlign: 'center',
     };
   }
 
-  const coords = getRootCoords(id, layout, true);
-  const x = coords.x;
-  
-  let transform, textAlign, left;
-  
-  if (x <= 20) {
-    // Left column: label sits immediately to the right of the dot, centered vertically
-    transform = 'translate(16px, -50%)';
-    textAlign = 'left';
-    left = '0%';
-  } else if (x >= 80) {
-    // Right column: label sits immediately to the left of the dot, centered vertically
-    transform = 'translate(calc(-100% - 16px), -50%)';
-    textAlign = 'right';
-    left = '100%';
-  } else {
-    // Center fallback
-    transform = 'translate(-50%, calc(-100% - 10px))';
-    textAlign = 'center';
-    left = '50%';
-  }
-
   return {
-    left,
-    transform,
-    textAlign,
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    textAlign: 'center',
     width: '120px',
     maxWidth: '120px',
   };
@@ -797,7 +739,7 @@ export default function TreeScene3D({
                 >
                   {BanyanData.categories[resolvedClickIdx]?.icon && (
                     <span className="pill-icon">
-                      <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" dangerouslySetInnerHTML={{ __html: BanyanData.categories[resolvedClickIdx].icon }} />
+                      <Icon icon={BanyanData.categories[resolvedClickIdx].icon} width={15} height={15} />
                     </span>
                   )}
                   {isMobile ? (cat.mobileName || cat.name) : cat.name}
@@ -831,14 +773,20 @@ export default function TreeScene3D({
 
           {activeCatObj?.conditions?.map((cond, idx) => {
             const total = activeCatObj.conditions.length;
-            // Desktop: use organic path-based positions
-            const pathIdx = idx % 7;
-            const count = Math.ceil(total / 7);
-            const k = Math.floor(idx / 7);
-            const waveY = (pathIdx % 2 === 0) ? -8 : 8;
-            const desktopY = 20 + 60 * (k + 0.5) / count + waveY;
-            const desktopX = getXForPath(pathIdx, desktopY);
-            
+            // Desktop: a centred "constellation" — rows are evenly spread across
+            // the width and stacked with generous vertical spacing, so pills never
+            // overlap regardless of how many conditions a category has. A small
+            // deterministic jitter keeps it feeling organic rather than gridded.
+            const cols = total <= 9 ? 3 : 4;
+            const rows = Math.ceil(total / cols);
+            const row = Math.floor(idx / cols);
+            const itemsInRow = Math.min(cols, total - row * cols);
+            const colInRow = idx - row * cols;
+            const jitterX = (((idx * 37) % 7) - 3) * 0.5; // ±1.5%
+            const jitterY = (((idx * 53) % 5) - 2) * 1.1; // ±2.2%
+            const desktopX = 19 + (colInRow + 0.5) * (62 / itemsInRow) + jitterX;
+            const desktopY = 15 + (row + 0.5) * (70 / rows) + jitterY;
+
             // Mobile: use evenly spaced grid
             const mobileCoords = getMobileConditionCoords(idx, total);
             const x = isMobile ? mobileCoords.x : desktopX;

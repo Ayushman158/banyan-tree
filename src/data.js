@@ -152,7 +152,7 @@ const categories = [
     "id": "mental",
     "name": "Mental Health",
     "tag": "Mind",
-    "icon": "<path d=\"M10 3a4 4 0 0 1 4 4c0 1.5-.8 2.8-2 3.5V12h-4v-1.5A4 4 0 0 1 6 7a4 4 0 0 1 4-4z\" stroke=\"currentColor\" stroke-width=\"1.2\" fill=\"none\" stroke-linecap=\"round\"/><circle cx=\"10\" cy=\"15.5\" r=\"1\" fill=\"currentColor\"/>",
+    "icon": "ph:brain",
     "defaultRoot": "chronic-stress",
     "conditions": [
       {
@@ -197,7 +197,7 @@ const categories = [
     "id": "metabolic",
     "name": "Metabolic Conditions",
     "tag": "Metabolism",
-    "icon": "<circle cx=\"10\" cy=\"10\" r=\"7\" stroke=\"currentColor\" stroke-width=\"1.2\" fill=\"none\"/><path d=\"M7 10h6M10 7v6\" stroke=\"currentColor\" stroke-width=\"1.2\" stroke-linecap=\"round\"/>",
+    "icon": "ph:flame",
     "defaultRoot": "mitochondrial-dysfunction",
     "conditions": [
       {
@@ -242,7 +242,7 @@ const categories = [
     "id": "musculoskeletal",
     "name": "Musculoskeletal Conditions",
     "tag": "Frame",
-    "icon": "<path d=\"M10 3v14M6 6l4-3 4 3M6 14l4 3 4-3\" stroke=\"currentColor\" stroke-width=\"1.2\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>",
+    "icon": "ph:bone",
     "defaultRoot": "inflammation",
     "conditions": [
       {
@@ -283,7 +283,7 @@ const categories = [
     "id": "cardiovascular",
     "name": "Cardiovascular Conditions",
     "tag": "Circulation",
-    "icon": "<path d=\"M10 16s-7-4.5-7-8a4 4 0 0 1 7-2.6A4 4 0 0 1 17 8c0 3.5-7 8-7 8z\" stroke=\"currentColor\" stroke-width=\"1.2\" fill=\"none\" stroke-linejoin=\"round\"/>",
+    "icon": "ph:heartbeat",
     "defaultRoot": "inflammation",
     "conditions": [
       {
@@ -316,7 +316,7 @@ const categories = [
     "id": "autoimmune",
     "name": "Autoimmune Conditions",
     "tag": "Inflammation",
-    "icon": "<path d=\"M10 3l1.8 5.5H17l-4.6 3.3 1.8 5.5L10 14l-4.2 3.3 1.8-5.5L3 8.5h5.2z\" stroke=\"currentColor\" stroke-width=\"1.2\" fill=\"none\" stroke-linejoin=\"round\"/>",
+    "icon": "ph:shield-check",
     "defaultRoot": "hidden-infections",
     "conditions": [
       {
@@ -353,7 +353,7 @@ const categories = [
     "id": "hormonal",
     "name": "Hormonal Conditions",
     "tag": "Hormones",
-    "icon": "<circle cx=\"10\" cy=\"6\" r=\"3\" stroke=\"currentColor\" stroke-width=\"1.2\" fill=\"none\"/><path d=\"M10 9v8M7 14h6\" stroke=\"currentColor\" stroke-width=\"1.2\" stroke-linecap=\"round\"/>",
+    "icon": "ph:activity",
     "defaultRoot": "hormonal-imbalance",
     "conditions": [
       {
@@ -414,7 +414,7 @@ const categories = [
     "id": "neurological",
     "name": "Neurological Conditions",
     "tag": "Nervous",
-    "icon": "<path d=\"M5 10c0-2.8 2.2-5 5-5s5 2.2 5 5-2.2 5-5 5\" stroke=\"currentColor\" stroke-width=\"1.2\" fill=\"none\" stroke-linecap=\"round\"/><path d=\"M10 10l3-2M10 10l-2 3M10 10l2 2\" stroke=\"currentColor\" stroke-width=\"1\" stroke-linecap=\"round\" opacity=\".7\"/>",
+    "icon": "ph:network",
     "defaultRoot": "environmental-toxins",
     "conditions": [
       {
@@ -451,7 +451,7 @@ const categories = [
     "id": "gut",
     "name": "Gut & Digestion",
     "tag": "Gut",
-    "icon": "<path d=\"M7 4c-2 0-3 1.5-3 3s1.5 3 3 3h6c2 0 3 1.5 3 3s-1 3-3 3H8\" stroke=\"currentColor\" stroke-width=\"1.2\" fill=\"none\" stroke-linecap=\"round\"/>",
+    "icon": "ph:leaf",
     "defaultRoot": "gut-dysfunction",
     "conditions": [
       {
@@ -508,7 +508,7 @@ const categories = [
     "id": "respiratory",
     "name": "Respiratory",
     "tag": "Breath",
-    "icon": "<path d=\"M10 4v6M7 7c-2.5 1-4 3-4 5.5 0 1.4 1 2.5 2.5 2.5S8 14 8 12.5V10m4 0v2.5c0 1.4 1 2.5 2.5 2.5S17 13.9 17 12.5C17 10 15.5 8 13 7\" stroke=\"currentColor\" stroke-width=\"1.2\" fill=\"none\" stroke-linecap=\"round\"/>",
+    "icon": "tabler:lungs",
     "defaultRoot": "poor-detoxification",
     "conditions": [
       {
@@ -565,7 +565,7 @@ const categories = [
     "id": "skin",
     "name": "Skin & Hair",
     "tag": "Skin",
-    "icon": "<ellipse cx=\"10\" cy=\"10\" rx=\"6\" ry=\"7.5\" stroke=\"currentColor\" stroke-width=\"1.2\" fill=\"none\"/><path d=\"M7.5 7.5c1.5-1 3.5-1 5 0\" stroke=\"currentColor\" stroke-width=\"1\" stroke-linecap=\"round\" opacity=\".6\"/>",
+    "icon": "ph:sparkle",
     "defaultRoot": "poor-detoxification",
     "conditions": [
       {
@@ -630,7 +630,7 @@ const categories = [
     "id": "oral",
     "name": "Eyes & Dental",
     "tag": "Eyes & Mouth",
-    "icon": "<path d=\"M6 4h8l1 5c0 3.3-2.2 6-5 6s-5-2.7-5-6z\" stroke=\"currentColor\" stroke-width=\"1.2\" fill=\"none\" stroke-linejoin=\"round\"/><path d=\"M10 9v4\" stroke=\"currentColor\" stroke-width=\"1\" stroke-linecap=\"round\" opacity=\".6\"/>",
+    "icon": "ph:tooth",
     "defaultRoot": "nutrients-deficiency",
     "conditions": [
       {
@@ -663,7 +663,7 @@ const categories = [
     "id": "renal",
     "name": "Renal & Urinary Conditions",
     "tag": "Filter",
-    "icon": "<path d=\"M8 4C5.5 4 4 6 4 8.5c0 3 2 5.5 4 6.5h4c2-1 4-3.5 4-6.5C16 6 14.5 4 12 4c-1 0-1.5.5-2 1-.5-.5-1-1-2-1z\" stroke=\"currentColor\" stroke-width=\"1.2\" fill=\"none\" stroke-linejoin=\"round\"/>",
+    "icon": "ph:drop",
     "defaultRoot": "poor-detoxification",
     "conditions": [
       {

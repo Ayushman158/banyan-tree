@@ -810,16 +810,6 @@ body {
   pointer-events: auto;
 }
 
-.hero-eyebrow {
-  font-family: var(--sans);
-  font-size: 8px;
-  font-weight: 500;
-  letter-spacing: 0.45em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.75);
-  margin-bottom: 8px;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
-}
 
 .hero-title {
   font-family: var(--serif);
@@ -1563,8 +1553,9 @@ footer a:hover { color: var(--gold-deep); }
 
 /* Apply canopy breathing only to the original hero image */
 .canopy-bg {
-  animation: canopyBreath 18s ease-in-out infinite;
+  animation: canopyBreath 20s ease-in-out infinite;
   transform: scale(1.12); /* Base zoom scale for cinematic crop */
+  transform-origin: 50% 82%; /* Pivot near the trunk base so the canopy sways like a breeze */
 }
 
 /* Warm, golden light shift in the canopy leaves to create anticipation */
@@ -1585,11 +1576,15 @@ footer a:hover { color: var(--gold-deep); }
   100% { transform: translate(-50%, -50%) scale(1.06); }
 }
 
-/* Extremely subtle alive breathing — barely perceptible, 18s organic cycle */
+/* Living canopy — a slow breath (scale) layered with a gentle breeze sway
+   (rotation pivoting near the trunk) so the tree feels alive, not static.
+   The mouse parallax translate is preserved at every keyframe. */
 @keyframes canopyBreath {
-  0%   { transform: translate3d(calc(var(--mouse-x, 0) * 14px), calc(var(--mouse-y, 0) * 14px), 0) scale(1.120); }
-  50%  { transform: translate3d(calc(var(--mouse-x, 0) * 14px), calc(var(--mouse-y, 0) * 14px), 0) scale(1.135); }
-  100% { transform: translate3d(calc(var(--mouse-x, 0) * 14px), calc(var(--mouse-y, 0) * 14px), 0) scale(1.120); }
+  0%   { transform: translate3d(calc(var(--mouse-x, 0) * 14px), calc(var(--mouse-y, 0) * 14px), 0) scale(1.120) rotate(-0.35deg); }
+  25%  { transform: translate3d(calc(var(--mouse-x, 0) * 14px), calc(var(--mouse-y, 0) * 14px), 0) scale(1.128) rotate(0.2deg); }
+  50%  { transform: translate3d(calc(var(--mouse-x, 0) * 14px), calc(var(--mouse-y, 0) * 14px), 0) scale(1.136) rotate(0.4deg); }
+  75%  { transform: translate3d(calc(var(--mouse-x, 0) * 14px), calc(var(--mouse-y, 0) * 14px), 0) scale(1.128) rotate(0.05deg); }
+  100% { transform: translate3d(calc(var(--mouse-x, 0) * 14px), calc(var(--mouse-y, 0) * 14px), 0) scale(1.120) rotate(-0.35deg); }
 }
 
 /* Disease nodes drop in from below after roots settle.
@@ -1640,23 +1635,10 @@ footer a:hover { color: var(--gold-deep); }
   opacity: 0.45; /* 40-50% per brief */
 }
 
+/* Standalone circular branch nodes removed — the glowing pill icon badges now
+   serve as the sole, self-evident click targets for a cleaner premium canopy. */
 .category-hotspot {
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  background: #fff8e7;
-  border: 1px solid var(--gold);
-  border-radius: 50%;
-  box-shadow: 0 0 8px var(--gold-soft), 0 0 16px rgba(207,168,102,0.4);
-  transform: translate(-50%, -50%);
-  cursor: pointer;
-  pointer-events: auto;
-  transition: all 0.35s var(--ease);
-}
-.category-hotspot:hover, .category-hotspot.is-hovered, .category-hotspot.is-active {
-  background: rgba(255, 253, 235, 0.95);
-  transform: translate(-50%, -50%) scale(1.4);
-  box-shadow: 0 0 0 3px rgba(207, 168, 102, 0.25), 0 0 16px rgba(207, 168, 102, 0.35);
+  display: none !important;
 }
 
 .category-label {
@@ -1686,29 +1668,76 @@ footer a:hover { color: var(--gold-deep); }
 }
 
 .pill-icon {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 16px;
-  height: 16px;
+  width: 25px;
+  height: 25px;
   flex-shrink: 0;
   border-radius: 50%;
-  background: rgba(200, 169, 107, 0.22);
-  border: 1px solid rgba(200, 169, 107, 0.5);
+  background: radial-gradient(circle at 35% 28%, rgba(255, 252, 244, 0.98), rgba(243, 230, 202, 0.92));
+  border: 1px solid rgba(200, 169, 107, 0.72);
   color: var(--gold-deep);
-  transition: all 0.35s var(--ease);
+  /* Luminous golden halo — clearly reads as the interactive target. Static
+     fallback for reduced motion; the breathing pulse animates over it. */
+  box-shadow: 0 0 0 3px rgba(200, 169, 107, 0.18),
+              0 0 16px rgba(200, 169, 107, 0.55),
+              0 0 5px rgba(255, 235, 188, 0.6),
+              inset 0 1px 1px rgba(255, 255, 255, 0.85);
+  animation: pillGlowPulse 3.2s var(--ease) infinite;
+  transition: background 0.4s var(--ease), border-color 0.4s var(--ease),
+              color 0.4s var(--ease), transform 0.4s var(--ease);
+}
+/* A second, slowly expanding ring — a soft "ping" that invites the click */
+.pill-icon::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 50%;
+  border: 1px solid rgba(200, 169, 107, 0.55);
+  pointer-events: none;
+  animation: pillPing 3.2s var(--ease) infinite;
+}
+@keyframes pillGlowPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 3px rgba(200, 169, 107, 0.16),
+                0 0 13px rgba(200, 169, 107, 0.42),
+                0 0 4px rgba(255, 235, 188, 0.45),
+                inset 0 1px 1px rgba(255, 255, 255, 0.85);
+  }
+  50% {
+    box-shadow: 0 0 0 5px rgba(200, 169, 107, 0.26),
+                0 0 24px rgba(200, 169, 107, 0.72),
+                0 0 9px rgba(255, 235, 188, 0.8),
+                inset 0 1px 1px rgba(255, 255, 255, 0.92);
+  }
+}
+@keyframes pillPing {
+  0%   { transform: scale(1); opacity: 0.7; }
+  60%, 100% { transform: scale(1.55); opacity: 0; }
 }
 .pill-icon svg {
-  width: 9px;
-  height: 9px;
+  width: 14.5px;
+  height: 14.5px;
 }
 .category-label:hover .pill-icon,
 .category-label.is-hovered .pill-icon,
 .category-label.is-active .pill-icon {
-  background: var(--gold);
-  border-color: var(--gold);
-  color: #fffbef;
-  box-shadow: 0 0 12px rgba(200, 169, 107, 0.5);
+  background: radial-gradient(circle at 35% 28%, #fffdf6, #f1dcb0) !important;
+  border-color: var(--gold) !important;
+  color: var(--gold-deep) !important;
+  box-shadow: 0 0 0 5px rgba(200, 169, 107, 0.3),
+              0 0 30px rgba(200, 169, 107, 0.9),
+              0 0 11px rgba(255, 235, 188, 0.95),
+              inset 0 1px 1px rgba(255, 255, 255, 0.95) !important;
+  animation: none !important;
+}
+.category-label:hover .pill-icon::after,
+.category-label.is-hovered .pill-icon::after,
+.category-label.is-active .pill-icon::after {
+  animation: none !important;
+  opacity: 0 !important;
 }
 
 /* ── Conditions list sidebar panel ── */
@@ -2257,28 +2286,37 @@ footer a:hover { color: var(--gold-deep); }
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8) !important;
 }
 
-/* Premium cream glass capsules with gold icon badges, echoing the reference moodboard */
+/* Premium cream glass capsules with glowing gold icon badges — awwwards-grade,
+   echoing the reference moodboard. Badge sits flush-left, label in deep forest. */
 .category-label {
+  font-family: var(--sans) !important;
   font-weight: 600 !important;
-  font-size: 9px !important;
-  letter-spacing: 0.16em !important;
-  color: var(--ink) !important;
-  background: linear-gradient(155deg, rgba(253, 251, 245, 0.96), rgba(244, 236, 219, 0.9)) !important;
-  border: 1px solid rgba(200, 169, 107, 0.5) !important;
+  font-size: 10px !important;
+  letter-spacing: 0.015em !important;
+  text-transform: none !important;
+  color: var(--deep-forest) !important;
+  background: linear-gradient(155deg, rgba(253, 251, 246, 0.97), rgba(246, 239, 225, 0.93)) !important;
+  border: 1px solid rgba(200, 169, 107, 0.42) !important;
   border-radius: 99px !important;
-  padding: 6px 14px !important;
-  backdrop-filter: blur(10px) saturate(120%) !important;
-  -webkit-backdrop-filter: blur(10px) saturate(120%) !important;
+  padding: 4px 17px 4px 4px !important;
+  gap: 9px !important;
+  backdrop-filter: blur(12px) saturate(125%) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(125%) !important;
   text-shadow: none !important;
-  box-shadow: 0 6px 20px rgba(40, 50, 35, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.65) !important;
+  /* Soft drop + a whisper of gold glow so idle pills quietly invite a click */
+  box-shadow: 0 8px 24px rgba(26, 36, 27, 0.16),
+              0 0 18px rgba(200, 169, 107, 0.13),
+              inset 0 1px 0 rgba(255, 255, 255, 0.72) !important;
 }
 
 .category-label:hover, .category-label.is-hovered, .category-label.is-active {
-  color: var(--ink) !important;
-  background: linear-gradient(155deg, rgba(249, 240, 214, 0.98), rgba(238, 222, 184, 0.96)) !important; /* Warm gold glass hover state */
-  border-color: var(--gold) !important;
+  color: var(--deep-forest) !important;
+  background: linear-gradient(155deg, rgba(255, 253, 246, 0.99), rgba(245, 235, 211, 0.97)) !important; /* Warm gold glass hover state */
+  border-color: rgba(200, 169, 107, 0.85) !important;
   text-shadow: none !important;
-  box-shadow: 0 8px 24px rgba(40, 50, 35, 0.22), 0 0 16px rgba(200, 169, 107, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.7) !important;
+  box-shadow: 0 12px 30px rgba(26, 36, 27, 0.2),
+              0 0 28px rgba(200, 169, 107, 0.4),
+              inset 0 1px 0 rgba(255, 255, 255, 0.85) !important;
 }
 
 /* ── Kling Video Splash Screen ── */
@@ -2347,7 +2385,7 @@ footer a:hover { color: var(--gold-deep); }
   letter-spacing: 0.42em;
   text-transform: uppercase;
   color: rgba(245, 236, 214, 0.82);
-  margin-bottom: 26px;
+  margin-bottom: 52px;
   text-indent: 0.42em;
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.85);
   opacity: 0;
@@ -2373,7 +2411,7 @@ footer a:hover { color: var(--gold-deep); }
   letter-spacing: 0.3em;
   color: #FBF1D4; /* Premium light gold/cream */
   text-indent: 0.3em;
-  margin: 0 0 18px 0;
+  margin: 0 0 52px 0;
   text-shadow: 0 4px 28px rgba(0, 0, 0, 0.8), 0 2px 8px rgba(0, 0, 0, 0.5);
   opacity: 0;
   white-space: nowrap;
@@ -2384,10 +2422,10 @@ footer a:hover { color: var(--gold-deep); }
 .splash-tagline {
   font-family: var(--serif);
   font-style: italic;
-  font-size: 22px;
+  font-size: 18px;
   line-height: 1.6;
-  color: #FCFBF7;
-  margin: 18px 0 44px 0;
+  color: rgba(252, 251, 247, 0.88);
+  margin: 0 0 52px 0;
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.75), 0 1px 4px rgba(0, 0, 0, 0.55);
   opacity: 0;
   animation: splashFadeIn 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -2451,9 +2489,12 @@ footer a:hover { color: var(--gold-deep); }
     font-size: 32px;
     letter-spacing: 0.2em;
     text-indent: 0.2em;
+    margin: 0 0 32px 0;
   }
+  .splash-eyebrow { margin-bottom: 32px; }
   .splash-tagline {
-    font-size: 16px;
+    font-size: 15px;
+    margin-bottom: 36px;
   }
 }
 
@@ -2462,17 +2503,19 @@ footer a:hover { color: var(--gold-deep); }
     font-size: 22px;
     letter-spacing: 0.16em;
     text-indent: 0.16em;
+    margin: 0 0 24px 0;
   }
   .splash-eyebrow {
     font-size: 8.5px;
     letter-spacing: 0.3em;
     gap: 10px;
+    margin-bottom: 24px;
   }
   .splash-eyebrow::before,
   .splash-eyebrow::after { width: 22px; }
   .splash-tagline {
-    font-size: 14px;
-    margin-bottom: 30px;
+    font-size: 13px;
+    margin-bottom: 28px;
   }
   .splash-btn {
     padding: 8px 18px;
@@ -3342,7 +3385,7 @@ footer a:hover { color: var(--gold-deep); }
   .splash-eyebrow {
     font-size: 9px;
     letter-spacing: 0.28em;
-    margin-bottom: 14px;
+    margin-bottom: 28px;
   }
 
   /* ─── CANOPY LAYER (Stage 1) — Full-Screen Immersive ─────────────────── */
@@ -4385,8 +4428,17 @@ body::after {
   transform: translateY(0);
   filter: blur(0);
 }
+/* Stagger the pill glow so the canopy breathes organically rather than as one throb */
+.category-interactive-group:nth-child(3n) .pill-icon,
+.category-interactive-group:nth-child(3n) .pill-icon::after { animation-delay: -1.05s; }
+.category-interactive-group:nth-child(3n+1) .pill-icon,
+.category-interactive-group:nth-child(3n+1) .pill-icon::after { animation-delay: -2.1s; }
+
 @media (prefers-reduced-motion: reduce) {
   .reveal { transition-duration: 0.3s; filter: none; transform: none; }
+  .pill-icon { animation: none !important; }
+  .pill-icon::after { animation: none !important; opacity: 0 !important; }
+  .canopy-bg { animation: none !important; }
 }
 
 /* ── Section tags — hairline that breathes into a gold gradient ──────────── */

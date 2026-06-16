@@ -1,14 +1,16 @@
 /* App — Banyan light-mode experience.
    Phase machine: canopy → category → roots → detail. */
 
-import React, { useEffect as useE, useRef as useR, useState as useS, useMemo as useM } from 'react';
+import React, { useEffect as useE, useRef as useR, useState as useS, useMemo as useM, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BanyanData } from './data.js';
 import TreeScene3D from './TreeScene3D.jsx';
 import { Philosophy, Methodology, Pricing, Voices, Qualifier, FinalCTA, SiteFooter, StatsStrip } from './sections.jsx';
 import { initSoundscape } from './sound.js';
-import SoilJournal from './SoilJournal.jsx';
-import SoilProfile from './SoilProfile.jsx';
+// The journal/profile are heavy (charts, lucide icons) and only mount on demand —
+// code-split them out of the initial bundle.
+const SoilJournal = lazy(() => import('./SoilJournal.jsx'));
+const SoilProfile = lazy(() => import('./SoilProfile.jsx'));
 import splashVideo from './assets/kling_20260603_作品__4501_0.mp4';
 
 /* ---------- Subtle drifting dust motes ---------- */
@@ -298,6 +300,11 @@ function App() {
   const [showJournal, setShowJournal] = useS(false);
   const [journalAnswers, setJournalAnswers] = useS(null);
   const [showSplash, setShowSplash] = useS(true);
+  // The blurred background video only fills letterbox bars on narrow screens.
+  // Render it solely there so desktop never decodes the heavy clip twice.
+  const [splashNeedsBgVideo] = useS(
+    () => typeof window !== 'undefined' && window.matchMedia('(max-width: 900px)').matches
+  );
 
   // Keep visitors inside the interactive hero experience until they
   // deliberately choose to continue — the page shouldn't scroll past
@@ -538,8 +545,6 @@ function App() {
           className={`hero-tagline${heroEntered ? " is-entered" : ""}`}
           style={{ opacity: !showSplash && phase === "canopy" && heroEntered ? 1 : 0 }}
         >
-          <span className="hero-eyebrow">An atlas of root cause healing</span>
-
           <h1 className="hero-title hero-title--statement">
             <span>Every symptom</span>
             <span>has a <span className="gold-italic">deeper root.</span></span>
@@ -627,12 +632,14 @@ function App() {
       <FinalCTA />
       <SiteFooter onOpenJournal={() => setShowJournal(true)} />
 
-      {showJournal && !journalAnswers && (
-        <SoilJournal onComplete={setJournalAnswers} onClose={() => setShowJournal(false)} />
-      )}
-      {showJournal && journalAnswers && (
-        <SoilProfile answers={journalAnswers} onRestart={() => setJournalAnswers(null)} onClose={() => { setShowJournal(false); setJournalAnswers(null); }} />
-      )}
+      <Suspense fallback={null}>
+        {showJournal && !journalAnswers && (
+          <SoilJournal onComplete={setJournalAnswers} onClose={() => setShowJournal(false)} />
+        )}
+        {showJournal && journalAnswers && (
+          <SoilProfile answers={journalAnswers} onRestart={() => setJournalAnswers(null)} onClose={() => { setShowJournal(false); setJournalAnswers(null); }} />
+        )}
+      </Suspense>
     </>
   );
 }
