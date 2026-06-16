@@ -59,10 +59,10 @@ const getCategoryCoords = (cat, isMobile) => {
     // fills its old row-5 slot so the right column stays complete.
     "mental":          { x: 57, y: 40 },
     "musculoskeletal": { x: 50, y: 47, centered: true },
-    "autoimmune":      { x: 59, y: 54 },
-    "metabolic":       { x: 59, y: 61 },
-    "cardiovascular":  { x: 57, y: 68 },
-    "renal":           { x: 56, y: 75 },
+    "autoimmune":      { x: 60, y: 54 },
+    "metabolic":       { x: 60, y: 61 },
+    "cardiovascular":  { x: 59, y: 68 },
+    "renal":           { x: 57, y: 75 },
     // Left column — matching arc, tapers in at top & bottom rows
     "neurological":    { x: 7,  y: 40 },
     "hormonal":        { x: 5,  y: 47 },
