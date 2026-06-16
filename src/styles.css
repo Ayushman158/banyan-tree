@@ -3708,7 +3708,7 @@ footer a:hover { color: var(--gold-deep); }
     text-transform: uppercase;
     color: var(--gold-soft);
     text-shadow: 0 1px 6px rgba(8, 18, 14, 0.9);
-    margin-bottom: 12px;
+    margin-bottom: 16px;
     opacity: 1;
   }
 
@@ -3730,19 +3730,25 @@ footer a:hover { color: var(--gold-deep); }
     display: block;
   }
 
-  /* Even, generous air between the three lines so the stack reads as
-     editorial typesetting rather than a tight UI label */
   .mobile-hero-title > span + span {
-    margin-top: 7px;
+    margin-top: 6px;
   }
 
-  /* The italic line is deliberately nested beneath "has a" with a touch
-     more space, so it resolves the phrase rather than crowding it */
   .mobile-hero-title .gold-italic {
     display: block;
     font-style: italic;
     color: #fffbdf;
-    margin-top: 11px;
+    margin-top: 6px;
+  }
+
+  .mobile-hero-subtitle {
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    color: rgba(247, 245, 240, 0.72);
+    text-shadow: 0 1px 6px rgba(8, 18, 14, 0.8);
+    margin: 18px 0 0;
   }
 
   .mobile-hero-divider {
@@ -3750,7 +3756,7 @@ footer a:hover { color: var(--gold-deep); }
     align-items: center;
     justify-content: center;
     gap: 10px;
-    margin: 14px auto 0;
+    margin: 12px auto 0;
     width: 64%;
   }
 
@@ -3764,17 +3770,6 @@ footer a:hover { color: var(--gold-deep); }
     font-size: 11px;
     color: rgba(200, 169, 107, 0.7);
     line-height: 1;
-  }
-
-  .mobile-hero-subtitle {
-    font-family: var(--sans);
-    font-size: 10px;
-    font-weight: 400;
-    letter-spacing: 0.08em;
-    color: rgba(247, 245, 240, 0.72);
-    text-shadow: 0 1px 6px rgba(8, 18, 14, 0.8);
-    /* Sits a touch lower so it reads as a bridge to the button grid below */
-    margin: 4px 0 0;
   }
 
   .hero-eyebrow {
