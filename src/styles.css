@@ -3690,7 +3690,7 @@ footer a:hover { color: var(--gold-deep); }
     align-items: center;
     text-align: center;
     position: absolute;
-    top: calc(14px + env(safe-area-inset-top));
+    top: calc(30px + env(safe-area-inset-top));
     /* Optically centred on the trunk (bg sits at 52.5%), not the viewport */
     left: 52.5%;
     transform: translateX(-50%);
@@ -3714,7 +3714,7 @@ footer a:hover { color: var(--gold-deep); }
 
   .mobile-hero-title {
     font-family: var(--serif);
-    font-size: clamp(30px, 8.5vw, 38px);
+    font-size: clamp(27px, 7.8vw, 34px);
     font-weight: 400;
     line-height: 1.14;
     letter-spacing: 0.01em;
@@ -3827,10 +3827,10 @@ footer a:hover { color: var(--gold-deep); }
   .mobile-path  { display: block !important; }
 
   .category-label {
-    font-size: 9px !important;
+    font-size: 8px !important;
     font-weight: 500 !important;
-    padding: 5px 13px !important;
-    gap: 6px !important;
+    padding: 4px 11px !important;
+    gap: 5px !important;
     letter-spacing: 0.02em !important;
     border-radius: 99px !important;
     left: var(--mobile-x) !important;
@@ -3859,12 +3859,12 @@ footer a:hover { color: var(--gold-deep); }
 
   /* Smaller, tighter icon badge for compact mobile pills */
   .pill-icon {
-    width: 12px !important;
-    height: 12px !important;
+    width: 10px !important;
+    height: 10px !important;
   }
   .pill-icon svg {
-    width: 7px !important;
-    height: 7px !important;
+    width: 6px !important;
+    height: 6px !important;
   }
 
   .category-label:active {
