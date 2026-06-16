@@ -3839,8 +3839,8 @@ footer a:hover { color: var(--gold-deep); }
     /* Uniform capsule width so both columns read as clean, even arcs
        (icon hard-left, label fills the rest) — matches the reference design */
     min-width: 102px !important;
-    justify-content: flex-start !important;
-    text-align: left !important;
+    justify-content: center !important;
+    text-align: center !important;
     max-width: none !important;
     white-space: nowrap !important;
     line-height: 1.2 !important;
