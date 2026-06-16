@@ -867,6 +867,42 @@ body {
   display: none;
 }
 
+/* Desktop hero eyebrow — sits above the statement as a quiet kicker */
+.hero-eyebrow {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: #f0d896;
+  margin: 0 0 18px 2px;
+  position: relative;
+  padding-left: 38px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.95), 0 0 8px rgba(0, 0, 0, 0.85), 0 2px 18px rgba(0, 0, 0, 0.75), 0 0 34px rgba(0, 0, 0, 0.55);
+}
+/* Hairline lead-in before the eyebrow */
+.hero-eyebrow::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 26px;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold-soft));
+  opacity: 0.8;
+}
+
+/* Desktop hero CTA cue — gentle prompt under the statement */
+.hero-statement-cue {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  color: rgba(251, 241, 212, 0.92);
+  margin: 26px 0 0 2px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), 0 2px 16px rgba(0, 0, 0, 0.7);
+}
+
 .hero-btn {
   font-family: var(--sans);
   font-weight: 600;
@@ -3675,12 +3711,14 @@ footer a:hover { color: var(--gold-deep); }
     right: 0;
     /* Soft pool of shadow that hugs only the hero text block — centred on the
        trunk (52.5%) and the text's vertical zone, leaving the rest bright */
-    height: 38%;
-    background: radial-gradient(ellipse 56% 60% at 52.5% 58%,
-      rgba(8, 18, 14, 0.6) 0%,
-      rgba(8, 18, 14, 0.48) 38%,
-      rgba(8, 18, 14, 0.26) 64%,
-      rgba(8, 18, 14, 0.1) 84%,
+    height: 55%;
+    /* Ellipse radii stay well inside the box on all sides so the falloff
+       reaches full transparency before the edges — no hard clip rectangle */
+    background: radial-gradient(ellipse 44% 38% at 52.5% 40%,
+      rgba(8, 18, 14, 0.58) 0%,
+      rgba(8, 18, 14, 0.45) 40%,
+      rgba(8, 18, 14, 0.24) 66%,
+      rgba(8, 18, 14, 0.08) 85%,
       transparent 100%);
     z-index: 10;
     pointer-events: none;

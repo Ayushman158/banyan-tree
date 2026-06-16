@@ -817,7 +817,7 @@ export default function TreeScene3D({
                 <button
                   type="button"
                   className={`condition-hotspot ${isActive ? 'is-active' : ''} ${isHovered ? 'is-hovered' : ''}`}
-                  style={{ left: `${x}%`, top: `${y}%`, pointerEvents: conditionsRevealed ? 'auto' : 'none' }}
+                  style={{ left: `${x}%`, top: `${y}%`, pointerEvents: (conditionsRevealed && !(isMobile && phase === 'detail')) ? 'auto' : 'none' }}
                   onClick={() => onConditionClick(cond.id)}
                   onMouseEnter={() => { setHoverCondition(cond.id); playHoverSound(); }}
                   onMouseLeave={() => setHoverCondition(null)}
@@ -828,7 +828,7 @@ export default function TreeScene3D({
                 <button
                   type="button"
                   className={`condition-label ${isActive ? 'is-active' : ''} ${isHovered ? 'is-hovered' : ''}`}
-                  style={{ ...getConditionLabelStyle(x, y, isMobile), pointerEvents: conditionsRevealed ? 'auto' : 'none' }}
+                  style={{ ...getConditionLabelStyle(x, y, isMobile), pointerEvents: (conditionsRevealed && !(isMobile && phase === 'detail')) ? 'auto' : 'none' }}
                   onClick={() => onConditionClick(cond.id)}
                   onMouseEnter={() => { setHoverCondition(cond.id); playHoverSound(); }}
                   onMouseLeave={() => setHoverCondition(null)}

@@ -518,8 +518,8 @@ function App() {
         {/* Mobile top vignette for text legibility (all phase header background) */}
         <div
           className="mobile-top-vignette"
-          style={{ 
-            opacity: !showSplash && heroEntered ? 1 : 0,
+          style={{
+            opacity: !showSplash && phase === "canopy" && heroEntered ? 1 : 0,
             pointerEvents: 'none'
           }}
         />
@@ -557,10 +557,12 @@ function App() {
           className={`hero-tagline${heroEntered ? " is-entered" : ""}`}
           style={{ opacity: !showSplash && phase === "canopy" && heroEntered ? 1 : 0 }}
         >
+          <span className="hero-eyebrow">An Atlas of Root-Cause Healing</span>
           <h1 className="hero-title hero-title--statement">
             <span>Every symptom</span>
             <span>has a <span className="gold-italic">deeper root.</span></span>
           </h1>
+          <span className="hero-statement-cue">Select a condition to begin exploring</span>
         </div>
 
 
@@ -626,7 +628,7 @@ function App() {
 
         {/* Underground: bottom-right healing pathways */}
         <div className={`underground-cta ${(phase === 'roots' || phase === 'detail') && rootsReady ? 'is-visible' : ''}`}>
-          <button className="btn btn--ghost underground-cta__btn" onClick={() => window.scrollBy({ top: window.innerHeight, behavior: 'smooth' })} data-hoverable="true">
+          <button className="btn btn--ghost underground-cta__btn" onClick={() => goToSection('method')} data-hoverable="true">
             View Healing Pathways
             <span className="underground-cta__arrow">→</span>
           </button>
