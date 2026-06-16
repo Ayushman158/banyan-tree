@@ -442,16 +442,18 @@ function App() {
             transition={{ duration: 1.2, ease: [0.76, 0, 0.24, 1] }}
             className="splash-screen"
           >
-            {/* Blurred background copy — fills letterbox bars on mobile */}
-            <video
-              className="splash-video-bg"
-              src={splashVideo}
-              autoPlay
-              loop
-              muted
-              playsInline
-              aria-hidden="true"
-            />
+            {/* Blurred background copy — fills letterbox bars on mobile only */}
+            {splashNeedsBgVideo && (
+              <video
+                className="splash-video-bg"
+                src={splashVideo}
+                autoPlay
+                loop
+                muted
+                playsInline
+                aria-hidden="true"
+              />
+            )}
             <video
               className="splash-video"
               src={splashVideo}
@@ -612,13 +614,6 @@ function App() {
           <span className="soil-story__path soil-story__path--three" />
         </div>
 
-        {/* Underground: bottom-right healing pathways */}
-        <div className={`underground-cta ${(phase === 'roots' || phase === 'detail') && rootsReady ? 'is-visible' : ''}`}>
-          <button className="btn btn--ghost underground-cta__btn" onClick={() => goToSection('philosophy')} data-hoverable="true">
-            View Healing Pathways
-            <span className="underground-cta__arrow">→</span>
-          </button>
-        </div>
       </section>
 
 

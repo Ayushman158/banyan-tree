@@ -699,34 +699,6 @@ body {
 }
 .underground-scroll.is-visible { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-.underground-cta {
-  position: absolute; bottom: 36px; right: 36px; z-index: 26;
-  opacity: 0; pointer-events: none;
-  transform: translateY(8px);
-  transition: opacity 0.8s var(--ease) 0.7s, transform 0.8s var(--ease) 0.7s;
-}
-.underground-cta.is-visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
-.underground-cta__btn {
-  background: rgba(31, 56, 40, 0.92) !important;
-  border: 1px solid rgba(200, 169, 107, 0.3) !important;
-  border-radius: 99px !important;
-  color: var(--gold-soft) !important;
-  backdrop-filter: blur(12px) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
-  display: flex; align-items: center; gap: 10px;
-  box-shadow: 0 8px 32px rgba(31, 56, 40, 0.35) !important;
-}
-.underground-cta__btn:hover {
-  background: rgba(200, 169, 107, 0.28) !important;
-  border-color: var(--gold) !important;
-  color: #fffbdf !important;
-  box-shadow: 0 0 15px rgba(200, 169, 107, 0.3), 0 8px 32px rgba(31, 56, 40, 0.35) !important;
-}
-.underground-cta__arrow {
-  font-size: 14px; opacity: 0.9;
-  transition: transform 0.3s var(--ease);
-}
-.underground-cta__btn:hover .underground-cta__arrow { transform: translateX(4px); opacity: 1; }
 
 .soil-story {
   position: absolute; inset: 0; z-index: 7; pointer-events: none;
@@ -1386,7 +1358,7 @@ footer a:hover { color: var(--gold-deep); }
   .panel-meta { grid-template-columns: 1fr; gap: 16px; }
   .ol-cat__name { font-size: 13px; }
   .underground-insight { bottom: 20px; left: 16px; max-width: 170px; font-size: 12px; padding: 10px 14px; }
-  .underground-cta { bottom: 20px; right: 16px; }
+
   .underground-scroll { display: none; }
   .ol-root__name { font-size: 13px; }
   .ol-root__subtitle { font-size: 8px; letter-spacing: 0.28em; }
@@ -1679,17 +1651,17 @@ footer a:hover { color: var(--gold-deep); }
   background: radial-gradient(circle at 35% 28%, rgba(255, 252, 244, 0.98), rgba(243, 230, 202, 0.92));
   border: 1px solid rgba(200, 169, 107, 0.72);
   color: var(--gold-deep);
-  /* Luminous golden halo — clearly reads as the interactive target. Static
-     fallback for reduced motion; the breathing pulse animates over it. */
-  box-shadow: 0 0 0 3px rgba(200, 169, 107, 0.18),
-              0 0 16px rgba(200, 169, 107, 0.55),
-              0 0 5px rgba(255, 235, 188, 0.6),
-              inset 0 1px 1px rgba(255, 255, 255, 0.85);
-  animation: pillGlowPulse 3.2s var(--ease) infinite;
+  /* Luminous golden halo — static (no per-frame repaint); the inviting motion
+     comes from the GPU-composited ping ring below. */
+  box-shadow: 0 0 0 4px rgba(200, 169, 107, 0.2),
+              0 0 18px rgba(200, 169, 107, 0.6),
+              0 0 6px rgba(255, 235, 188, 0.62),
+              inset 0 1px 1px rgba(255, 255, 255, 0.88);
   transition: background 0.4s var(--ease), border-color 0.4s var(--ease),
               color 0.4s var(--ease), transform 0.4s var(--ease);
 }
-/* A second, slowly expanding ring — a soft "ping" that invites the click */
+/* A slowly expanding ring — a soft "ping" that invites the click.
+   Animates only transform + opacity, so it composites on the GPU. */
 .pill-icon::after {
   content: "";
   position: absolute;
@@ -1697,21 +1669,8 @@ footer a:hover { color: var(--gold-deep); }
   border-radius: 50%;
   border: 1px solid rgba(200, 169, 107, 0.55);
   pointer-events: none;
+  will-change: transform, opacity;
   animation: pillPing 3.2s var(--ease) infinite;
-}
-@keyframes pillGlowPulse {
-  0%, 100% {
-    box-shadow: 0 0 0 3px rgba(200, 169, 107, 0.16),
-                0 0 13px rgba(200, 169, 107, 0.42),
-                0 0 4px rgba(255, 235, 188, 0.45),
-                inset 0 1px 1px rgba(255, 255, 255, 0.85);
-  }
-  50% {
-    box-shadow: 0 0 0 5px rgba(200, 169, 107, 0.26),
-                0 0 24px rgba(200, 169, 107, 0.72),
-                0 0 9px rgba(255, 235, 188, 0.8),
-                inset 0 1px 1px rgba(255, 255, 255, 0.92);
-  }
 }
 @keyframes pillPing {
   0%   { transform: scale(1); opacity: 0.7; }
@@ -4121,33 +4080,6 @@ footer a:hover { color: var(--gold-deep); }
     color: rgba(247, 245, 240, 0.92) !important;
   }
 
-  /* ─── STAGE 3: UNDERGROUND CTA ──────────────────────────────────────── */
-  .underground-cta {
-    position: fixed !important;
-    left: 16px !important;
-    right: 16px !important;
-    bottom: calc(14px + env(safe-area-inset-bottom, 0px)) !important;
-    width: auto !important;
-    z-index: 45 !important;
-    display: flex !important;
-    justify-content: center !important;
-  }
-
-  .underground-cta__btn {
-    width: 100% !important;
-    justify-content: center !important;
-    padding: 14px 24px !important;
-    font-size: 10px !important;
-    font-weight: 600 !important;
-    letter-spacing: 0.14em !important;
-    border-radius: 99px !important;
-    background: rgba(31, 56, 40, 0.92) !important;
-    border: 1px solid rgba(200, 169, 107, 0.3) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
-    backdrop-filter: blur(12px) !important;
-    box-shadow: 0 8px 32px rgba(31, 56, 40, 0.35) !important;
-    color: var(--gold-soft) !important;
-  }
 
   /* ─── STAGE 3: UNDERGROUND INSIGHT ─────────────────────────────────── */
   .underground-insight {
@@ -4428,10 +4360,8 @@ body::after {
   transform: translateY(0);
   filter: blur(0);
 }
-/* Stagger the pill glow so the canopy breathes organically rather than as one throb */
-.category-interactive-group:nth-child(3n) .pill-icon,
+/* Stagger the pill pings so the canopy shimmers organically, not as one throb */
 .category-interactive-group:nth-child(3n) .pill-icon::after { animation-delay: -1.05s; }
-.category-interactive-group:nth-child(3n+1) .pill-icon,
 .category-interactive-group:nth-child(3n+1) .pill-icon::after { animation-delay: -2.1s; }
 
 @media (prefers-reduced-motion: reduce) {
