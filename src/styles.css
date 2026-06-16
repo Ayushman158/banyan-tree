@@ -3827,7 +3827,7 @@ footer a:hover { color: var(--gold-deep); }
   .mobile-path  { display: block !important; }
 
   .category-label {
-    font-size: 7px !important;
+    font-size: 6px !important;
     font-weight: 500 !important;
     padding: 3.5px 11px !important;
     gap: 4.5px !important;
