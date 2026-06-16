@@ -875,21 +875,22 @@ body {
   letter-spacing: 0.32em;
   text-transform: uppercase;
   color: #f0d896;
-  margin: 0 0 18px 2px;
+  /* Flush-left with the statement below; nudge for optical letter-spacing */
+  margin: 0 0 20px -0.16em;
   position: relative;
-  padding-left: 38px;
+  padding-top: 16px;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.95), 0 0 8px rgba(0, 0, 0, 0.85), 0 2px 18px rgba(0, 0, 0, 0.75), 0 0 34px rgba(0, 0, 0, 0.55);
 }
-/* Hairline lead-in before the eyebrow */
+/* Hairline accent sits above the eyebrow, aligned to its left edge */
 .hero-eyebrow::before {
   content: "";
   position: absolute;
   left: 0;
-  top: 50%;
-  width: 26px;
+  top: 0;
+  width: 32px;
   height: 1px;
-  background: linear-gradient(to right, transparent, var(--gold-soft));
-  opacity: 0.8;
+  background: linear-gradient(to right, var(--gold-soft), transparent);
+  opacity: 0.85;
 }
 
 /* Desktop hero CTA cue — gentle prompt under the statement */
