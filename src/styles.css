@@ -3431,7 +3431,7 @@ footer a:hover { color: var(--gold-deep); }
     transform: scale(1.04) !important;
     transform-origin: center top !important;
     filter: brightness(1.22) !important; /* Brighten the mobile canopy background to match desktop */
-    background-position: center top !important;
+    background-position: 52.5% top !important; /* Shifted slightly to perfectly center the physical tree trunk */
   }
 
   /* Remove heavy blur pseudo-element on mobile for GPU savings */
@@ -3645,33 +3645,33 @@ footer a:hover { color: var(--gold-deep); }
     align-items: center;
     text-align: center;
     position: absolute;
-    top: calc(72px + env(safe-area-inset-top));
+    top: calc(48px + env(safe-area-inset-top));
     left: 50%;
     transform: translateX(-50%);
-    width: 88%;
+    width: 90%;
     z-index: 25;
     pointer-events: none;
     transition: opacity 0.6s var(--ease);
   }
 
   .mobile-hero-eyebrow {
-    font-family: var(--mono);
-    font-size: 7.5px;
-    font-weight: 600;
-    letter-spacing: 0.3em;
+    font-family: var(--sans);
+    font-size: 8.5px;
+    font-weight: 500;
+    letter-spacing: 0.35em;
     text-transform: uppercase;
     color: var(--gold-soft);
     text-shadow: 0 1px 6px rgba(8, 18, 14, 0.9);
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     opacity: 1;
   }
 
   .mobile-hero-title {
     font-family: var(--serif);
-    font-size: clamp(30px, 8.5vw, 38px);
-    font-weight: 300;
-    line-height: 1.18;
-    letter-spacing: 0.005em;
+    font-size: clamp(34px, 9.5vw, 42px);
+    font-weight: 400;
+    line-height: 1.15;
+    letter-spacing: 0.01em;
     color: rgba(247, 245, 240, 0.97);
     text-shadow: 0 2px 20px rgba(8, 18, 14, 0.85), 0 4px 40px rgba(8, 18, 14, 0.6);
     display: flex;
@@ -3775,11 +3775,11 @@ footer a:hover { color: var(--gold-deep); }
   .mobile-path  { display: block !important; }
 
   .category-label {
-    font-size: 6px !important;
-    font-weight: 600 !important;
-    padding: 4px 9px !important;
-    gap: 4px !important;
-    letter-spacing: 0.03em !important;
+    font-size: 10px !important;
+    font-weight: 500 !important;
+    padding: 7px 18px !important;
+    gap: 8px !important;
+    letter-spacing: 0.02em !important;
     border-radius: 99px !important;
     left: var(--mobile-x) !important;
     top: var(--mobile-y) !important;
@@ -3807,12 +3807,12 @@ footer a:hover { color: var(--gold-deep); }
 
   /* Smaller, tighter icon badge for compact mobile pills */
   .pill-icon {
-    width: 12px !important;
-    height: 12px !important;
+    width: 14px !important;
+    height: 14px !important;
   }
   .pill-icon svg {
-    width: 7px !important;
-    height: 7px !important;
+    width: 8px !important;
+    height: 8px !important;
   }
 
   .category-label:active {
@@ -4297,8 +4297,8 @@ footer a:hover { color: var(--gold-deep); }
 /* Client requested desktop layout on mobile, but scaled down so pills look smaller and premium */
 @media (max-width: 600px) {
   .category-label {
-    font-size: 5.5px !important;
-    padding: 3px 8px !important;
+    font-size: 10px !important;
+    padding: 7px 18px !important;
     border-radius: 99px !important;
     letter-spacing: 0.02em !important;
     max-width: none !important;
