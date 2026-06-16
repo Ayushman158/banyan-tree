@@ -61,7 +61,7 @@ const getCategoryCoords = (cat, isMobile) => {
     "cardiovascular":  { x: 59, y: 47 },
     "autoimmune":      { x: 61, y: 54 },
     "metabolic":       { x: 61, y: 61 },
-    "musculoskeletal": { x: 59, y: 68 },
+    "musculoskeletal": { x: 50, y: 68, centered: true },
     "renal":           { x: 57, y: 75 },
     // Left column — mirror arc, pulled outward to match the channel width
     "neurological":    { x: 7,  y: 40 },
@@ -694,9 +694,9 @@ export default function TreeScene3D({
             const actualIdx = BanyanData.categories.findIndex(c => c.id === cat.id);
             const resolvedClickIdx = actualIdx !== -1 ? actualIdx : idx;
 
-            // Mobile: perfectly align both columns to their left edge
-            const mobileTransform = 'translate(0, -50%)';
-            const mobileTextAlign = 'left';
+            // Mobile: left-edge alignment for columns; centred for the longest pill
+            const mobileTransform = coords.centered ? 'translate(-50%, -50%)' : 'translate(0, -50%)';
+            const mobileTextAlign = coords.centered ? 'center' : 'left';
 
             return (
               <div 
