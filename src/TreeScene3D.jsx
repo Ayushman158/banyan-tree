@@ -50,21 +50,20 @@ const getCategoryCoords = (cat, isMobile) => {
   // Mobile: Spaced and adjusted curve around the canopy
   // Top and bottom rows point outward to avoid middle overlap, middle rows point inward to avoid screen edges
   const mobileCoords = {
-    // Right column - scattered around the branch line for an organic feel
-    // Right column — closer to trunk, flanking right branches
-    "mental":          { x: 68, y: 47 },
-    "cardiovascular":  { x: 68, y: 56 },
-    "autoimmune":      { x: 68, y: 65 },
-    "metabolic":       { x: 68, y: 73 },
-    "musculoskeletal": { x: 68, y: 81 },
-    "renal":           { x: 68, y: 89 },
-    // Left column — closer to trunk, flanking left branches
-    "neurological":    { x: 32, y: 47 },
-    "hormonal":        { x: 32, y: 56 },
-    "gut":             { x: 32, y: 65 },
-    "skin":            { x: 32, y: 73 },
-    "respiratory":     { x: 32, y: 81 },
-    "oral":            { x: 32, y: 89 },
+    // Right column — left edge at 54%, y=48–82% (safe on iPhone 15)
+    "mental":          { x: 54, y: 48 },
+    "cardiovascular":  { x: 54, y: 55 },
+    "autoimmune":      { x: 54, y: 62 },
+    "metabolic":       { x: 54, y: 69 },
+    "musculoskeletal": { x: 54, y: 76 },
+    "renal":           { x: 54, y: 82 },
+    // Left column — left edge at 7%, y=48–82% (safe on iPhone 15)
+    "neurological":    { x: 7,  y: 48 },
+    "hormonal":        { x: 7,  y: 55 },
+    "gut":             { x: 7,  y: 62 },
+    "skin":            { x: 7,  y: 69 },
+    "respiratory":     { x: 7,  y: 76 },
+    "oral":            { x: 7,  y: 82 },
   };
   const mc = mobileCoords[cat.id];
   if (!mc) return { x: cat.x, y: cat.y, labelX: cat.x, labelY: cat.y };
@@ -689,12 +688,9 @@ export default function TreeScene3D({
             const actualIdx = BanyanData.categories.findIndex(c => c.id === cat.id);
             const resolvedClickIdx = actualIdx !== -1 ? actualIdx : idx;
 
-            // Mobile: Always point outward (left-column points left, right-column points right)
-            // to keep the center tree clean and visible.
-            const mobileTransform = cat.align === 'right'
-              ? 'translate(calc(-100% - 14px), -50%)'
-              : 'translate(14px, -50%)';
-            const mobileTextAlign = cat.align === 'right' ? 'right' : 'left';
+            // Mobile: perfectly align both columns to their left edge
+            const mobileTransform = 'translate(0, -50%)';
+            const mobileTextAlign = 'left';
 
             return (
               <div 
