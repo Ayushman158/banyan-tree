@@ -3673,13 +3673,14 @@ footer a:hover { color: var(--gold-deep); }
     top: 0;
     left: 0;
     right: 0;
-    /* Only covers the hero text zone — gone well before the pills start at ~44% */
+    /* Soft pool of shadow that hugs only the hero text block — centred on the
+       trunk (52.5%) and the text's vertical zone, leaving the rest bright */
     height: 38%;
-    background: linear-gradient(to bottom,
-      rgba(8, 18, 14, 0.92) 0%,
-      rgba(8, 18, 14, 0.78) 45%,
-      rgba(8, 18, 14, 0.28) 78%,
-      transparent 100%);
+    background: radial-gradient(ellipse 42% 52% at 52.5% 46%,
+      rgba(8, 18, 14, 0.9) 0%,
+      rgba(8, 18, 14, 0.7) 42%,
+      rgba(8, 18, 14, 0.3) 70%,
+      transparent 88%);
     z-index: 10;
     pointer-events: none;
     transition: opacity 0.6s var(--ease);
@@ -3744,12 +3745,12 @@ footer a:hover { color: var(--gold-deep); }
 
   .mobile-hero-subtitle {
     font-family: var(--sans);
-    font-size: 10px;
-    font-weight: 400;
-    letter-spacing: 0.08em;
-    color: rgba(247, 245, 240, 0.95);
-    text-shadow: 0 1px 6px rgba(8, 18, 14, 0.8);
+    font-size: 9px;
+    font-weight: 500;
+    color: #e8cc78;
+    text-shadow: 0 1px 10px rgba(8, 18, 14, 0.95), 0 0 24px rgba(8, 18, 14, 0.7);
     margin: 12px 0 0;
+    letter-spacing: 0.08em;
   }
 
   .mobile-hero-divider {
