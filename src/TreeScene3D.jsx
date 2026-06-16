@@ -14,18 +14,18 @@ import rootsImg from './assets/roots hd.jpg';
 const CATEGORIES = [
   // Right side of canopy (pushed inwards, scattered around the branch line for a more organic feel)
   { id: "mental", name: "Mental Health", x: 63, y: 13, labelX: 69, labelY: 13, align: "left" },
-  { id: "autoimmune", name: "Autoimmune\u00A0& Inflammatory", mobileName: "Autoimmune", x: 49, y: 26, labelX: 55, labelY: 26, align: "left" },
-  { id: "cardiovascular", name: "Cardiovascular", x: 64, y: 34, labelX: 70, labelY: 34, align: "left" },
-  { id: "musculoskeletal", name: "Musculoskeletal", x: 60, y: 45, labelX: 66, labelY: 45, align: "left" },
-  { id: "metabolic", name: "Lifestyle\u00A0/ Metabolic", mobileName: "Metabolic", x: 52, y: 58, labelX: 58, labelY: 58, align: "left" },
-  { id: "renal", name: "Renal\u00A0& Urinary", mobileName: "Renal", x: 50, y: 80, labelX: 56, labelY: 80, align: "left" },
+  { id: "autoimmune", name: "Autoimmune\u00A0& Inflammatory", mobileName: "Autoimmune", x: 49, y: 24, labelX: 55, labelY: 24, align: "left" },
+  { id: "cardiovascular", name: "Cardiovascular", x: 64, y: 31, labelX: 70, labelY: 31, align: "left" },
+  { id: "musculoskeletal", name: "Musculoskeletal", x: 60, y: 41, labelX: 66, labelY: 41, align: "left" },
+  { id: "metabolic", name: "Lifestyle\u00A0/ Metabolic", mobileName: "Metabolic", x: 52, y: 52, labelX: 58, labelY: 52, align: "left" },
+  { id: "renal", name: "Renal\u00A0& Urinary", mobileName: "Renal", x: 50, y: 72, labelX: 56, labelY: 72, align: "left" },
   // Left side of canopy (pushed inwards to avoid hero text, scattered for an organic feel)
-  { id: "neurological", name: "Neurological", x: 37, y: 24, labelX: 37, labelY: 24, align: "right" },
+  { id: "neurological", name: "Neurological", x: 37, y: 23, labelX: 37, labelY: 23, align: "right" },
   { id: "hormonal", name: "Hormonal\u00A0& Endocrine", mobileName: "Hormonal", x: 48, y: 15, labelX: 48, labelY: 15, align: "right" },
-  { id: "gut", name: "Gut\u00A0& Digestive Health", mobileName: "Gut Health", x: 38, y: 38, labelX: 38, labelY: 38, align: "right" },
-  { id: "respiratory", name: "Respiratory\u00A0& ENT", mobileName: "Respiratory", x: 40, y: 50, labelX: 40, labelY: 50, align: "right" },
-  { id: "skin", name: "Skin\u00A0& Hair", x: 46, y: 63, labelX: 46, labelY: 63, align: "right" },
-  { id: "oral", name: "Oral\u00A0& Dental Health", mobileName: "Oral Health", x: 44, y: 75, labelX: 44, labelY: 75, align: "right" },
+  { id: "gut", name: "Gut\u00A0& Digestive Health", mobileName: "Gut Health", x: 38, y: 35, labelX: 38, labelY: 35, align: "right" },
+  { id: "respiratory", name: "Respiratory\u00A0& ENT", mobileName: "Respiratory", x: 40, y: 45, labelX: 40, labelY: 45, align: "right" },
+  { id: "skin", name: "Skin\u00A0& Hair", x: 46, y: 57, labelX: 46, labelY: 57, align: "right" },
+  { id: "oral", name: "Oral\u00A0& Dental Health", mobileName: "Oral Health", x: 44, y: 67, labelX: 44, labelY: 67, align: "right" },
 ];
 
 // Coordinate configuration for the roots cause nodes
@@ -52,18 +52,18 @@ const getCategoryCoords = (cat, isMobile) => {
   const mobileCoords = {
     // Right column - scattered around the branch line for an organic feel
     "mental":          { x: 68, y: 26 },
-    "autoimmune":      { x: 60, y: 48 },
-    "cardiovascular":  { x: 74, y: 38 },
-    "musculoskeletal": { x: 62, y: 66 },
-    "metabolic":       { x: 70, y: 56 },
-    "renal":           { x: 55, y: 75 },
+    "autoimmune":      { x: 60, y: 45 },
+    "cardiovascular":  { x: 74, y: 36 },
+    "musculoskeletal": { x: 62, y: 60 },
+    "metabolic":       { x: 70, y: 52 },
+    "renal":           { x: 55, y: 68 },
     // Left column - scattered around the branch line for an organic feel
-    "neurological":    { x: 32, y: 28 },
-    "hormonal":        { x: 40, y: 40 },
-    "gut":             { x: 30, y: 52 },
-    "respiratory":     { x: 38, y: 64 },
-    "skin":            { x: 30, y: 58 },
-    "oral":            { x: 44, y: 75 },
+    "neurological":    { x: 32, y: 27 },
+    "hormonal":        { x: 40, y: 38 },
+    "gut":             { x: 30, y: 48 },
+    "respiratory":     { x: 38, y: 58 },
+    "skin":            { x: 30, y: 53 },
+    "oral":            { x: 44, y: 68 },
   };
   const mc = mobileCoords[cat.id];
   if (!mc) return { x: cat.x, y: cat.y, labelX: cat.x, labelY: cat.y };
