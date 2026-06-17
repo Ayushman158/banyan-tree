@@ -306,6 +306,34 @@ function App() {
     () => typeof window !== 'undefined' && window.matchMedia('(max-width: 900px)').matches
   );
 
+  // iOS refuses to autoplay video in Low Power Mode (and occasionally throttles
+  // it otherwise), then paints a native play-button glyph over the paused clip.
+  // We force the muted DOM property — React's `muted` attribute is unreliable —
+  // and call play() ourselves. If the browser still rejects it, we fall back to
+  // the static poster frame so no play button is ever shown.
+  const splashVideoRef = useR(null);
+  const [splashVideoBlocked, setSplashVideoBlocked] = useS(false);
+
+  useE(() => {
+    if (!showSplash) return;
+    const v = splashVideoRef.current;
+    if (!v) return;
+    v.muted = true;
+    v.defaultMuted = true;
+    v.setAttribute('muted', '');
+    const tryPlay = () => {
+      const p = v.play();
+      if (p && typeof p.catch === 'function') {
+        p.then(() => setSplashVideoBlocked(false)).catch(() => setSplashVideoBlocked(true));
+      }
+    };
+    tryPlay();
+    // Retry once the tab/app regains focus — Low Power Mode can lift mid-view.
+    const onVisible = () => { if (document.visibilityState === 'visible') tryPlay(); };
+    document.addEventListener('visibilitychange', onVisible);
+    return () => document.removeEventListener('visibilitychange', onVisible);
+  }, [showSplash]);
+
   // Keep visitors inside the interactive hero experience until they
   // deliberately choose to continue — the page shouldn't scroll past
   // the hero on its own. Unlocked only via explicit navigation below.
@@ -456,16 +484,28 @@ function App() {
               />
             )}
             <video
+              ref={splashVideoRef}
               className="splash-video"
               src={splashVideo}
               autoPlay
               loop
               muted
               playsInline
+              webkit-playsinline="true"
               preload="auto"
               fetchPriority="high"
               poster="/splash-poster.jpg"
+              style={{ opacity: splashVideoBlocked ? 0 : 1 }}
             />
+            {/* Autoplay refused (e.g. iOS Low Power Mode): show the poster frame
+                so the hero still looks intentional — never a bare play button. */}
+            {splashVideoBlocked && (
+              <div
+                className="splash-video splash-video--poster"
+                aria-hidden="true"
+                style={{ backgroundImage: 'url("/splash-poster.jpg")' }}
+              />
+            )}
             <div className="splash-overlay" />
             <div className="splash-content">
               <span className="splash-eyebrow">An Atlas of Root-Cause Healing</span>
@@ -477,7 +517,7 @@ function App() {
                 onClick={() => setShowSplash(false)}
                 data-hoverable="true"
               >
-                <span>Enter</span>
+                <span>Begin healing</span>
                 <span className="splash-btn__arrow">→</span>
               </button>
             </div>

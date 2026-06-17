@@ -1023,7 +1023,7 @@ export default function TreeScene3D({
                 </dl>
                 <div className="panel-actions">
                   <button className="btn btn--primary" data-hoverable="true">
-                    Begin a consultation
+                    Get in touch
                   </button>
                   <button className="btn btn--ghost" data-hoverable="true" onClick={() => onCrumbJump('roots')}>
                     Continue exploring
