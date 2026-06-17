@@ -185,15 +185,11 @@ function Methodology() {
                     <svg width="100%" height="12" viewBox="0 0 100 12" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <defs>
                         <linearGradient id={`cross-grad-${i}`} x1="0" y1="0" x2="1" y2="0">
-                          <stop offset="0%" stopColor="#6B8471" stopOpacity="0.55" />
+                          <stop offset="0%" stopColor="#6B8471" stopOpacity="0.65" />
                           <stop offset="100%" stopColor="#D67A45" stopOpacity="1" />
                         </linearGradient>
                       </defs>
-                      <path d="M0 6H98" stroke={`url(#cross-grad-${i})`} strokeWidth="1.5" opacity="0.3" />
-                      <path d="M0 6H98" stroke={`url(#cross-grad-${i})`} strokeWidth="2.5" strokeDasharray="6 5" className="flowing-line-horizontal" />
-                      <circle r="3" cy="6" fill="#D67A45">
-                        <animate attributeName="cx" from="0" to="96" dur="2.4s" repeatCount="indefinite" />
-                      </circle>
+                      <path d="M0 6H100" stroke={`url(#cross-grad-${i})`} strokeWidth="2" opacity="0.9" />
                     </svg>
                     <ArrowRight size={15} strokeWidth={2.5} className="method-node__link-cross-arrow" />
                   </span>
