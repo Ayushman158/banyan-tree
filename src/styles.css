@@ -3478,7 +3478,7 @@ section.spread.method-process {
   position: absolute;
   bottom: -16px;
   right: -16px;
-  opacity: 0.035;
+  opacity: 0.09;
   pointer-events: none;
   z-index: 0;
   transition: transform 0.6s var(--ease), opacity 0.6s var(--ease);
@@ -3490,7 +3490,7 @@ section.spread.method-process {
   color: #D67A45;
 }
 .method-node__inner:hover .method-node__watermark {
-  opacity: 0.08;
+  opacity: 0.18;
   transform: scale(1.15) rotate(12deg);
 }
 
