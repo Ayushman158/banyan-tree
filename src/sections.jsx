@@ -43,7 +43,7 @@ function useReveal() {
           io.disconnect();
         }
       });
-    }, { threshold: 0.14 });
+    }, { threshold: 0.02 });
     io.observe(el);
     return () => io.disconnect();
   }, []);
@@ -159,7 +159,7 @@ function Methodology() {
         <div className="method-flow__col method-flow__col--fm">
           <div className="method-flow__head">
             <span className="method-flow__crest"><Leaf size={22} strokeWidth={1.5} /></span>
-            <h3 className="method-flow__name">Functional Medicine</h3>
+            <h3 className="method-flow__name">Functional<br/>Medicine</h3>
             <span className="method-flow__sub">Fix the physiology first</span>
           </div>
           <ol className="method-flow__steps">
@@ -173,25 +173,14 @@ function Methodology() {
                   </span>
                   <Leaf className="method-node__watermark" size={72} strokeWidth={0.25} />
                 </div>
-                {i < fmSteps.length - 1 && (
-                  <span className="method-node__link" aria-hidden="true">
-                    <svg width="2" height="100%" viewBox="0 0 2 40" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M1 0V40" stroke="currentColor" strokeWidth="1.5" strokeDasharray="4 4" className="flowing-line-vertical" />
-                    </svg>
-                  </span>
+                {i < 3 && (
+                  <span className="method-node__link" aria-hidden="true" />
                 )}
-                {(i === 0 || i === 3) && (
+                {(i === 0 || i === 1 || i === 3) && (
                   <span className="method-node__link-cross" aria-hidden="true">
-                    <svg width="100%" height="12" viewBox="0 0 100 12" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <defs>
-                        <linearGradient id={`cross-grad-${i}`} x1="0" y1="0" x2="1" y2="0">
-                          <stop offset="0%" stopColor="#6B8471" stopOpacity="0.65" />
-                          <stop offset="100%" stopColor="#D67A45" stopOpacity="1" />
-                        </linearGradient>
-                      </defs>
-                      <path d="M0 6H100" stroke={`url(#cross-grad-${i})`} strokeWidth="2" opacity="0.9" />
-                    </svg>
-                    <ArrowRight size={15} strokeWidth={2.5} className="method-node__link-cross-arrow" />
+                    <span className="method-node__cross-node">
+                      <ArrowRight size={13} strokeWidth={2.5} />
+                    </span>
                   </span>
                 )}
               </li>
@@ -201,9 +190,9 @@ function Methodology() {
 
         {/* Central connector */}
         <div className="method-flow__amp" aria-hidden="true">
-          <span className="method-flow__amp-line method-flow__amp-line--t" />
+          <span className="method-flow__amp-dot method-flow__amp-dot--top" />
           <span className="method-flow__amp-mark">&amp;</span>
-          <span className="method-flow__amp-line method-flow__amp-line--b" />
+          <span className="method-flow__amp-dot method-flow__amp-dot--bottom" />
         </div>
 
         {/* Ayurveda */}
@@ -224,12 +213,8 @@ function Methodology() {
                   </span>
                   <Flower2 className="method-node__watermark" size={72} strokeWidth={0.25} />
                 </div>
-                {i < aySteps.length - 1 && (
-                  <span className="method-node__link" aria-hidden="true">
-                    <svg width="2" height="100%" viewBox="0 0 2 40" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M1 0V40" stroke="currentColor" strokeWidth="1.5" strokeDasharray="4 4" className="flowing-line-vertical" />
-                    </svg>
-                  </span>
+                {i < 3 && (
+                  <span className="method-node__link" aria-hidden="true" />
                 )}
               </li>
             ))}
@@ -239,7 +224,7 @@ function Methodology() {
 
       <p className="method-process__foot reveal">
         This is not symptom management.<br/>
-        <em>This is cellular repair, digestive healing, and lifestyle realignment.</em>
+        <em>This is cellular repair, digestive healing, and whole-body balance.</em>
       </p>
     </section>
   );
