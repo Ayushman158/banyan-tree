@@ -3606,6 +3606,18 @@ section.spread.method-process {
   }
 }
 
+/* Watermark floating animations for mobile screens */
+@keyframes floatWatermarkFM {
+  0% { transform: scale(1) rotate(-15deg); opacity: 0.09; }
+  50% { transform: scale(1.15) rotate(-5deg); opacity: 0.16; }
+  100% { transform: scale(1) rotate(-15deg); opacity: 0.09; }
+}
+@keyframes floatWatermarkAY {
+  0% { transform: scale(1) rotate(15deg); opacity: 0.09; }
+  50% { transform: scale(1.15) rotate(5deg); opacity: 0.16; }
+  100% { transform: scale(1) rotate(15deg); opacity: 0.09; }
+}
+
 /* Botanical Background Medallion SVG watermarks */
 .method-flow__medallion {
   position: absolute;
@@ -3682,7 +3694,8 @@ section.spread.method-process {
   .method-flow__sub { font-size: 9px; margin-top: 4px; }
   .method-flow__amp { padding-top: 64px; gap: 8px; }
   .method-flow__amp-mark { width: 32px; height: 32px; font-size: 16px; }
-  .method-node { gap: 6px; padding: 10px 8px; border-radius: 12px; flex-direction: column; align-items: center; text-align: center; margin-bottom: 28px; }
+  .method-node { margin-bottom: 28px; display: flex; flex-direction: column; align-items: stretch; }
+  .method-node__inner { gap: 6px; padding: 10px 8px; border-radius: 12px; flex-direction: column; align-items: center; text-align: center; }
   .method-node::before { filter: blur(10px); }
   .method-node:hover::before { filter: blur(14px); }
   .method-node__icon { width: 28px; height: 28px; margin: 0; }
@@ -3693,9 +3706,25 @@ section.spread.method-process {
   .method-node__link svg { width: 2px; height: 100%; }
   .method-node__link-cross { width: calc(8px + clamp(4px, 1.5vw, 12px) * 2 + 32px); height: 12px; }
   .method-node__link-cross svg { height: 12px; }
-  .method-flow__medallion { width: 90px; height: auto; bottom: -10px; }
-  .method-flow__medallion--fm { left: -20px; }
-  .method-flow__medallion--ay { right: -20px; }
+  .method-node__watermark {
+    width: 50px;
+    height: auto;
+    bottom: -10px;
+    right: -10px;
+  }
+  /* Organic breathing animations for mobile watermarks */
+  .method-flow__col--fm .method-node__watermark {
+    animation: floatWatermarkFM 8s ease-in-out infinite;
+  }
+  .method-flow__col--ay .method-node__watermark {
+    animation: floatWatermarkAY 8s ease-in-out infinite;
+  }
+  
+  /* Staggered breathing delays to simulate rustling leaves */
+  .method-flow__steps li:nth-child(1) .method-node__watermark { animation-delay: 0s; }
+  .method-flow__steps li:nth-child(2) .method-node__watermark { animation-delay: 2s; }
+  .method-flow__steps li:nth-child(3) .method-node__watermark { animation-delay: 4s; }
+  .method-flow__steps li:nth-child(4) .method-node__watermark { animation-delay: 6s; }
   .wave-in svg, .wave-out svg { height: 50px; }
 }
 
