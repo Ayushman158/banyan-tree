@@ -165,16 +165,34 @@ function Methodology() {
           <ol className="method-flow__steps">
             {fmSteps.map(({ Icon, label, desc }, i) => (
               <li className="method-node" key={label}>
-                <span className="method-node__icon"><Icon size={20} strokeWidth={1.6} /></span>
-                <span className="method-node__body">
-                  <span className="method-node__label">{label}</span>
-                  <span className="method-node__desc">{desc}</span>
-                </span>
+                <div className="method-node__inner">
+                  <span className="method-node__icon"><Icon size={20} strokeWidth={1.6} /></span>
+                  <span className="method-node__body">
+                    <span className="method-node__label">{label}</span>
+                    <span className="method-node__desc">{desc}</span>
+                  </span>
+                  <Leaf className="method-node__watermark" size={72} strokeWidth={0.25} />
+                </div>
                 {i < fmSteps.length - 1 && (
-                  <span className="method-node__link" aria-hidden="true"><ArrowDown size={15} strokeWidth={2} /></span>
+                  <span className="method-node__link" aria-hidden="true">
+                    <svg width="2" height="100%" viewBox="0 0 2 40" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M1 0V40" stroke="currentColor" strokeWidth="1.5" strokeDasharray="4 4" className="flowing-line-vertical" />
+                    </svg>
+                  </span>
                 )}
                 {(i === 0 || i === 3) && (
-                  <span className="method-node__link-cross" aria-hidden="true"><ArrowRight size={16} strokeWidth={2} /></span>
+                  <span className="method-node__link-cross" aria-hidden="true">
+                    <svg width="100%" height="12" viewBox="0 0 100 12" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <defs>
+                        <linearGradient id={`cross-grad-${i}`} x1="0" y1="0" x2="1" y2="0">
+                          <stop offset="0%" stopColor="#6B8471" stopOpacity="0.25" />
+                          <stop offset="100%" stopColor="#D67A45" stopOpacity="0.95" />
+                        </linearGradient>
+                      </defs>
+                      <path d="M0 6H98" stroke={`url(#cross-grad-${i})`} strokeWidth="1.5" strokeDasharray="4 4" className="flowing-line-horizontal" />
+                    </svg>
+                    <ArrowRight size={12} strokeWidth={2} className="method-node__link-cross-arrow" />
+                  </span>
                 )}
               </li>
             ))}
@@ -198,13 +216,20 @@ function Methodology() {
           <ol className="method-flow__steps">
             {aySteps.map(({ Icon, label, desc }, i) => (
               <li className="method-node" key={label}>
-                <span className="method-node__icon"><Icon size={20} strokeWidth={1.6} /></span>
-                <span className="method-node__body">
-                  <span className="method-node__label">{label}</span>
-                  <span className="method-node__desc">{desc}</span>
-                </span>
+                <div className="method-node__inner">
+                  <span className="method-node__icon"><Icon size={20} strokeWidth={1.6} /></span>
+                  <span className="method-node__body">
+                    <span className="method-node__label">{label}</span>
+                    <span className="method-node__desc">{desc}</span>
+                  </span>
+                  <Flower2 className="method-node__watermark" size={72} strokeWidth={0.25} />
+                </div>
                 {i < aySteps.length - 1 && (
-                  <span className="method-node__link" aria-hidden="true"><ArrowDown size={15} strokeWidth={2} /></span>
+                  <span className="method-node__link" aria-hidden="true">
+                    <svg width="2" height="100%" viewBox="0 0 2 40" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M1 0V40" stroke="currentColor" strokeWidth="1.5" strokeDasharray="4 4" className="flowing-line-vertical" />
+                    </svg>
+                  </span>
                 )}
               </li>
             ))}
