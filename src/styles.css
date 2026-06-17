@@ -4044,42 +4044,16 @@ section.spread.method-process {
 /* Footer Section */
 .method-process__foot {
   text-align: center; font-family: var(--serif);
-  font-size: clamp(18px, 2.6vw, 25px); line-height: 1.6;
-  color: var(--ink); margin: clamp(48px, 7vw, 76px) auto 0; max-width: 38ch;
+  font-size: clamp(18px, 2.6vw, 25px); line-height: 1.7;
+  color: var(--ink); margin: clamp(48px, 7vw, 76px) auto 0; max-width: 44ch;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
 }
 .method-process__foot em {
-  position: relative;
   font-style: italic;
   color: var(--gold-deep);
-  display: block;
-  margin-top: 12px;
 }
-/* Leaf icons flanking the footer */
-.method-process__foot em::before {
-  content: "";
-  display: inline-block;
-  width: 46px;
-  height: 20px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 56 24' fill='none' stroke='%23c8a96b' stroke-width='1.1' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 21 C 20 19, 38 13, 54 3'/%3E%3Cpath d='M12 18 C 9 13, 12 10, 17 11 C 16 16, 14 18, 12 18 Z'/%3E%3Cpath d='M24 14 C 21 9, 24 6, 29 7 C 28 12, 26 14, 24 14 Z'/%3E%3Cpath d='M37 9 C 34 4, 37 1, 42 2 C 41 7, 39 9, 37 9 Z'/%3E%3Cpath d='M17 19 C 20 17, 24 18, 25 22 C 21 23, 18 22, 17 19 Z'/%3E%3Cpath d='M29 15 C 32 13, 36 14, 37 18 C 33 19, 30 18, 29 15 Z'/%3E%3C/svg%3E");
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  vertical-align: middle;
-  margin-right: 14px;
-  transform: scaleX(-1);
-}
-.method-process__foot em::after {
-  content: "";
-  display: inline-block;
-  width: 46px;
-  height: 20px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 56 24' fill='none' stroke='%23c8a96b' stroke-width='1.1' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 21 C 20 19, 38 13, 54 3'/%3E%3Cpath d='M12 18 C 9 13, 12 10, 17 11 C 16 16, 14 18, 12 18 Z'/%3E%3Cpath d='M24 14 C 21 9, 24 6, 29 7 C 28 12, 26 14, 24 14 Z'/%3E%3Cpath d='M37 9 C 34 4, 37 1, 42 2 C 41 7, 39 9, 37 9 Z'/%3E%3Cpath d='M17 19 C 20 17, 24 18, 25 22 C 21 23, 18 22, 17 19 Z'/%3E%3Cpath d='M29 15 C 32 13, 36 14, 37 18 C 33 19, 30 18, 29 15 Z'/%3E%3C/svg%3E");
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  vertical-align: middle;
-  margin-left: 14px;
-}
+.method-process__foot em::before,
+.method-process__foot em::after { content: none; }
 
 /* ── Responsive ─────────────────────────────────────────────────────────── */
 @media (max-width: 900px) {
