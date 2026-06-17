@@ -116,27 +116,6 @@ function Philosophy() {
   );
 }
 
-/* ── Stats strip — inside dark zone, just above WaveOut ─────────────────── */
-function StatsStrip() {
-  const ref = useReveal();
-  const stats = [
-    { n: "12", label: "Health domains" },
-    { n: "121", label: "Conditions mapped" },
-    { n: "7", label: "Root causes" },
-    { n: "2", label: "Complete sciences" },
-  ];
-  return (
-    <div className="stats-strip" ref={ref}>
-      {stats.map((s, i) => (
-        <div className={`stats-strip__item reveal delay-${i + 1}`} key={s.label}>
-          <span className="stats-strip__num">{s.n}</span>
-          <span className="stats-strip__label">{s.label}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
 /* ── II — Method ─────────────────────────────────────────────────────────── */
 function Methodology() {
   const ref = useReveal();
@@ -544,4 +523,4 @@ function SiteFooter({ onOpenJournal }) {
   );
 }
 
-export { Philosophy, Methodology, StatsStrip, Pricing, Voices, Qualifier, FinalCTA, SiteFooter };
+export { Philosophy, Methodology, Pricing, Voices, Qualifier, FinalCTA, SiteFooter };

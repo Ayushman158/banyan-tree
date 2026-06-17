@@ -4351,7 +4351,7 @@ section.spread.method-process {
 
   /* ─── STAGE 3: UNDERGROUND CTA ──────────────────────────────────────── */
   .underground-cta {
-    position: fixed !important;
+    position: absolute !important;
     left: 16px !important;
     right: 16px !important;
     bottom: calc(14px + env(safe-area-inset-bottom, 0px)) !important;

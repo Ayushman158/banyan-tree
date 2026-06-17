@@ -5,7 +5,7 @@ import React, { useEffect as useE, useRef as useR, useState as useS, useMemo as 
 import { motion, AnimatePresence } from 'framer-motion';
 import { BanyanData } from './data.js';
 import TreeScene3D from './TreeScene3D.jsx';
-import { Philosophy, Methodology, Pricing, Voices, Qualifier, FinalCTA, SiteFooter, StatsStrip } from './sections.jsx';
+import { Philosophy, Methodology, Pricing, Voices, Qualifier, FinalCTA, SiteFooter } from './sections.jsx';
 import { initSoundscape } from './sound.js';
 // The journal/profile are heavy (charts, lucide icons) and only mount on demand —
 // code-split them out of the initial bundle.
@@ -338,11 +338,20 @@ function App() {
   // deliberately choose to continue — the page shouldn't scroll past
   // the hero on its own. Unlocked only via explicit navigation below.
   const [exploreLocked, setExploreLocked] = useS(true);
+  const [scrolledPastHero, setScrolledPastHero] = useS(false);
 
   useE(() => {
     document.body.classList.toggle('explore-locked', exploreLocked);
     return () => document.body.classList.remove('explore-locked');
   }, [exploreLocked]);
+
+  useE(() => {
+    const handleScroll = () => {
+      setScrolledPastHero(window.scrollY > 50);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const goToSection = (id) => {
     setExploreLocked(false);
@@ -667,7 +676,7 @@ function App() {
         </div>
 
         {/* Underground: bottom-right healing pathways */}
-        <div className={`underground-cta ${(phase === 'roots' || phase === 'detail') && rootsReady ? 'is-visible' : ''}`}>
+        <div className={`underground-cta ${(phase === 'roots' || phase === 'detail') && rootsReady && !scrolledPastHero ? 'is-visible' : ''}`}>
           <button className="btn btn--ghost underground-cta__btn" onClick={() => goToSection('method')} data-hoverable="true">
             View Healing Pathways
             <span className="underground-cta__arrow">→</span>
@@ -679,7 +688,6 @@ function App() {
 
 
       <Philosophy />
-      <StatsStrip />
       <Methodology />
       <Voices />
       <Pricing />
