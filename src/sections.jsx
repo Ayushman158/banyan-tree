@@ -6,14 +6,11 @@ import functionalMedicineImg from './assets/functional-medicine-method.jpg';
 import ayurvedaImg from './assets/ayurveda-method.jpg';
 import beginAtRootBg from './assets/begin-at-root-bg.jpg';
 import {
-  Microscope,
   Droplet,
   Shield,
   Sparkles,
   Compass,
-  Scale,
   Heart,
-  Flame,
   Check,
   X,
   Calendar,
@@ -21,10 +18,15 @@ import {
   ArrowRight,
   ArrowDown,
   Search,
-  Activity,
-  Orbit,
   Leaf,
-  Flower2
+  Flower2,
+  User,
+  Sprout,
+  Waves,
+  Feather,
+  SunMoon,
+  Shell,
+  Sun
 } from 'lucide-react';
 
 function useReveal() {
@@ -120,16 +122,16 @@ function Philosophy() {
 function Methodology() {
   const ref = useReveal();
   const fmSteps = [
-    { Icon: Search,    label: "Root Cause Analysis",      desc: "Identify why symptoms exist" },
-    { Icon: Droplet,   label: "Fix Nutrient Deficiencies", desc: "Restore vitamins, minerals, amino acids & cofactors" },
-    { Icon: Activity,  label: "Heal Gut & Liver",          desc: "Improve digestion, absorption & detox capacity" },
-    { Icon: Sparkles,  label: "Enhance Detoxification",    desc: "Activate gentle, safe detox pathways" },
+    { Icon: Search,   label: "Root Cause Analysis",       desc: "Identify why symptoms exist" },
+    { Icon: Sprout,   label: "Fix Nutrient Deficiencies", desc: "Restore vitamins, minerals, amino acids, and cofactors" },
+    { Icon: Waves,    label: "Heal Gut & Liver",          desc: "Improve digestion, absorption, microbiome balance and detox capacity" },
+    { Icon: Feather,  label: "Enhance Detoxification",    desc: "Activate gentle, safe detox pathways for long term recovery" },
   ];
   const aySteps = [
-    { Icon: Compass, label: "Prakriti Analysis",            desc: "Understand your unique constitution" },
-    { Icon: Orbit,   label: "Optimise the Five Elements",   desc: "Balance Earth, Water, Fire, Air & Ether" },
-    { Icon: Scale,   label: "Balance the Doshas",           desc: "Harmonise Vata, Pitta & Kapha" },
-    { Icon: Flame,   label: "Strengthen Digestion (Agni)",  desc: "Prevent toxin buildup, fuel transformation" },
+    { Icon: User,     label: "Prakriti Analysis",              desc: "Understand your unique constitution" },
+    { Icon: SunMoon,  label: "Optimize the Five Elements",     desc: "Balance Earth, Water, Fire, Air & Ether" },
+    { Icon: Shell,    label: "Balance Doshas",                 desc: "Harmonize Vata, Pitta, and Kapha for stability and vitality" },
+    { Icon: Sun,      label: "Improve Digestion & Metabolism", desc: "Strengthen Agni (digestive fire) prevent toxin (ama) formation" },
   ];
   return (
     <section className="spread method-section method-process" id="method" ref={ref}>
@@ -170,6 +172,9 @@ function Methodology() {
                 </span>
                 {i < fmSteps.length - 1 && (
                   <span className="method-node__link" aria-hidden="true"><ArrowDown size={15} strokeWidth={2} /></span>
+                )}
+                {(i === 0 || i === 3) && (
+                  <span className="method-node__link-cross" aria-hidden="true"><ArrowRight size={16} strokeWidth={2} /></span>
                 )}
               </li>
             ))}
