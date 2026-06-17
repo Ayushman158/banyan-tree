@@ -18,6 +18,7 @@ import {
   BookOpen,
   ArrowRight,
   ArrowDown,
+  ChevronDown,
   Search,
   Leaf,
   Flower2,
@@ -127,7 +128,7 @@ function Methodology() {
     { Icon: Search,    label: "Root Cause Analysis",           desc: "Identify the upstream drivers behind your symptoms — not just what you feel, but why it's happening." },
     { Icon: Sprout,    label: "Fix Nutrient Deficiencies",     desc: "Restore the vitamins, minerals, amino acids, and cofactors your body needs to repair and function." },
     { Icon: Waves,     label: "Heal Gut & Liver",              desc: "Improve digestion, absorption, and microbiome balance while rebuilding the liver's detox capacity." },
-    { Icon: Sparkles,  label: "Optimize Mitochondrial Health", desc: "Recharge your cells at the source — supporting energy production, cellular repair, and metabolic resilience." },
+    { Icon: Sparkles,  label: "Optimize Mitochondrial Health", desc: "Recharge your cells at the source — supporting energy production, cellular repair, and metabolic resilience." },
     { Icon: Feather,   label: "Support Detoxification",        desc: "Activate gentle, safe detox pathways that help the body clear what's been accumulating." },
   ];
   const aySteps = [
@@ -167,17 +168,10 @@ function Methodology() {
         >
           <span className="method-node__icon"><Icon size={20} strokeWidth={1.6} /></span>
           <span className="method-node__label">{label}</span>
-          <span className="method-node__more" aria-hidden="true">+</span>
+          <span className="method-node__more" aria-hidden="true"><ChevronDown size={13} strokeWidth={1.5} /></span>
         </button>
         {i < 4 && (
           <span className="method-node__link" aria-hidden="true" />
-        )}
-        {discipline === "fm" && (i === 0 || i === 4) && (
-          <span className="method-node__link-cross" aria-hidden="true">
-            <span className="method-node__cross-node">
-              <ArrowRight size={15} strokeWidth={1.6} />
-            </span>
-          </span>
         )}
       </li>
     );
@@ -221,7 +215,13 @@ function Methodology() {
 
         {/* Central connector */}
         <div className="method-flow__amp" aria-hidden="true">
+          <span className="method-flow__amp-arrow method-flow__amp-arrow--top" aria-hidden="true">
+            <ArrowRight size={14} strokeWidth={1.5} />
+          </span>
           <span className="method-flow__amp-mark">&amp;</span>
+          <span className="method-flow__amp-arrow method-flow__amp-arrow--bottom" aria-hidden="true">
+            <ArrowRight size={14} strokeWidth={1.5} />
+          </span>
         </div>
 
         {/* Ayurveda */}
