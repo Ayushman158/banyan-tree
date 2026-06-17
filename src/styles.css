@@ -3626,11 +3626,11 @@ section.spread.method-process {
 
 .method-node__inner {
   position: relative;
-  display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 16px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 14px;
   background: linear-gradient(168deg, #ffffff 0%, #fdfbf6 100%);
   border-radius: 18px;
-  padding: 30px 22px;
-  min-height: 160px;
+  padding: 26px 18px;
+  min-height: 124px;
   box-sizing: border-box;
   box-shadow:
     0 8px 24px rgba(83, 67, 39, 0.04),
@@ -3638,7 +3638,15 @@ section.spread.method-process {
   overflow: hidden;
   z-index: 1;
   width: 100%;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  appearance: none; -webkit-appearance: none;
   transition: box-shadow 0.45s var(--ease), border-color 0.45s var(--ease), transform 0.45s var(--ease);
+}
+.method-node__inner:focus-visible {
+  outline: 2px solid rgba(200, 169, 107, 0.6);
+  outline-offset: 3px;
 }
 .method-node:hover .method-node__inner {
   box-shadow:
@@ -3742,8 +3750,7 @@ section.spread.method-process {
 }
 .method-node__icon svg { width: 18px; height: auto; }
 
-/* Text Content: Label and Description */
-.method-node__body { display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 0; width: 100%; }
+/* Card label */
 .method-node__label {
   font-family: var(--serif); font-weight: 500;
   font-size: clamp(16px, 2vw, 19px); color: var(--ink); letter-spacing: 0.01em;
@@ -3767,13 +3774,164 @@ section.spread.method-process {
   width: 40px;
   opacity: 0.8;
 }
-.method-node__desc {
-  font-family: var(--sans); font-size: clamp(11.5px, 1.4vw, 13px);
-  line-height: 1.5; color: var(--ink-soft);
-  max-width: 36ch;
-  /* Reserve 3 text lines so descriptions of any length keep cards equal height */
-  display: flex; align-items: center; justify-content: center;
-  min-height: 4.5em;
+/* "+" affordance signalling the card opens a detail view */
+.method-node__more {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1;
+  color: var(--gold-deep);
+  background: rgba(200, 169, 107, 0.1);
+  border: 1px solid rgba(200, 169, 107, 0.3);
+  transition: transform 0.4s var(--ease), background 0.4s var(--ease), border-color 0.4s var(--ease);
+}
+.method-node:hover .method-node__more {
+  transform: rotate(90deg);
+  background: rgba(200, 169, 107, 0.18);
+  border-color: rgba(200, 169, 107, 0.5);
+}
+
+/* ── Step detail sheet (tap a card to read the full description) ──────────── */
+.method-detail {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(28, 24, 16, 0.42);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: methodDetailFade 0.3s var(--ease);
+}
+@keyframes methodDetailFade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.method-detail__panel {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  text-align: center;
+  padding: 44px 36px 40px;
+  border-radius: 24px;
+  background: linear-gradient(168deg, #ffffff 0%, #fdfaf3 100%);
+  border: 1px solid rgba(200, 169, 107, 0.25);
+  box-shadow:
+    0 30px 80px rgba(40, 30, 12, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  animation: methodDetailPop 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes methodDetailPop {
+  from { opacity: 0; transform: translateY(24px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.method-detail__panel--fm { border-top: 3px solid rgba(107, 132, 113, 0.55); }
+.method-detail__panel--ay { border-top: 3px solid rgba(214, 122, 69, 0.5); }
+
+.method-detail__close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid rgba(200, 169, 107, 0.28);
+  background: rgba(255, 255, 255, 0.7);
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: transform 0.3s var(--ease), border-color 0.3s var(--ease), color 0.3s var(--ease);
+}
+.method-detail__close:hover {
+  transform: rotate(90deg);
+  border-color: rgba(200, 169, 107, 0.55);
+  color: var(--ink);
+}
+
+.method-detail__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  margin-bottom: 18px;
+}
+.method-detail__panel--fm .method-detail__icon {
+  background: radial-gradient(circle at 50% 35%, rgba(107, 132, 113, 0.16), rgba(107, 132, 113, 0.05));
+  border: 1px solid rgba(107, 132, 113, 0.4);
+  color: #596E5F;
+}
+.method-detail__panel--ay .method-detail__icon {
+  background: radial-gradient(circle at 50% 35%, rgba(214, 122, 69, 0.16), rgba(214, 122, 69, 0.05));
+  border: 1px solid rgba(214, 122, 69, 0.38);
+  color: #D67A45;
+}
+
+.method-detail__tag {
+  display: block;
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.method-detail__panel--fm .method-detail__tag { color: #6B8471; }
+.method-detail__panel--ay .method-detail__tag { color: #c47a4a; }
+
+.method-detail__title {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(22px, 4vw, 27px);
+  line-height: 1.2;
+  color: var(--ink);
+  margin: 0 0 16px;
+}
+.method-detail__desc {
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--ink-soft);
+  margin: 0 auto;
+  max-width: 34ch;
+}
+
+/* Mobile: dock the sheet to the bottom and slide it up */
+@media (max-width: 600px) {
+  .method-detail {
+    align-items: flex-end;
+    padding: 0;
+  }
+  .method-detail__panel {
+    max-width: 100%;
+    padding: 38px 26px 40px;
+    border-radius: 24px 24px 0 0;
+    animation: methodSheetUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes methodSheetUp {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
+  }
+  .method-detail__icon { width: 56px; height: 56px; margin-bottom: 14px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .method-detail,
+  .method-detail__panel { animation: none; }
 }
 
 /* Horizontal cross-arrow pointing to the corresponding Ayurveda step */
@@ -3858,7 +4016,7 @@ section.spread.method-process {
 /* Centered Ampersand Circle */
 .method-flow__amp-mark {
   position: absolute;
-  top: 59%;
+  top: 55%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 3;
@@ -3959,8 +4117,8 @@ section.spread.method-process {
   .method-node { margin-bottom: 0; }
   .method-node:hover { transform: translateY(-2px); }
   .method-node__inner {
-    gap: 10px; padding: 18px 12px; border-radius: 12px; box-shadow: 0 5px 15px rgba(83, 67, 39, 0.02);
-    min-height: 130px; box-sizing: border-box; justify-content: center; display: flex; flex-direction: column;
+    gap: 10px; padding: 16px 8px; border-radius: 12px; box-shadow: 0 5px 15px rgba(83, 67, 39, 0.02);
+    min-height: 104px; box-sizing: border-box; justify-content: center; display: flex; flex-direction: column;
   }
   .method-node__inner:hover { box-shadow: 0 10px 24px rgba(83, 67, 39, 0.05); }
   .method-node::before { filter: blur(10px); }
@@ -3976,7 +4134,7 @@ section.spread.method-process {
   .method-node__icon svg { width: 14px; }
   .method-node__label { font-size: 13.5px; }
   .method-node__label::after { width: 20px; margin-top: 6px; }
-  .method-node__desc { font-size: 10.5px; line-height: 1.4; max-width: 100%; }
+  .method-node__more { width: 16px; height: 16px; font-size: 13px; top: 8px; right: 8px; }
   
   .method-node__link-cross {
     left: calc(100% - 2px);

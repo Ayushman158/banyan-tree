@@ -1,7 +1,8 @@
 /* Scroll-driven narrative sections — real content, editorial design.
    References: Awwwards editorial layouts · Stripe pricing clarity · v0 minimalism */
 
-import { useEffect as _useEffect, useRef as _useRef } from 'react';
+import { useEffect as _useEffect, useRef as _useRef, useState as _useState } from 'react';
+import { createPortal as _createPortal } from 'react-dom';
 import functionalMedicineImg from './assets/functional-medicine-method.jpg';
 import ayurvedaImg from './assets/ayurveda-method.jpg';
 import beginAtRootBg from './assets/begin-at-root-bg.jpg';
@@ -121,18 +122,69 @@ function Philosophy() {
 /* ── II — Method ─────────────────────────────────────────────────────────── */
 function Methodology() {
   const ref = useReveal();
+  const [active, setActive] = _useState(null);
   const fmSteps = [
-    { Icon: Search,   label: "Root Cause Analysis",       desc: "Identify why symptoms exist" },
-    { Icon: Sprout,   label: "Fix Nutrient Deficiencies", desc: "Restore vitamins, minerals, amino acids, and cofactors" },
-    { Icon: Waves,    label: "Heal Gut & Liver",          desc: "Improve digestion, absorption, microbiome balance and detox capacity" },
-    { Icon: Feather,  label: "Enhance Detoxification",    desc: "Activate gentle, safe detox pathways for long term recovery" },
+    { Icon: Search,    label: "Root Cause Analysis",           desc: "Identify the upstream drivers behind your symptoms — not just what you feel, but why it's happening." },
+    { Icon: Sprout,    label: "Fix Nutrient Deficiencies",     desc: "Restore the vitamins, minerals, amino acids, and cofactors your body needs to repair and function." },
+    { Icon: Waves,     label: "Heal Gut & Liver",              desc: "Improve digestion, absorption, and microbiome balance while rebuilding the liver's detox capacity." },
+    { Icon: Sparkles,  label: "Optimize Mitochondrial Health", desc: "Recharge your cells at the source — supporting energy production, cellular repair, and metabolic resilience." },
+    { Icon: Feather,   label: "Support Detoxification",        desc: "Activate gentle, safe detox pathways that help the body clear what's been accumulating." },
   ];
   const aySteps = [
-    { Icon: User,     label: "Prakriti Analysis",              desc: "Understand your unique constitution" },
-    { Icon: SunMoon,  label: "Optimize the Five Elements",     desc: "Balance Earth, Water, Fire, Air & Ether" },
-    { Icon: Shell,    label: "Balance Doshas",                 desc: "Harmonize Vata, Pitta, and Kapha for stability and vitality" },
-    { Icon: Sun,      label: "Improve Digestion & Metabolism", desc: "Strengthen Agni (digestive fire) prevent toxin (ama) formation" },
+    { Icon: User,     label: "Prakriti Analysis",                    desc: "Understand your unique constitution — the natural blueprint that shapes how your body responds." },
+    { Icon: Shell,    label: "Balance Doshas",                        desc: "Harmonize Vata, Pitta, and Kapha to rebuild stability, resilience, and lasting vitality." },
+    { Icon: Sun,      label: "Improve Digestion (Agni)",              desc: "Strengthen digestive fire to prevent the build-up of toxins (ama) and fuel metabolism from within." },
+    { Icon: SunMoon,  label: "Optimize the Five Elements",            desc: "Bring Earth, Water, Fire, Air & Ether back into balance to restore harmony across the system." },
+    { Icon: Compass,  label: "Restore Ahara, Vihara & Achara",       desc: "Realign your diet, daily rhythms, and conduct with your constitution for sustainable, whole-life healing." },
   ];
+
+  const openDetail = (step, discipline, disciplineName, index) =>
+    setActive({ ...step, discipline, disciplineName, index });
+  const closeDetail = () => setActive(null);
+
+  _useEffect(() => {
+    if (!active) return;
+    const onKey = (e) => { if (e.key === "Escape") closeDetail(); };
+    document.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [active]);
+
+  const renderNode = (step, i, discipline, disciplineName) => {
+    const { Icon, label } = step;
+    return (
+      <li className="method-node" key={label}>
+        <button
+          type="button"
+          className="method-node__inner"
+          onClick={() => openDetail(step, discipline, disciplineName, i)}
+          aria-haspopup="dialog"
+          aria-label={`${label} — read more`}
+        >
+          <span className="method-node__icon"><Icon size={20} strokeWidth={1.6} /></span>
+          <span className="method-node__label">{label}</span>
+          <span className="method-node__more" aria-hidden="true">+</span>
+        </button>
+        {i < 4 && (
+          <span className="method-node__link" aria-hidden="true" />
+        )}
+        {discipline === "fm" && (i === 0 || i === 4) && (
+          <span className="method-node__link-cross" aria-hidden="true">
+            <span className="method-node__cross-node">
+              <ArrowRight size={15} strokeWidth={1.6} />
+            </span>
+          </span>
+        )}
+      </li>
+    );
+  };
+
+  const ActiveIcon = active?.Icon;
+
   return (
     <section className="spread method-section method-process" id="method" ref={ref}>
       <div className="method-process__aura" aria-hidden="true" />
@@ -163,27 +215,7 @@ function Methodology() {
             <span className="method-flow__sub">Fix the physiology first</span>
           </div>
           <ol className="method-flow__steps">
-            {fmSteps.map(({ Icon, label, desc }, i) => (
-              <li className="method-node" key={label}>
-                <div className="method-node__inner">
-                  <span className="method-node__icon"><Icon size={20} strokeWidth={1.6} /></span>
-                  <span className="method-node__body">
-                    <span className="method-node__label">{label}</span>
-                    <span className="method-node__desc">{desc}</span>
-                  </span>
-                </div>
-                {i < 3 && (
-                  <span className="method-node__link" aria-hidden="true" />
-                )}
-                {(i === 0 || i === 3) && (
-                  <span className="method-node__link-cross" aria-hidden="true">
-                    <span className="method-node__cross-node">
-                      <ArrowRight size={15} strokeWidth={1.6} />
-                    </span>
-                  </span>
-                )}
-              </li>
-            ))}
+            {fmSteps.map((step, i) => renderNode(step, i, "fm", "Functional Medicine"))}
           </ol>
         </div>
 
@@ -200,20 +232,7 @@ function Methodology() {
             <span className="method-flow__sub">Restore balance &amp; rhythm</span>
           </div>
           <ol className="method-flow__steps">
-            {aySteps.map(({ Icon, label, desc }, i) => (
-              <li className="method-node" key={label}>
-                <div className="method-node__inner">
-                  <span className="method-node__icon"><Icon size={20} strokeWidth={1.6} /></span>
-                  <span className="method-node__body">
-                    <span className="method-node__label">{label}</span>
-                    <span className="method-node__desc">{desc}</span>
-                  </span>
-                </div>
-                {i < 3 && (
-                  <span className="method-node__link" aria-hidden="true" />
-                )}
-              </li>
-            ))}
+            {aySteps.map((step, i) => renderNode(step, i, "ay", "Ayurveda"))}
           </ol>
         </div>
       </div>
@@ -222,6 +241,39 @@ function Methodology() {
         This is not symptom management.<br/>
         <em>This is cellular repair, digestive healing, and whole-body balance.</em>
       </p>
+
+      {/* Step detail sheet — portalled to <body> so position:fixed escapes any
+          transformed ancestor and anchors to the viewport */}
+      {active && _createPortal(
+        <div
+          className="method-detail"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="method-detail-title"
+          onClick={closeDetail}
+        >
+          <div
+            className={`method-detail__panel method-detail__panel--${active.discipline}`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              className="method-detail__close"
+              onClick={closeDetail}
+              aria-label="Close"
+            >
+              <X size={18} />
+            </button>
+            <span className="method-detail__icon">
+              {ActiveIcon && <ActiveIcon size={26} strokeWidth={1.5} />}
+            </span>
+            <span className="method-detail__tag">{active.disciplineName}</span>
+            <h4 id="method-detail-title" className="method-detail__title">{active.label}</h4>
+            <p className="method-detail__desc">{active.desc}</p>
+          </div>
+        </div>,
+        document.body
+      )}
     </section>
   );
 }
