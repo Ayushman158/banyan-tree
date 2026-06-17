@@ -160,7 +160,7 @@ function Loader({ gone }) {
 }
 
 /* ---------- Nav ---------- */
-function Nav({ onOpenJournal, onNavigate }) {
+function Nav({ onNavigate }) {
   const [scrolled, setScrolled] = useS(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useS(false);
 
@@ -183,7 +183,6 @@ function Nav({ onOpenJournal, onNavigate }) {
             <a href="#philosophy" onClick={(e) => { e.preventDefault(); onNavigate('philosophy'); }} data-hoverable="true">Philosophy</a>
             <a href="#method" onClick={(e) => { e.preventDefault(); onNavigate('method'); }} data-hoverable="true">Method</a>
             <a href="#voices" onClick={(e) => { e.preventDefault(); onNavigate('voices'); }} data-hoverable="true">Voices</a>
-            <button className="nav-link-btn" onClick={onOpenJournal} data-hoverable="true">Journal</button>
           </div>
           <a href="#apply" className="nav-cta" onClick={(e) => { e.preventDefault(); onNavigate('apply'); }} data-hoverable="true">Apply for Consult</a>
         </div>
@@ -218,12 +217,6 @@ function Nav({ onOpenJournal, onNavigate }) {
               <a href="#philosophy" onClick={() => setMobileMenuOpen(false)}>Philosophy</a>
               <a href="#method" onClick={() => setMobileMenuOpen(false)}>Method</a>
               <a href="#voices" onClick={() => setMobileMenuOpen(false)}>Voices</a>
-              <button 
-                className="mobile-menu-btn" 
-                onClick={() => { onOpenJournal(); setMobileMenuOpen(false); }}
-              >
-                Journal
-              </button>
               <a href="#apply" className="mobile-menu-cta" onClick={() => setMobileMenuOpen(false)}>
                 Apply for Consult
               </a>
@@ -534,7 +527,7 @@ function App() {
         )}
       </AnimatePresence>
 
-      {!showSplash && <Nav onOpenJournal={() => setShowJournal(true)} onNavigate={goToSection} />}
+      {!showSplash && <Nav onNavigate={goToSection} />}
 
       <section className={`stage${(phase === 'roots' || phase === 'detail') ? ' is-underground' : ''}`} data-screen-label="01 Hero">
         {!showSplash && (
@@ -687,13 +680,13 @@ function App() {
 
 
 
-      <Philosophy />
       <Methodology />
+      <Philosophy />
       <Voices />
       <Pricing />
       <Qualifier />
       <FinalCTA />
-      <SiteFooter onOpenJournal={() => setShowJournal(true)} />
+      <SiteFooter />
 
       <Suspense fallback={null}>
         {showJournal && !journalAnswers && (

@@ -7,15 +7,15 @@
   --paper-2:      rgba(247, 245, 240, 0.96); /* Mist White (translucent) */
   --paper-3:      #DCCFB9; /* Soil Beige */
   --ink:          #1F221E; /* Primary Text */
-  --ink-soft:     #4A544F; /* Secondary Text (darkened slate green-grey for contrast) */
-  --ink-mute:     #4A544F; /* Secondary Text (darkened slate green-grey for contrast) */
-  --ink-faint:    rgba(31, 34, 30, 0.35);
+  --ink-soft:     #2D3330; /* Secondary Text (darkened slate green-grey for contrast) */
+  --ink-mute:     #2D3330; /* Secondary Text (darkened slate green-grey for contrast) */
+  --ink-faint:    rgba(31, 34, 30, 0.62); /* Darkened for accessibility/contrast */
   --line:         rgba(220, 207, 185, 0.4); /* Soil Beige lines */
   --line-strong:  rgba(220, 207, 185, 0.7);
 
   /* Accents */
   --gold:         #C8A96B; /* Healing Gold */
-  --gold-deep:    #8F6E36; /* Darkened Gold (for text contrast on light backgrounds) */
+  --gold-deep:    #755629; /* Darkened Gold (for text contrast on light backgrounds) */
   --gold-soft:    #F8E9C8; /* Light Accent Gold */
   --sky-soft:     #DCEAF6; /* Powder Sky */
   --moss:         #50654E; /* Banyan Green */
@@ -1325,19 +1325,137 @@ section.spread { position: relative; padding: 18vh 7vw; z-index: 15; background:
   border-color: var(--ink) !important;
 }
 
+/* Premium Footer */
 footer {
-  padding: 50px 7vw 36px;
-  display: flex; justify-content: space-between; align-items: flex-end; gap: 30px;
-  border-top: 1px solid var(--line);
-  background: hsla(40, 32%, 91%, 1);
-  font-family: var(--mono); font-size: 10px; letter-spacing: 0.38em;
-  text-transform: uppercase; color: var(--ink-mute);
+  padding: 80px 7vw 48px;
+  background: hsla(40, 24%, 94%, 1); /* Slightly lighter and cleaner warm background */
+  border-top: 1px solid var(--line-strong);
+  color: var(--ink-mute);
+  font-family: var(--sans);
+  font-size: 14px;
 }
-footer .left { display: flex; flex-direction: column; gap: 8px; }
-footer .mark { font-family: var(--serif); font-style: italic; font-size: 28px; color: var(--ink); text-transform: none; }
-footer .right { display: flex; gap: 28px; }
-footer a { color: var(--ink-mute); text-decoration: none; transition: color 0.4s var(--ease); }
-footer a:hover { color: var(--gold-deep); }
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+  width: 100%;
+}
+
+.footer-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 40px;
+  width: 100%;
+}
+
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.footer-logo {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 32px;
+  color: var(--gold-deep);
+  background: rgba(200, 169, 107, 0.12);
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid rgba(200, 169, 107, 0.3);
+  user-select: none;
+}
+
+.footer-brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.footer-brand-text .mark {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 28px;
+  color: var(--ink);
+  line-height: 1.2;
+}
+
+.footer-brand-text .footer-role {
+  font-family: var(--sans);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.footer-nav {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+}
+
+.footer-nav a {
+  color: var(--ink-mute);
+  font-family: var(--sans);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all 0.35s var(--ease);
+  position: relative;
+  padding: 4px 0;
+}
+
+.footer-nav a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--gold-deep);
+  transition: width 0.35s var(--ease);
+}
+
+.footer-nav a:hover {
+  color: var(--gold-deep);
+}
+
+.footer-nav a:hover::after {
+  width: 100%;
+}
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--line);
+  padding-top: 24px;
+  font-size: 12px;
+  color: var(--ink-faint);
+  width: 100%;
+}
+
+.footer-bottom .copyright {
+  font-family: var(--sans);
+}
+
+.footer-bottom .footer-tagline {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 16px;
+  color: var(--gold-deep);
+}
 
 /* ── Reveal animations ───────────────────────────────────────────────────── */
 .reveal { opacity: 0; transform: translateY(40px); transition: opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1), transform 1.2s cubic-bezier(0.22, 1, 0.36, 1); }
@@ -1426,8 +1544,12 @@ footer a:hover { color: var(--gold-deep); }
     z-index: 1;
   }
   .cat-banner .name, .cond-banner .name { font-size: 28px; }
-  footer { flex-direction: column; align-items: center; text-align: center; gap: 24px; padding: 40px 4vw 30px; }
-  footer .right { flex-wrap: wrap; justify-content: center; }
+  footer { padding: 60px 5vw 40px; }
+  .footer-container { gap: 40px; }
+  .footer-top { flex-direction: column; align-items: center; text-align: center; gap: 30px; }
+  .footer-brand { flex-direction: column; gap: 12px; }
+  .footer-nav { flex-direction: column; gap: 16px; }
+  .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
   .philosophy { grid-template-columns: 1fr; gap: 36px; }
   .philosophy .col-right { padding-top: 0; }
   .method { grid-template-columns: 1fr 1fr; gap: 30px; }
@@ -3448,30 +3570,50 @@ section.spread.method-process {
   left: 50%;
   top: 100%;
   height: clamp(32px, 4vw, 44px);
-  width: 2px;
+  width: 1.5px;
   transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   z-index: 1;
   pointer-events: none;
-  background-image: linear-gradient(to bottom, currentColor 42%, transparent 42%);
-  background-size: 1.5px 12px;
-  animation: flowDashed 2.4s linear infinite;
+  overflow: hidden;
+  /* Soft static dashes — gently drifting to feel alive without marching */
+  background-image: linear-gradient(to bottom, currentColor 36%, transparent 36%);
+  background-size: 1.5px 10px;
+  animation: flowDashed 6s linear infinite;
+}
+/* Traveling light streak that glides down the connector */
+.method-node__link::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1.5px;
+  height: 14px;
+  border-radius: 2px;
+  background: linear-gradient(to bottom, transparent, var(--link-glow, currentColor) 50%, transparent);
+  filter: blur(0.4px);
+  animation: linkFlow 2.8s cubic-bezier(0.45, 0, 0.55, 1) infinite;
 }
 @keyframes flowDashed {
-  from {
-    background-position: 0 0;
-  }
-  to {
-    background-position: 0 12px;
-  }
+  from { background-position: 0 0; }
+  to   { background-position: 0 10px; }
 }
+@keyframes linkFlow {
+  0%   { top: -16px; opacity: 0; }
+  25%  { opacity: 1; }
+  75%  { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+/* Stagger the streaks so the three connectors don't pulse in unison */
+.method-flow__steps li:nth-child(1) .method-node__link::after { animation-delay: 0s; }
+.method-flow__steps li:nth-child(2) .method-node__link::after { animation-delay: 0.9s; }
+.method-flow__steps li:nth-child(3) .method-node__link::after { animation-delay: 1.8s; }
 .method-flow__col--fm .method-node__link {
-  color: rgba(107, 132, 113, 0.4);
+  color: rgba(107, 132, 113, 0.32);
+  --link-glow: rgba(107, 132, 113, 0.85);
 }
 .method-flow__col--ay .method-node__link {
-  color: rgba(214, 122, 69, 0.38);
+  color: rgba(214, 122, 69, 0.3);
+  --link-glow: rgba(214, 122, 69, 0.82);
 }
 .method-node {
   position: relative;
@@ -3606,6 +3748,9 @@ section.spread.method-process {
   font-family: var(--serif); font-weight: 500;
   font-size: clamp(16px, 2vw, 19px); color: var(--ink); letter-spacing: 0.01em;
   line-height: 1.3;
+  /* Reserve 2 text lines + underline so 1- and 2-line labels keep cards equal height */
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: calc(2.6em + 13px);
 }
 /* Small gold line segment under label */
 .method-node__label::after {
@@ -3626,6 +3771,9 @@ section.spread.method-process {
   font-family: var(--sans); font-size: clamp(11.5px, 1.4vw, 13px);
   line-height: 1.5; color: var(--ink-soft);
   max-width: 36ch;
+  /* Reserve 3 text lines so descriptions of any length keep cards equal height */
+  display: flex; align-items: center; justify-content: center;
+  min-height: 4.5em;
 }
 
 /* Horizontal cross-arrow pointing to the corresponding Ayurveda step */
@@ -3664,9 +3812,13 @@ section.spread.method-process {
   transition: transform 0.4s var(--ease), border-color 0.4s var(--ease), color 0.4s var(--ease), box-shadow 0.4s var(--ease);
 }
 .method-node__cross-node svg {
-  width: 14px;
-  height: 14px;
-  stroke-width: 1.8;
+  width: 16px;
+  height: 16px;
+  stroke-width: 1.5;
+  transition: transform 0.4s var(--ease);
+}
+.method-node:hover .method-node__cross-node svg {
+  transform: translateX(1px);
 }
 .method-node:hover .method-node__cross-node {
   transform: translate(-50%, -50%) scale(1.1);
@@ -3693,32 +3845,14 @@ section.spread.method-process {
   left: 50%;
   transform: translateX(-50%);
   width: 1px;
-  /* Visible only across the steps region (≈32%–86% of the column), fading out
-     before it reaches the headers so it reads as a connector, not a full spine. */
+  /* Spans the full steps region, capped just beyond the first and last arrow
+     nodes (which sit at ≈31% and ≈88%) so it reads as one continuous thread. */
   background: linear-gradient(to bottom,
-    transparent 27%,
-    rgba(200, 169, 107, 0.28) 31%,
-    rgba(200, 169, 107, 0.28) 88%,
-    transparent 92%);
+    transparent 20%,
+    rgba(200, 169, 107, 0.3) 24%,
+    rgba(200, 169, 107, 0.3) 95%,
+    transparent 99%);
   z-index: 1;
-}
-
-/* Top & Bottom small dots — anchored to the connector's visible ends */
-.method-flow__amp-dot {
-  position: absolute;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 5px;
-  height: 5px;
-  background: rgba(200, 169, 107, 0.5);
-  border-radius: 50%;
-  z-index: 2;
-}
-.method-flow__amp-dot--top {
-  top: 31%;
-}
-.method-flow__amp-dot--bottom {
-  top: 88%;
 }
 
 /* Centered Ampersand Circle */

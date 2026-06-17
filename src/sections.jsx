@@ -85,7 +85,7 @@ function Philosophy() {
   const ref = useReveal();
   return (
     <section className="spread spread--dark" id="philosophy" ref={ref}>
-      <div className="section-tag reveal"><span>I · Philosophy</span></div>
+      <div className="section-tag reveal"><span>III · Philosophy</span></div>
       <div className="philosophy">
         <div className="col-left">
           <h2 className="section-h reveal">
@@ -171,15 +171,14 @@ function Methodology() {
                     <span className="method-node__label">{label}</span>
                     <span className="method-node__desc">{desc}</span>
                   </span>
-                  <Leaf className="method-node__watermark" size={72} strokeWidth={0.25} />
                 </div>
                 {i < 3 && (
                   <span className="method-node__link" aria-hidden="true" />
                 )}
-                {(i === 0 || i === 1 || i === 3) && (
+                {(i === 0 || i === 3) && (
                   <span className="method-node__link-cross" aria-hidden="true">
                     <span className="method-node__cross-node">
-                      <ArrowRight size={13} strokeWidth={2.5} />
+                      <ArrowRight size={15} strokeWidth={1.6} />
                     </span>
                   </span>
                 )}
@@ -190,9 +189,7 @@ function Methodology() {
 
         {/* Central connector */}
         <div className="method-flow__amp" aria-hidden="true">
-          <span className="method-flow__amp-dot method-flow__amp-dot--top" />
           <span className="method-flow__amp-mark">&amp;</span>
-          <span className="method-flow__amp-dot method-flow__amp-dot--bottom" />
         </div>
 
         {/* Ayurveda */}
@@ -211,7 +208,6 @@ function Methodology() {
                     <span className="method-node__label">{label}</span>
                     <span className="method-node__desc">{desc}</span>
                   </span>
-                  <Flower2 className="method-node__watermark" size={72} strokeWidth={0.25} />
                 </div>
                 {i < 3 && (
                   <span className="method-node__link" aria-hidden="true" />
@@ -512,27 +508,29 @@ function FinalCTA() {
 }
 
 /* ── Footer ──────────────────────────────────────────────────────────────── */
-function SiteFooter({ onOpenJournal }) {
+function SiteFooter() {
   return (
     <footer>
-      <div className="left">
-        <span className="mark">Himanshu Garg</span>
-        <span>Functional Medicine · Ayurveda · Lisbon &amp; Kyoto</span>
-      </div>
-      <div className="right">
-        <a
-          href="#"
-          onClick={(e) => {
-            e.preventDefault();
-            if (onOpenJournal) onOpenJournal();
-          }}
-          data-hoverable="true"
-        >
-          Journal
-        </a>
-        <a href="#philosophy" data-hoverable="true">Philosophy</a>
-        <a href="#programs" data-hoverable="true">Programs</a>
-        <a href="#begin" data-hoverable="true">Contact</a>
+      <div className="footer-container">
+        <div className="footer-top">
+          <div className="footer-brand">
+            <span className="footer-logo">h.</span>
+            <div className="footer-brand-text">
+              <span className="mark">Himanshu Garg</span>
+              <span className="footer-role">Functional Medicine Practitioner</span>
+            </div>
+          </div>
+          <div className="footer-nav">
+            <a href="#philosophy" data-hoverable="true">Philosophy</a>
+            <a href="#method" data-hoverable="true">Method</a>
+            <a href="#programs" data-hoverable="true">Programs</a>
+            <a href="#begin" data-hoverable="true">Contact</a>
+          </div>
+        </div>
+        <div className="footer-bottom">
+          <p className="copyright">&copy; {new Date().getFullYear()} Himanshu Garg. All rights reserved.</p>
+          <p className="footer-tagline">Healing at the root.</p>
+        </div>
       </div>
     </footer>
   );
