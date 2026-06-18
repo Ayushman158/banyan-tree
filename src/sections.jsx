@@ -94,8 +94,68 @@ function Parallax({ speed = 0.05, className = "", children, ...props }) {
 }
 
 /* ── I · Philosophy ──────────────────────────────────────────────────────── */
+const PHIL_ASSUMPTIONS = [
+  "It's all in your head",
+  "You'll have to live with it",
+  "That's normal for your age",
+  "It's genetic",
+  "Your labs are in range",
+  "Nothing more can be done",
+];
+
 function Philosophy() {
-  const ref = useReveal();
+  const sectionRef = _useRef(null);
+  const introRef = _useRef(null);
+  const [started, setStarted] = _useState(false);
+  const [step, setStep] = _useState(0);
+  const [phase, setPhase] = _useState("in");   // in → struck → out
+  const [bridgeIn, setBridgeIn] = _useState(false);
+  const done = step >= PHIL_ASSUMPTIONS.length;
+
+  // Begin the sequence only once it scrolls into view (skip for reduced motion)
+  _useEffect(() => {
+    const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) { setStarted(true); setStep(PHIL_ASSUMPTIONS.length); setBridgeIn(true); return; }
+    const el = introRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { setStarted(true); io.disconnect(); }
+    }, { threshold: 0.55 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  // Drive each statement: hold → strike → fade out → next
+  _useEffect(() => {
+    if (!started || done) return;
+    setPhase("in");
+    const t1 = setTimeout(() => setPhase("struck"), 2000);
+    const t2 = setTimeout(() => setPhase("out"), 2950);
+    const t3 = setTimeout(() => setStep((s) => s + 1), 3650);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+  }, [started, step, done]);
+
+  // After the final cut, a beat of empty space, then reveal the bridge
+  _useEffect(() => {
+    if (!done) return;
+    const t = setTimeout(() => setBridgeIn(true), 650);
+    return () => clearTimeout(t);
+  }, [done]);
+
+  // Let the chart and closing line fade up naturally as each enters view
+  _useEffect(() => {
+    const root = sectionRef.current;
+    if (!root) return;
+    const targets = root.querySelectorAll(".vs, .phil-closing");
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) { e.target.classList.add("is-in"); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.15 });
+    targets.forEach((t) => io.observe(t));
+    return () => io.disconnect();
+  }, []);
+
   const rows = [
     {
       trad: { Icon: Clock,          label: "Short Consultations",        desc: "Limited time to address your concerns" },
@@ -130,19 +190,26 @@ function Philosophy() {
   );
 
   return (
-    <section className="spread philosophy-vs" id="philosophy" ref={ref}>
+    <section className="spread philosophy-vs" id="philosophy" ref={sectionRef}>
       <div className="philosophy-vs__aura" aria-hidden="true" />
 
-      <header className="method-process__head">
-        <div className="section-tag reveal"><span>III · Philosophy</span></div>
-        <h2 className="section-h reveal">
-          Two paths.<br/><em>One clear choice.</em>
-        </h2>
-        <p className="method-process__intro reveal delay-1">
-          The same symptoms, approached two very different ways — the shift from
-          managing disease to understanding why it began.
-        </p>
-      </header>
+      {/* Cinematic editorial intro — dismissals questioned, then the bridge */}
+      <div className="phil-intro" ref={introRef}>
+        <div className="phil-statements">
+          {!done && (
+            <div className={`phil-statement is-${phase}`} key={step}>
+              <span className="phil-statement__text">{PHIL_ASSUMPTIONS[step]}</span>
+              <span className="phil-statement__strike" aria-hidden="true" />
+            </div>
+          )}
+        </div>
+        <div className={`phil-bridge${bridgeIn ? " is-in" : ""}`}>
+          <h2 className="phil-bridge__title">Why root cause healing?</h2>
+          <p className="phil-bridge__sub">
+            Most people know their diagnosis. Few people understand what created it.
+          </p>
+        </div>
+      </div>
 
       <div className="vs reveal delay-2">
         <span className="vs__spine" aria-hidden="true" />
@@ -171,6 +238,11 @@ function Philosophy() {
           ))}
         </div>
       </div>
+
+      <p className="phil-closing reveal">
+        This isn't about replacing your doctor. It's about finding the answers
+        beyond the diagnosis.
+      </p>
     </section>
   );
 }

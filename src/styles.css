@@ -4156,6 +4156,117 @@ section.spread.philosophy-vs {
 }
 .philosophy-vs > *:not(.philosophy-vs__aura) { position: relative; z-index: 1; }
 
+/* ── Cinematic editorial intro ───────────────────────────────────────────── */
+.phil-intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 68vh;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: clamp(48px, 12vh, 140px) 24px clamp(40px, 8vh, 96px);
+}
+.phil-statements {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 1.3em;
+}
+.phil-statement {
+  position: relative;
+  display: inline-block;
+  padding: 0 0.12em;
+  animation: philStatementIn 0.95s var(--ease) both;
+}
+.phil-statement.is-out {
+  opacity: 0;
+  transition: opacity 0.65s var(--ease);
+}
+.phil-statement__text {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(27px, 6vw, 60px);
+  line-height: 1.14;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+/* Thin reflective line that travels through the sentence */
+.phil-statement__strike {
+  position: absolute;
+  top: 53%;
+  left: -3%;
+  width: 106%;
+  height: 1.5px;
+  border-radius: 2px;
+  background: linear-gradient(to right,
+    transparent 0%,
+    rgba(117, 86, 41, 0.62) 14%,
+    rgba(117, 86, 41, 0.62) 86%,
+    transparent 100%);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+/* Drawn with a keyframe (not a transition) so a fresh sentence always starts
+   clean — the line never carries over to the next statement */
+.phil-statement.is-struck .phil-statement__strike {
+  animation: philStrike 0.95s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+.phil-statement.is-out .phil-statement__strike { transform: scaleX(1); }
+@keyframes philStrike {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+@keyframes philStatementIn {
+  from { opacity: 0; transform: translateY(14px); filter: blur(4px); }
+  to   { opacity: 1; transform: none; filter: blur(0); }
+}
+
+/* Emotional bridge into the chart */
+.phil-bridge {
+  margin-top: clamp(36px, 7vh, 84px);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 1.3s var(--ease), transform 1.3s var(--ease);
+  pointer-events: none;
+}
+.phil-bridge.is-in { opacity: 1; transform: none; pointer-events: auto; }
+.phil-bridge__title {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(32px, 6.6vw, 66px);
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0;
+}
+.phil-bridge__sub {
+  font-family: var(--sans);
+  font-size: clamp(14px, 2vw, 18px);
+  line-height: 1.65;
+  color: var(--ink-soft);
+  margin: clamp(18px, 3vw, 28px) auto 0;
+  max-width: 48ch;
+}
+
+/* Quiet closing line */
+.phil-closing {
+  text-align: center;
+  max-width: 42ch;
+  margin: clamp(56px, 9vw, 104px) auto 0;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(16px, 2.2vw, 21px);
+  line-height: 1.62;
+  color: var(--ink-soft);
+  opacity: 0.92;
+}
+@media (prefers-reduced-motion: reduce) {
+  .phil-statement, .phil-bridge { animation: none; transition: none; }
+}
+
 .vs {
   position: relative;
   max-width: 1080px;

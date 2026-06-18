@@ -680,8 +680,8 @@ function App() {
 
 
 
-      <Methodology />
       <Philosophy />
+      <Methodology />
       <Voices />
       <Pricing />
       <Qualifier />
