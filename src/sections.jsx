@@ -175,23 +175,129 @@ function Philosophy() {
   );
 }
 
+/* Soft, soothing per-step illustrations shown in the detail sheet.
+   All motion is slow, low-contrast and loops gently — pure SVG + CSS. */
+function StepScene({ kind }) {
+  const scenes = {
+    lens: (
+      <svg viewBox="0 0 120 120" className="scene scene--lens">
+        <g className="scene-float">
+          <circle cx="52" cy="52" r="25" className="s-stroke" />
+          <circle cx="52" cy="52" r="25" className="s-fill-soft" />
+          <line x1="70" y1="70" x2="90" y2="90" className="s-stroke" strokeWidth="4" />
+          <circle cx="52" cy="52" r="9" className="s-stroke scene-pulse" strokeWidth="2" />
+        </g>
+      </svg>
+    ),
+    sprout: (
+      <svg viewBox="0 0 120 120" className="scene scene--sprout">
+        <line x1="60" y1="94" x2="60" y2="52" className="s-stroke" strokeWidth="3" />
+        <path className="s-fill scene-sway-l" d="M60 64 C44 60 38 46 46 40 C58 42 62 56 60 64 Z" />
+        <path className="s-fill scene-sway-r" d="M60 56 C76 52 82 38 74 32 C62 34 58 48 60 56 Z" />
+        <circle className="s-fill scene-rise scene-rise-1" cx="46" cy="40" r="2.4" />
+        <circle className="s-fill scene-rise scene-rise-2" cx="74" cy="44" r="2" />
+        <circle className="s-fill scene-rise scene-rise-3" cx="60" cy="32" r="2" />
+      </svg>
+    ),
+    waves: (
+      <svg viewBox="0 0 120 120" className="scene scene--waves">
+        <circle cx="60" cy="60" r="14" className="s-stroke scene-ripple scene-ripple-1" strokeWidth="2" />
+        <circle cx="60" cy="60" r="14" className="s-stroke scene-ripple scene-ripple-2" strokeWidth="2" />
+        <circle cx="60" cy="60" r="14" className="s-stroke scene-ripple scene-ripple-3" strokeWidth="2" />
+        <circle cx="60" cy="60" r="6" className="s-fill" />
+      </svg>
+    ),
+    cell: (
+      <svg viewBox="0 0 120 120" className="scene scene--cell">
+        <circle cx="60" cy="60" r="22" className="s-stroke scene-breathe" strokeWidth="1.5" opacity="0.4" />
+        <circle cx="60" cy="60" r="13" className="s-fill scene-breathe" />
+        <g className="scene-orbit">
+          <circle cx="60" cy="30" r="3" className="s-fill" />
+          <circle cx="90" cy="60" r="2.6" className="s-fill" />
+          <circle cx="60" cy="90" r="3" className="s-fill" />
+          <circle cx="30" cy="60" r="2.6" className="s-fill" />
+        </g>
+      </svg>
+    ),
+    detox: (
+      <svg viewBox="0 0 120 120" className="scene scene--detox">
+        <g className="scene-sway-l">
+          <path className="s-stroke" d="M62 38 C40 44 34 72 52 86 C74 80 84 52 62 38 Z" strokeWidth="2.5" fill="none" />
+          <path className="s-stroke" d="M62 38 C58 58 54 74 52 86" strokeWidth="2" fill="none" />
+        </g>
+        <circle className="s-fill scene-fall scene-fall-1" cx="44" cy="52" r="2" />
+        <circle className="s-fill scene-fall scene-fall-2" cx="76" cy="60" r="2" />
+        <circle className="s-fill scene-fall scene-fall-3" cx="60" cy="70" r="1.6" />
+      </svg>
+    ),
+    aura: (
+      <svg viewBox="0 0 120 120" className="scene scene--aura">
+        <circle cx="60" cy="50" r="8" className="s-fill" />
+        <path className="s-fill" d="M42 80 C42 64 78 64 78 80 Z" />
+        <circle cx="60" cy="62" r="20" className="s-stroke scene-ripple scene-ripple-1" strokeWidth="1.6" />
+        <circle cx="60" cy="62" r="20" className="s-stroke scene-ripple scene-ripple-2" strokeWidth="1.6" />
+        <circle cx="60" cy="62" r="20" className="s-stroke scene-ripple scene-ripple-3" strokeWidth="1.6" />
+      </svg>
+    ),
+    doshas: (
+      <svg viewBox="0 0 120 120" className="scene scene--doshas">
+        <g className="scene-spin-slow">
+          <circle cx="60" cy="30" r="7" className="s-fill scene-twinkle scene-rise-1" />
+          <circle cx="34" cy="76" r="7" className="s-fill scene-twinkle scene-rise-2" />
+          <circle cx="86" cy="76" r="7" className="s-fill scene-twinkle scene-rise-3" />
+        </g>
+        <circle cx="60" cy="60" r="3" className="s-fill" />
+      </svg>
+    ),
+    agni: (
+      <svg viewBox="0 0 120 120" className="scene scene--agni">
+        <path className="s-fill scene-flame scene-flame-1" d="M60 96 C42 84 48 62 60 46 C72 62 78 84 60 96 Z" />
+        <path className="s-fill scene-flame scene-flame-2" d="M60 96 C50 88 52 72 60 60 C68 72 70 88 60 96 Z" opacity="0.55" />
+        <path className="s-flame-core scene-flame scene-flame-3" d="M60 96 C54 90 55 80 60 72 C65 80 66 90 60 96 Z" />
+      </svg>
+    ),
+    elements: (
+      <svg viewBox="0 0 120 120" className="scene scene--elements">
+        <g className="scene-spin-slow">
+          <circle cx="60" cy="30" r="5" className="s-fill scene-twinkle scene-rise-1" />
+          <circle cx="89" cy="51" r="5" className="s-fill scene-twinkle scene-rise-2" />
+          <circle cx="78" cy="85" r="5" className="s-fill scene-twinkle scene-rise-3" />
+          <circle cx="42" cy="85" r="5" className="s-fill scene-twinkle scene-rise-1" />
+          <circle cx="31" cy="51" r="5" className="s-fill scene-twinkle scene-rise-2" />
+        </g>
+        <circle cx="60" cy="60" r="3.4" className="s-fill" />
+      </svg>
+    ),
+    rhythm: (
+      <svg viewBox="0 0 120 120" className="scene scene--rhythm">
+        <circle cx="60" cy="60" r="24" className="s-stroke" strokeWidth="1.4" opacity="0.32" />
+        <circle cx="60" cy="60" r="9" className="s-fill" opacity="0.55" />
+        <g className="scene-spin-orbit">
+          <circle cx="60" cy="36" r="6" className="s-fill" />
+        </g>
+      </svg>
+    ),
+  };
+  return scenes[kind] || null;
+}
+
 /* ── II — Method ─────────────────────────────────────────────────────────── */
 function Methodology() {
   const ref = useReveal();
   const [active, setActive] = _useState(null);
   const fmSteps = [
-    { Icon: Search,    label: "Root Cause Analysis",           desc: "Identify the upstream drivers behind your symptoms — not just what you feel, but why it's happening." },
-    { Icon: Sprout,    label: "Fix Nutrient Deficiencies",     desc: "Restore the vitamins, minerals, amino acids, and cofactors your body needs to repair and function." },
-    { Icon: Waves,     label: "Heal Gut & Liver",              desc: "Improve digestion, absorption, and microbiome balance while rebuilding the liver's detox capacity." },
-    { Icon: Sparkles,  label: "Optimize Mitochondrial Health", desc: "Recharge your cells at the source — supporting energy production, cellular repair, and metabolic resilience." },
-    { Icon: Feather,   label: "Support Detoxification",        desc: "Activate gentle, safe detox pathways that help the body clear what's been accumulating." },
+    { Icon: Search,    anim: "lens",   label: "Root Cause Analysis",           desc: "Identify the upstream drivers behind your symptoms — not just what you feel, but why it's happening." },
+    { Icon: Sprout,    anim: "sprout", label: "Fix Nutrient Deficiencies",     desc: "Restore the vitamins, minerals, amino acids, and cofactors your body needs to repair and function." },
+    { Icon: Waves,     anim: "waves",  label: "Heal Gut & Liver",              desc: "Improve digestion, absorption, and microbiome balance while rebuilding the liver's detox capacity." },
+    { Icon: Sparkles,  anim: "cell",   label: "Optimize Mitochondrial Health", desc: "Recharge your cells at the source — supporting energy production, cellular repair, and metabolic resilience." },
+    { Icon: Feather,   anim: "detox",  label: "Support Detoxification",        desc: "Activate gentle, safe detox pathways that help the body clear what's been accumulating." },
   ];
   const aySteps = [
-    { Icon: User,     label: "Prakriti Analysis",                    desc: "Understand your unique constitution — the natural blueprint that shapes how your body responds." },
-    { Icon: Shell,    label: "Balance Doshas",                        desc: "Harmonize Vata, Pitta, and Kapha to rebuild stability, resilience, and lasting vitality." },
-    { Icon: Sun,      label: "Improve Digestion (Agni)",              desc: "Strengthen digestive fire to prevent the build-up of toxins (ama) and fuel metabolism from within." },
-    { Icon: SunMoon,  label: "Optimize the Five Elements",            desc: "Bring Earth, Water, Fire, Air & Ether back into balance to restore harmony across the system." },
-    { Icon: Compass,  label: "Restore Ahara, Vihara & Achara",       desc: "Realign your diet, daily rhythms, and conduct with your constitution for sustainable, whole-life healing." },
+    { Icon: User,     anim: "aura",     label: "Prakriti Analysis",                    desc: "Understand your unique constitution — the natural blueprint that shapes how your body responds." },
+    { Icon: Shell,    anim: "doshas",   label: "Balance Doshas",                        desc: "Harmonize Vata, Pitta, and Kapha to rebuild stability, resilience, and lasting vitality." },
+    { Icon: Sun,      anim: "agni",     label: "Improve Digestion (Agni)",              desc: "Strengthen digestive fire to prevent the build-up of toxins (ama) and fuel metabolism from within." },
+    { Icon: SunMoon,  anim: "elements", label: "Optimize the Five Elements",            desc: "Bring Earth, Water, Fire, Air & Ether back into balance to restore harmony across the system." },
+    { Icon: Compass,  anim: "rhythm",   label: "Restore Ahara, Vihara & Achara",       desc: "Realign your diet, daily rhythms, and conduct with your constitution for sustainable, whole-life healing." },
   ];
 
   const openDetail = (step, discipline, disciplineName, index) =>
@@ -319,8 +425,8 @@ function Methodology() {
             >
               <X size={18} />
             </button>
-            <span className="method-detail__icon">
-              {ActiveIcon && <ActiveIcon size={26} strokeWidth={1.5} />}
+            <span className="method-detail__scene" aria-hidden="true">
+              {active.anim ? <StepScene kind={active.anim} /> : (ActiveIcon && <ActiveIcon size={26} strokeWidth={1.5} />)}
             </span>
             <span className="method-detail__tag">{active.disciplineName}</span>
             <h4 id="method-detail-title" className="method-detail__title">{active.label}</h4>

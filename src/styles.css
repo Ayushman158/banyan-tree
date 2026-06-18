@@ -3502,6 +3502,19 @@ section.spread.method-process {
   transform: translateY(6px) scale(1.03);
   background: radial-gradient(circle, rgba(200, 169, 107, 0.22) 0%, rgba(200, 169, 107, 0.03) 68%, transparent 100%);
 }
+/* Discipline-tinted glows — sage-green for Functional Medicine, warm terracotta for Ayurveda */
+.method-flow__col--fm::before {
+  background: radial-gradient(circle, rgba(107, 132, 113, 0.2) 0%, rgba(107, 132, 113, 0.03) 66%, transparent 100%);
+}
+.method-flow__col--fm:hover::before {
+  background: radial-gradient(circle, rgba(107, 132, 113, 0.3) 0%, rgba(107, 132, 113, 0.05) 66%, transparent 100%);
+}
+.method-flow__col--ay::before {
+  background: radial-gradient(circle, rgba(214, 122, 69, 0.18) 0%, rgba(214, 122, 69, 0.03) 66%, transparent 100%);
+}
+.method-flow__col--ay:hover::before {
+  background: radial-gradient(circle, rgba(214, 122, 69, 0.28) 0%, rgba(214, 122, 69, 0.05) 66%, transparent 100%);
+}
 
 .method-flow__head { text-align: center; margin-bottom: clamp(24px, 3vw, 36px); }
 .method-flow__crest {
@@ -3868,6 +3881,99 @@ section.spread.method-process {
   color: #D67A45;
 }
 
+/* Animated illustration stage */
+.method-detail__scene {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 104px;
+  height: 104px;
+  border-radius: 50%;
+  margin-bottom: 18px;
+}
+.method-detail__panel--fm .method-detail__scene {
+  background: radial-gradient(circle at 50% 36%, rgba(107, 132, 113, 0.14), rgba(107, 132, 113, 0.04) 70%, transparent);
+  color: #5e7468;
+}
+.method-detail__panel--ay .method-detail__scene {
+  background: radial-gradient(circle at 50% 36%, rgba(214, 122, 69, 0.13), rgba(214, 122, 69, 0.04) 70%, transparent);
+  color: #c9763f;
+}
+.method-detail__scene .scene { width: 92px; height: 92px; display: block; }
+
+/* Scene primitives */
+.scene .s-stroke { fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.scene .s-fill { fill: currentColor; }
+.scene .s-fill-soft { fill: currentColor; opacity: 0.08; }
+.scene .s-flame-core { fill: #fff7e9; opacity: 0.6; }
+@media (prefers-reduced-motion: no-preference) {
+  .scene-float    { animation: sceneFloat 5.5s ease-in-out infinite; transform-origin: 60px 60px; }
+  .scene-pulse    { animation: scenePulse 2.8s ease-in-out infinite; transform-origin: 52px 52px; }
+  .scene-sway-l   { animation: sceneSway 4.5s ease-in-out infinite; transform-origin: 60px 84px; }
+  .scene-sway-r   { animation: sceneSway 4.5s ease-in-out infinite reverse; transform-origin: 60px 84px; }
+  .scene-rise     { animation: sceneRise 3.4s ease-in-out infinite; }
+  .scene-rise-2   { animation-delay: 1.1s; }
+  .scene-rise-3   { animation-delay: 2.2s; }
+  .scene-ripple   { animation: sceneRipple 3.6s ease-out infinite; transform-origin: center; transform-box: fill-box; opacity: 0; }
+  .scene-ripple-2 { animation-delay: 1.2s; }
+  .scene-ripple-3 { animation-delay: 2.4s; }
+  .scene-breathe  { animation: sceneBreathe 4s ease-in-out infinite; transform-origin: 60px 60px; transform-box: view-box; }
+  .scene-orbit    { animation: sceneSpin 14s linear infinite; transform-origin: 60px 60px; transform-box: view-box; }
+  .scene-spin-slow{ animation: sceneSpin 20s linear infinite; transform-origin: 60px 60px; transform-box: view-box; }
+  .scene-spin-orbit{ animation: sceneSpin 11s linear infinite; transform-origin: 60px 60px; transform-box: view-box; }
+  .scene-twinkle  { animation: sceneTwinkle 3s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  .scene-fall     { animation: sceneFall 3.6s ease-in-out infinite; }
+  .scene-fall-2   { animation-delay: 1.2s; }
+  .scene-fall-3   { animation-delay: 2.4s; }
+  .scene-flame    { animation: sceneFlame 1.8s ease-in-out infinite; transform-origin: 60px 96px; transform-box: view-box; }
+  .scene-flame-2  { animation-duration: 1.5s; animation-delay: 0.2s; }
+  .scene-flame-3  { animation-duration: 1.2s; animation-delay: 0.4s; }
+}
+@keyframes sceneFloat {
+  0%, 100% { transform: translate(0, 0); }
+  50%      { transform: translate(5px, -4px); }
+}
+@keyframes scenePulse {
+  0%, 100% { transform: scale(0.7); opacity: 0.7; }
+  50%      { transform: scale(1.25); opacity: 0.15; }
+}
+@keyframes sceneSway {
+  0%, 100% { transform: rotate(-5deg); }
+  50%      { transform: rotate(5deg); }
+}
+@keyframes sceneRise {
+  0%       { transform: translateY(6px); opacity: 0; }
+  30%      { opacity: 0.8; }
+  70%      { opacity: 0.5; }
+  100%     { transform: translateY(-12px); opacity: 0; }
+}
+@keyframes sceneRipple {
+  0%   { transform: scale(0.5); opacity: 0; }
+  25%  { opacity: 0.6; }
+  100% { transform: scale(1.7); opacity: 0; }
+}
+@keyframes sceneBreathe {
+  0%, 100% { transform: scale(0.92); }
+  50%      { transform: scale(1.08); }
+}
+@keyframes sceneSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes sceneTwinkle {
+  0%, 100% { transform: scale(0.85); opacity: 0.55; }
+  50%      { transform: scale(1.1); opacity: 1; }
+}
+@keyframes sceneFall {
+  0%   { transform: translateY(-6px); opacity: 0; }
+  30%  { opacity: 0.7; }
+  100% { transform: translateY(14px); opacity: 0; }
+}
+@keyframes sceneFlame {
+  0%, 100% { transform: scaleY(1) scaleX(1); }
+  50%      { transform: scaleY(1.12) scaleX(0.94); }
+}
+
 .method-detail__tag {
   display: block;
   font-family: var(--sans);
@@ -3914,6 +4020,8 @@ section.spread.method-process {
     to   { transform: translateY(0); }
   }
   .method-detail__icon { width: 56px; height: 56px; margin-bottom: 14px; }
+  .method-detail__scene { width: 92px; height: 92px; margin-bottom: 14px; }
+  .method-detail__scene .scene { width: 80px; height: 80px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
