@@ -125,14 +125,15 @@ function Philosophy() {
     return () => io.disconnect();
   }, []);
 
-  // Drive each statement: hold → strike → fade out → next
+  // Drive each statement. The strike itself is a mount-timed CSS animation
+  // (delay = hold), so it replays cleanly on every fresh sentence. Here we
+  // only schedule the fade-out and the advance to the next line.
   _useEffect(() => {
     if (!started || done) return;
     setPhase("in");
-    const t1 = setTimeout(() => setPhase("struck"), 2000);
-    const t2 = setTimeout(() => setPhase("out"), 2950);
-    const t3 = setTimeout(() => setStep((s) => s + 1), 3650);
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+    const t2 = setTimeout(() => setPhase("out"), 3500);   // 1.8s hold + 1.1s draw + ~0.6s held
+    const t3 = setTimeout(() => setStep((s) => s + 1), 4200);
+    return () => { clearTimeout(t2); clearTimeout(t3); };
   }, [started, step, done]);
 
   // After the final cut, a beat of empty space, then reveal the bridge
@@ -196,7 +197,7 @@ function Philosophy() {
       {/* Cinematic editorial intro — dismissals questioned, then the bridge */}
       <div className="phil-intro" ref={introRef}>
         <div className="phil-statements">
-          {!done && (
+          {started && !done && (
             <div className={`phil-statement is-${phase}`} key={step}>
               <span className="phil-statement__text">{PHIL_ASSUMPTIONS[step]}</span>
               <span className="phil-statement__strike" aria-hidden="true" />
