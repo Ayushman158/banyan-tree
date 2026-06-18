@@ -142,7 +142,7 @@ function Philosophy() {
       entries.forEach((e) => {
         if (e.isIntersecting) { e.target.classList.add("is-in"); io.unobserve(e.target); }
       });
-    }, { threshold: 0.15 });
+    }, { threshold: 0.05 });
     targets.forEach((t) => io.observe(t));
     return () => io.disconnect();
   }, []);
