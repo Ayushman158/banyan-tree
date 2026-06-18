@@ -98,8 +98,8 @@ const PHIL_ASSUMPTIONS = [
   "It's all in your head",
   "You'll have to live with it",
   "That's normal for your age",
-  "It's genetic",
-  "Your labs are in range",
+  "It's just poor genetics",
+  "Your labs are normal, so don't worry",
   "Nothing more can be done",
 ];
 
@@ -108,14 +108,12 @@ function Philosophy() {
   const introRef = _useRef(null);
   const [started, setStarted] = _useState(false);
   const [step, setStep] = _useState(0);
-  const [phase, setPhase] = _useState("in");   // in → struck → out
-  const [bridgeIn, setBridgeIn] = _useState(false);
-  const done = step >= PHIL_ASSUMPTIONS.length;
+  const [phase, setPhase] = _useState("in");   // in → out → loops
 
   // Begin the sequence only once it scrolls into view (skip for reduced motion)
   _useEffect(() => {
     const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) { setStarted(true); setStep(PHIL_ASSUMPTIONS.length); setBridgeIn(true); return; }
+    if (reduce) { setStarted(true); return; }
     const el = introRef.current;
     if (!el) return;
     const io = new IntersectionObserver(([e]) => {
@@ -125,23 +123,15 @@ function Philosophy() {
     return () => io.disconnect();
   }, []);
 
-  // Drive each statement. The strike itself is a mount-timed CSS animation
-  // (delay = hold), so it replays cleanly on every fresh sentence. Here we
-  // only schedule the fade-out and the advance to the next line.
+  // Drive each statement in an infinite loop. The strike is a mount-timed CSS
+  // animation so it replays cleanly on every fresh sentence.
   _useEffect(() => {
-    if (!started || done) return;
+    if (!started) return;
     setPhase("in");
-    const t2 = setTimeout(() => setPhase("out"), 3500);   // 1.8s hold + 1.1s draw + ~0.6s held
-    const t3 = setTimeout(() => setStep((s) => s + 1), 4200);
+    const t2 = setTimeout(() => setPhase("out"), 3500);
+    const t3 = setTimeout(() => setStep((s) => (s + 1) % PHIL_ASSUMPTIONS.length), 4200);
     return () => { clearTimeout(t2); clearTimeout(t3); };
-  }, [started, step, done]);
-
-  // After the final cut, a beat of empty space, then reveal the bridge
-  _useEffect(() => {
-    if (!done) return;
-    const t = setTimeout(() => setBridgeIn(true), 650);
-    return () => clearTimeout(t);
-  }, [done]);
+  }, [started, step]);
 
   // Let the chart and closing line fade up naturally as each enters view
   _useEffect(() => {
@@ -159,24 +149,24 @@ function Philosophy() {
 
   const rows = [
     {
-      trad: { Icon: Clock,          label: "Short Consultations",        desc: "Limited time to address your concerns" },
-      root: { Icon: ClipboardCheck, label: "Deep Health Assessment",     desc: "Time to understand your full health story" },
+      trad: { Icon: Clock,          label: "10-Minute Appointments",      desc: "Limited time to understand your health story" },
+      root: { Icon: ClipboardCheck, label: "12-Week Guided Journey",      desc: "Deep dive into your health with time and attention" },
     },
     {
-      trad: { Icon: BarChart3,      label: "Population-Based Ranges",     desc: "Labs read against population averages" },
-      root: { Icon: Target,         label: "Functional & Optimal Analysis", desc: "Beyond “normal” to what's optimal for you" },
+      trad: { Icon: BarChart3,      label: "Standard Reference Ranges",   desc: "Labs compared to population averages, not optimal levels" },
+      root: { Icon: Target,         label: "Functional & Optimal Analysis", desc: "100+ markers analyzed against optimal ranges, beyond 'normal'" },
     },
     {
-      trad: { Icon: ClipboardList,  label: "Symptom Management",          desc: "Focused on suppressing symptoms" },
-      root: { Icon: Search,         label: "Root-Cause Investigation",    desc: "Why symptoms developed in the first place" },
+      trad: { Icon: ClipboardList,  label: "Symptom Management",          desc: "Focus on managing symptoms, not why they exist" },
+      root: { Icon: Search,         label: "Root-Cause Investigation",    desc: "Find out what's driving your symptoms" },
     },
     {
-      trad: { Icon: Boxes,          label: "Isolated Body Systems",       desc: "Each system treated separately" },
-      root: { Icon: Network,        label: "Whole-Body Systems View",     desc: "Gut, hormones, mind & lifestyle, connected" },
+      trad: { Icon: Boxes,          label: "Condition-Specific",          desc: "One condition at a time, often missing the bigger picture" },
+      root: { Icon: Network,        label: "Whole-Body Systems Approach", desc: "Gut, hormones, inflammation, nutrients & lifestyle, interconnected" },
     },
     {
-      trad: { Icon: Pill,           label: "Reactive Care",               desc: "Addressing problems after they appear" },
-      root: { Icon: Map,            label: "Personalized Healing Roadmap", desc: "Step-by-step guidance for your biology" },
+      trad: { Icon: Pill,           label: "Treatment Plan",              desc: "Medication or temporary solutions" },
+      root: { Icon: Map,            label: "Personalized Healing Roadmap", desc: "A step-by-step plan to address the root, not just the branches" },
     },
   ];
 
@@ -194,17 +184,19 @@ function Philosophy() {
     <section className="spread philosophy-vs" id="philosophy" ref={sectionRef}>
       <div className="philosophy-vs__aura" aria-hidden="true" />
 
+      <div className="section-tag reveal"><span>I · The Philosophy</span></div>
+
       {/* Cinematic editorial intro — dismissals questioned, then the bridge */}
       <div className="phil-intro" ref={introRef}>
         <div className="phil-statements">
-          {started && !done && (
+          {started && (
             <div className={`phil-statement is-${phase}`} key={step}>
               <span className="phil-statement__text">{PHIL_ASSUMPTIONS[step]}</span>
               <span className="phil-statement__strike" aria-hidden="true" />
             </div>
           )}
         </div>
-        <div className={`phil-bridge${bridgeIn ? " is-in" : ""}`}>
+        <div className="phil-bridge is-in">
           <h2 className="phil-bridge__title">Why root cause healing?</h2>
           <p className="phil-bridge__sub">
             Most people know their diagnosis. Few people understand what created it.
@@ -298,8 +290,8 @@ function StepScene({ kind }) {
         </defs>
         <g clipPath="url(#gutClip)">
           <rect x="20" y="20" width="80" height="84" className="s-fill-soft" />
-          <path className="s-fill scene-drift" d="M14 66 q11 -7 22 0 t22 0 t22 0 t22 0 v40 h-110 Z" opacity="0.5" />
-          <path className="s-fill scene-drift-rev" d="M14 74 q11 -6 22 0 t22 0 t22 0 t22 0 v40 h-110 Z" opacity="0.32" />
+          <path className="s-fill scene-drift" d="M8 66 q11 -7 22 0 t22 0 t22 0 t22 0 t22 0 t22 0 v40 h-132 Z" opacity="0.5" />
+          <path className="s-fill scene-drift-rev" d="M8 74 q11 -6 22 0 t22 0 t22 0 t22 0 t22 0 t22 0 v40 h-132 Z" opacity="0.32" />
         </g>
         <circle cx="60" cy="62" r="29" className="s-stroke" strokeWidth="2.6" />
         <circle cx="50" cy="50" r="2" className="s-fill scene-twinkle scene-st-2" />
@@ -334,33 +326,58 @@ function StepScene({ kind }) {
           <path className="s-stroke" d="M58 58 L70 54" strokeWidth="1.3" />
           <path className="s-stroke" d="M57 70 L46 70" strokeWidth="1.3" />
         </g>
-        <circle className="s-fill scene-fall scene-st-1" cx="44" cy="58" r="2" />
-        <circle className="s-fill scene-fall scene-st-3" cx="76" cy="64" r="2" />
-        <circle className="s-fill scene-fall scene-st-5" cx="60" cy="76" r="1.6" />
+        <circle className="s-fill scene-fall scene-st-1" cx="46" cy="44" r="1.8" />
+        <circle className="s-fill scene-fall scene-st-3" cx="70" cy="54" r="1.8" />
+        <circle className="s-fill scene-fall scene-st-5" cx="58" cy="88" r="1.6" />
       </svg>
     ),
     /* Prakriti Analysis — a seated figure radiating a calm aura */
     aura: (
       <svg viewBox="0 0 120 120" className="scene scene--aura">
-        <circle cx="60" cy="66" r="22" className="s-stroke scene-ripple scene-st-1" strokeWidth="1.6" />
-        <circle cx="60" cy="66" r="22" className="s-stroke scene-ripple scene-st-3" strokeWidth="1.6" />
-        <circle cx="60" cy="66" r="22" className="s-stroke scene-ripple scene-st-5" strokeWidth="1.6" />
-        <circle cx="60" cy="46" r="9" className="s-fill" />
-        <path className="s-fill" d="M40 84 C42 66 78 66 80 84 C70 88 50 88 40 84 Z" />
-        <path className="s-stroke" d="M40 84 C30 78 30 70 38 70" strokeWidth="2.4" fill="none" />
-        <path className="s-stroke" d="M80 84 C90 78 90 70 82 70" strokeWidth="2.4" fill="none" />
+        <circle cx="60" cy="62" r="22" className="s-stroke scene-ripple scene-st-1" strokeWidth="1.2" />
+        <circle cx="60" cy="62" r="22" className="s-stroke scene-ripple scene-st-3" strokeWidth="1.2" />
+        <circle cx="60" cy="62" r="22" className="s-stroke scene-ripple scene-st-5" strokeWidth="1.2" />
+        <g className="scene-breathe-figure">
+          <g transform="translate(35.625, 33.25) scale(2.5)">
+            <path d="M6.84159 14.75C6.53159 15.432 5.81959 15.736 5.18859 16.066L1.54259 17.973C0.077588 18.74 0.808588 20.75 2.37959 20.75C5.87159 20.75 8.63359 19.056 11.7896 17.75C12.5846 17.421 12.9696 17.491 13.7496 17.841" className="s-stroke" style={{ strokeWidth: 0.8 }} strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M6.74959 17.841C7.52959 17.491 7.91459 17.421 8.70959 17.75C11.8656 19.056 14.6276 20.75 18.1196 20.75C19.6896 20.75 20.4216 18.74 18.9566 17.973L15.3106 16.066C14.6796 15.736 13.9666 15.432 13.6576 14.75" className="s-stroke" style={{ strokeWidth: 0.8 }} strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M7.74959 2.75C7.74959 3.28043 7.9603 3.78914 8.33537 4.16421C8.71045 4.53929 9.21916 4.75 9.74959 4.75C10.28 4.75 10.7887 4.53929 11.1638 4.16421C11.5389 3.78914 11.7496 3.28043 11.7496 2.75C11.7496 2.21957 11.5389 1.71086 11.1638 1.33579C10.7887 0.960714 10.28 0.75 9.74959 0.75C9.21916 0.75 8.71045 0.960714 8.33537 1.33579C7.9603 1.71086 7.74959 2.21957 7.74959 2.75Z" className="s-stroke" style={{ strokeWidth: 0.8 }} />
+            <path d="M9.74959 6.75C8.15829 6.75 6.63217 7.38214 5.50695 8.50736C4.38173 9.63258 3.74959 11.1587 3.74959 12.75C5.34089 12.75 6.86701 12.1179 7.99223 10.9926C9.11745 9.86742 9.74959 8.3413 9.74959 6.75ZM9.74959 6.75C11.3409 6.75 12.867 7.38214 13.9922 8.50736C15.1174 9.63258 15.7496 11.1587 15.7496 12.75C14.1583 12.75 12.6322 12.1179 11.5069 10.9926C10.3817 9.86742 9.74959 8.3413 9.74959 6.75Z" className="s-stroke" style={{ strokeWidth: 0.8 }} strokeLinejoin="round" />
+            <circle cx="9.75" cy="11.5" r="0.8" className="s-fill scene-twinkle scene-st-2" style={{ fill: '#c8a96b' }} />
+          </g>
+        </g>
       </svg>
     ),
     /* Balance Doshas — air, fire & water orbiting a still centre */
     doshas: (
       <svg viewBox="0 0 120 120" className="scene scene--doshas">
-        <circle cx="60" cy="60" r="30" className="s-stroke" strokeWidth="1.3" opacity="0.28" />
+        <circle cx="60" cy="60" r="30" className="s-stroke" strokeWidth="1.2" opacity="0.25" strokeDasharray="2 2" />
         <g className="scene-spin-slow">
-          <path className="s-stroke scene-twinkle scene-st-1" d="M52 26 q10 -4 8 5 q-2 7 -8 5" strokeWidth="2.2" fill="none" />
-          <path className="s-fill scene-twinkle scene-st-3" d="M34 84 C28 78 30 70 34 65 C38 70 40 78 34 84 Z" />
-          <path className="s-fill scene-twinkle scene-st-5" d="M86 74 C86 80 82 84 78 84 C74 84 70 80 70 74 C70 68 78 60 78 60 C78 60 86 68 86 74 Z" />
+          {/* Vata (Air/Wind) */}
+          <g className="scene-twinkle scene-st-1">
+            <g transform="translate(50.1, 20) scale(0.9)">
+              <path fillRule="evenodd" clipRule="evenodd" d="M5 3.25C5 2.60721 5.19061 1.97886 5.54772 1.4444C5.90484 0.909939 6.41242 0.493378 7.00628 0.247393C7.60014 0.00140817 8.25361 -0.0629527 8.88404 0.0624493C9.51448 0.187851 10.0936 0.497384 10.5481 0.951904C11.0026 1.40643 11.3122 1.98552 11.4376 2.61596C11.563 3.2464 11.4986 3.89986 11.2526 4.49372C11.0066 5.08758 10.5901 5.59516 10.0556 5.95228C9.52114 6.30939 8.89279 6.5 8.25 6.5H1.75C1.55109 6.5 1.36032 6.42098 1.21967 6.28033C1.07902 6.13968 1 5.94891 1 5.75C1 5.55109 1.07902 5.36032 1.21967 5.21967C1.36032 5.07902 1.55109 5 1.75 5H8.25C8.59612 5 8.93446 4.89737 9.22225 4.70507C9.51003 4.51278 9.73434 4.23947 9.86679 3.9197C9.99924 3.59993 10.0339 3.24806 9.96637 2.90859C9.89885 2.56913 9.73218 2.25731 9.48744 2.01256C9.2427 1.76782 8.93087 1.60115 8.59141 1.53363C8.25194 1.4661 7.90007 1.50076 7.5803 1.63321C7.26053 1.76567 6.98722 1.98997 6.79493 2.27775C6.60264 2.56554 6.5 2.90388 6.5 3.25V3.607C6.5 3.80591 6.42098 3.99668 6.28033 4.13733C6.13968 4.27798 5.94891 4.357 5.75 4.357C5.55109 4.357 5.36032 4.27798 5.21967 4.13733C5.07902 3.99668 5 3.80591 5 3.607V3.25ZM13 5.25C13 4.40943 13.2493 3.58774 13.7163 2.88883C14.1833 2.18992 14.847 1.64519 15.6236 1.32351C16.4002 1.00184 17.2547 0.917677 18.0791 1.08166C18.9036 1.24565 19.6608 1.65042 20.2552 2.2448C20.8496 2.83917 21.2543 3.59645 21.4183 4.42087C21.5823 5.24529 21.4982 6.09982 21.1765 6.87641C20.8548 7.65299 20.3101 8.31675 19.6112 8.78375C18.9123 9.25074 18.0906 9.5 17.25 9.5H0.75C0.551088 9.5 0.360322 9.42098 0.21967 9.28033C0.0790177 9.13968 0 8.94891 0 8.75C0 8.55109 0.0790177 8.36032 0.21967 8.21967C0.360322 8.07902 0.551088 8 0.75 8H17.25C17.7939 8 18.3256 7.83872 18.7778 7.53654C19.2301 7.23437 19.5825 6.80488 19.7907 6.30238C19.9988 5.79988 20.0533 5.24695 19.9472 4.7135C19.841 4.18006 19.5791 3.69005 19.1945 3.30546C18.8099 2.92086 18.3199 2.65895 17.7865 2.55284C17.2531 2.44673 16.7001 2.50119 16.1976 2.70933C15.6951 2.91747 15.2656 3.26995 14.9635 3.72218C14.6613 4.17442 14.5 4.7061 14.5 5.25V5.75C14.5 5.94891 14.421 6.13968 14.2803 6.28033C14.1397 6.42098 13.9489 6.5 13.75 6.5C13.5511 6.5 13.3603 6.42098 13.2197 6.28033C13.079 6.13968 13 5.94891 13 5.75V5.25ZM2 11.75C2 11.5511 2.07902 11.3603 2.21967 11.2197C2.36032 11.079 2.55109 11 2.75 11H17.25C18.0906 11 18.9123 11.2493 19.6112 11.7163C20.3101 12.1833 20.8548 12.847 21.1765 13.6236C21.4982 14.4002 21.5823 15.2547 21.4183 16.0791C21.2543 16.9036 20.8496 17.6608 20.2552 18.2552C19.6608 18.8496 18.9036 19.2544 18.0791 19.4183C17.2547 19.5823 16.4002 19.4982 15.6236 19.1765C14.847 18.8548 14.1833 18.3101 13.7163 17.6112C13.2493 16.9123 13 16.0906 13 15.25V14.75C13 14.5511 13.079 14.3603 13.2197 14.2197C13.3603 14.079 13.5511 14 13.75 14C13.9489 14 14.1397 14.079 14.2803 14.2197C14.421 14.3603 14.5 14.5511 14.5 14.75V15.25C14.5 15.7939 14.6613 16.3256 14.9635 16.7778C15.2656 17.2301 15.6951 17.5825 16.1976 17.7907C16.7001 17.9988 17.2531 18.0533 17.7865 17.9472C18.3199 17.8411 18.8099 17.5791 19.1945 17.1945C19.5791 16.81 19.841 16.3199 19.9472 15.7865C20.0533 15.2531 19.9988 14.7001 19.7907 14.1976C19.5825 13.6951 19.2301 13.2656 18.7778 12.9635C18.3256 12.6613 17.7939 12.5 17.25 12.5H2.75C2.55109 12.5 2.36032 12.421 2.21967 12.2803C2.07902 12.1397 2 11.9489 2 11.75Z" className="s-fill" />
+            </g>
+          </g>
+          {/* Pitta (Fire/Flame) */}
+          <g className="scene-twinkle scene-st-3">
+            <g transform="translate(24.4, 65.4) scale(1.2)">
+              <path d="M9.32 15.653C9.22691 15.5329 9.16948 15.389 9.15427 15.2378C9.13906 15.0866 9.16669 14.9342 9.234 14.798C9.41 14.456 9.479 14.065 9.434 13.68C9.39728 13.4053 9.30654 13.1405 9.167 12.901C9.03002 12.6641 8.84589 12.4579 8.626 12.295C7.87834 11.7331 7.35369 10.9247 7.145 10.013C5.437 12.252 6.092 13.523 6.91 14.643C7.0056 14.7744 7.05592 14.9333 7.0534 15.0958C7.05087 15.2583 6.99563 15.4156 6.896 15.544C6.79415 15.6738 6.65751 15.7719 6.502 15.827C6.34826 15.8808 6.18219 15.8888 6.024 15.85C4.919 15.58 3.879 15.066 3.174 14.247C2.77465 13.7919 2.46701 13.2638 2.268 12.692C2.06678 12.1152 1.97751 11.5053 2.005 10.895C2.005 10.895 1.872 8.43199 4.842 6.01899C4.842 6.01899 8.352 3.04099 7.134 0.838995C7.089 0.7307 7.07564 0.611864 7.09546 0.49628C7.11528 0.380696 7.16748 0.273105 7.246 0.185995C7.32238 0.100768 7.42304 0.0409897 7.53442 0.0147076C7.64581 -0.0115745 7.76257 -0.00309841 7.869 0.0389948L8.015 0.0969948C9.33707 0.932703 10.3704 2.15452 10.975 3.59699C11.555 5.00999 11.551 6.65699 11.159 8.12399C11.484 7.83199 11.755 7.48299 11.96 7.09099L11.989 7.02699C12.187 6.54999 12.81 6.70199 13.044 7.01399C13.13 7.15099 15.336 10.357 14.151 13.062C13.7183 13.8819 13.0854 14.5792 12.311 15.089C11.6619 15.5205 10.9362 15.8237 10.173 15.982C10.0153 16.0154 9.8513 16.0022 9.701 15.944C9.54937 15.8849 9.41737 15.7844 9.32 15.654V15.653ZM7.554 7.89199C7.64727 7.84287 7.7556 7.83061 7.85749 7.85766C7.95938 7.8847 8.04737 7.94908 8.104 8.038C8.144 8.098 8.169 8.164 8.179 8.236L8.224 8.585C8.244 9.096 8.238 9.63 8.437 10.121C8.643 10.625 8.963 11.071 9.369 11.419C9.89204 11.7632 10.2969 12.2595 10.529 12.841C10.749 13.405 10.779 14.031 10.613 14.614C11.1211 14.4543 11.5932 14.1972 12.003 13.857L12.106 13.773C12.442 13.496 12.719 13.15 12.919 12.756C13.12 12.363 13.241 11.931 13.273 11.487C13.338 10.462 12.989 9.433 12.446 8.515C12.198 8.875 11.856 9.154 11.461 9.319C11.214 9.424 10.952 9.489 10.685 9.509C10.5321 9.51838 10.3797 9.48367 10.246 9.409C10.1103 9.33201 9.99904 9.21833 9.925 9.081C9.864 8.97018 9.82914 8.84689 9.82307 8.72055C9.817 8.5942 9.8399 8.46814 9.89 8.352C10.302 7.38 10.43 6.30199 10.255 5.25499C10.0481 4.05704 9.47435 2.95288 8.613 2.09499C8.457 4.29999 6.196 6.35299 5.732 6.79499C5.65975 6.86241 5.58503 6.92712 5.508 6.98899C3.082 8.95399 3.248 10.744 3.248 10.823C3.20109 11.534 3.36047 12.2434 3.707 12.866C4.072 13.511 4.597 14.043 5.227 14.406C4.5 12.808 4.5 10.89 7.183 8.14L7.555 7.88999L7.554 7.89199Z" className="s-fill" />
+            </g>
+          </g>
+          {/* Kapha (Water/Drop) */}
+          <g className="scene-twinkle scene-st-5">
+            <g transform="translate(76.4, 65.4) scale(1.2)">
+              {/* Soft fill path */}
+              <path d="M12.5 10C12.5 12.7616 10.7616 14.5 8 14.5C5.23844 14.5 3.5 12.7616 3.5 10C3.5 7.03656 6.72594 3.03593 7.71531 1.87875C7.75052 1.83763 7.7942 1.80463 7.84337 1.782C7.89254 1.75937 7.94603 1.74765 8.00016 1.74765C8.05428 1.74765 8.10777 1.75937 8.15694 1.782C8.20611 1.80463 8.2498 1.83763 8.285 1.87875C9.27406 3.03593 12.5 7.03656 12.5 10Z" className="s-fill-soft" />
+              {/* Outline stroke */}
+              <path d="M12.5 10C12.5 12.7616 10.7616 14.5 8 14.5C5.23844 14.5 3.5 12.7616 3.5 10C3.5 7.03656 6.72594 3.03593 7.71531 1.87875C7.75052 1.83763 7.7942 1.80463 7.84337 1.782C7.89254 1.75937 7.94603 1.74765 8.00016 1.74765C8.05428 1.74765 8.10777 1.75937 8.15694 1.782C8.20611 1.80463 8.2498 1.83763 8.285 1.87875C9.27406 3.03593 12.5 7.03656 12.5 10Z" className="s-stroke" style={{ strokeWidth: 1.5 }} strokeMiterlimit="10" />
+              {/* Accent stroke */}
+              <path d="M10.75 10.25C10.75 10.8467 10.5129 11.419 10.091 11.841C9.66903 12.2629 9.09674 12.5 8.5 12.5" className="s-stroke" style={{ strokeWidth: 1.5 }} strokeLinecap="round" strokeLinejoin="round" />
+            </g>
+          </g>
         </g>
-        <circle cx="60" cy="60" r="3.4" className="s-fill" />
+        <circle cx="60" cy="60" r="3.2" className="s-fill" />
       </svg>
     ),
     /* Improve Digestion (Agni) — a living flame over a small hearth */
@@ -375,32 +392,94 @@ function StepScene({ kind }) {
     /* Optimize the Five Elements — earth, water, fire, air, ether in slow rotation */
     elements: (
       <svg viewBox="0 0 120 120" className="scene scene--elements">
-        <circle cx="60" cy="60" r="31" className="s-stroke" strokeWidth="1.2" opacity="0.26" />
+        <circle cx="60" cy="60" r="32" className="s-stroke" strokeWidth="1.2" opacity="0.25" strokeDasharray="2 2" />
         <g className="scene-spin-slow">
-          <rect x="55" y="24" width="10" height="10" rx="1.5" className="s-fill scene-twinkle scene-st-1" />
-          <path className="s-fill scene-twinkle scene-st-2" d="M89 51 C89 55 86 58 82.5 58 C79 58 76 55 76 51 C76 47 82.5 41 82.5 41 C82.5 41 89 47 89 51 Z" />
-          <path className="s-fill scene-twinkle scene-st-3" d="M78 84 C71 78 74 70 78 65 C82 70 85 78 78 84 Z" />
-          <path className="s-stroke scene-twinkle scene-st-4" d="M36 80 q10 -4 8 4 q-2 6 -8 4" strokeWidth="2" fill="none" />
-          <circle cx="31" cy="51" r="5.4" className="s-stroke scene-twinkle scene-st-5" strokeWidth="2" />
+          {/* Earth — at top (60, 28) */}
+          <g className="scene-twinkle scene-st-1">
+            <g transform="translate(60, 28)">
+              {/* Soil box */}
+              <rect x="-5.5" y="-2" width="11" height="9" rx="1" className="s-stroke s-fill-soft" style={{ strokeWidth: 1.2 }} />
+              {/* Strata lines */}
+              <line x1="-5.5" y1="1" x2="5.5" y2="1" className="s-stroke" style={{ strokeWidth: 1.0 }} />
+              <line x1="-5.5" y1="4" x2="5.5" y2="4" className="s-stroke" style={{ strokeWidth: 1.0 }} />
+              {/* Sprout */}
+              <path d="M 0 -2 C -2.5 -4 -2.5 -7 0 -5.5" className="s-fill" />
+              <path d="M 0 -2 C 2.5 -4 2.5 -7 0 -5.5" className="s-fill" />
+              <line x1="0" y1="-2" x2="0" y2="0" className="s-stroke" style={{ strokeWidth: 1.2 }} />
+            </g>
+          </g>
+          {/* Water — at (90.4, 50.1) */}
+          <g className="scene-twinkle scene-st-2">
+            <g transform="translate(90.4, 50.1)">
+              {/* Drop soft fill */}
+              <path d="M 0 -7 C -3 -3 -3.5 -1 0 -1 C 3.5 -1 3 -3 0 -7 Z" className="s-fill-soft" />
+              {/* Drop outline */}
+              <path d="M 0 -7 C -3 -3 -3.5 -1 0 -1 C 3.5 -1 3 -3 0 -7 Z" className="s-stroke" style={{ strokeWidth: 1.2 }} />
+              {/* Waves below */}
+              <path d="M -6 2.5 C -3.5 0.5 -2.5 4.5 0 2.5 C 2.5 0.5 3.5 4.5 6 2.5" className="s-stroke" style={{ strokeWidth: 1.2 }} />
+              <path d="M -6 6 C -3.5 4 -2.5 8 0 6 C 2.5 4 3.5 8 6 6" className="s-stroke" style={{ strokeWidth: 1.2 }} />
+            </g>
+          </g>
+          {/* Fire — at (78.8, 85.9) */}
+          <g className="scene-twinkle scene-st-3">
+            <g transform="translate(78.8, 85.9)">
+              {/* Flame soft fill */}
+              <path d="M 0 5 C -3 5 -4 3 -4 1 C -4 -1.5 -1 -5 0 -6 C 1 -5 4 -1.5 4 1 C 4 3 3 5 0 5 Z" className="s-fill-soft" />
+              {/* Flame outline */}
+              <path d="M 0 5 C -3 5 -4 3 -4 1 C -4 -1.5 -1 -5 0 -6 C 1 -5 4 -1.5 4 1 C 4 3 3 5 0 5 Z" className="s-stroke" style={{ strokeWidth: 1.2 }} />
+              {/* Inner core */}
+              <path d="M 0 4 C -1.5 4 -2 2.5 -2 1 C -2 -0.5 -0.5 -3 0 -3.5 C 0.5 -3 2 -0.5 2 1 C 2 2.5 1.5 4 0 4 Z" className="s-fill" />
+              {/* Spark dot */}
+              <circle cx="0" cy="-8.5" r="1.1" className="s-fill" />
+            </g>
+          </g>
+          {/* Air — at (41.2, 85.9) */}
+          <g className="scene-twinkle scene-st-4">
+            <g transform="translate(41.2, 85.9)">
+              {/* Swirl 1 */}
+              <path d="M -6.5 -2.5 H 1 C 2.5 -2.5 3.5 -1.5 3.5 0 C 3.5 1.5 2.5 2.5 1 2.5 C -0.5 2.5 -1.5 1.5 -1.5 0 C -1.5 -1 -0.5 -1.5 0 -1.5" className="s-stroke" style={{ strokeWidth: 1.2 }} fill="none" />
+              {/* Swirl 2 */}
+              <path d="M -5 2.5 H -1 C 0.5 2.5 1.5 3.5 1.5 5 C 1.5 6.5 0.5 7.5 -1 7.5 C -2.5 7.5 -3.5 6.5 -3.5 5 C -3.5 4 -2.5 3.5 -2 3.5" className="s-stroke" style={{ strokeWidth: 1.2 }} fill="none" />
+            </g>
+          </g>
+          {/* Ether — at (29.6, 50.1) */}
+          <g className="scene-twinkle scene-st-5">
+            <g transform="translate(29.6, 50.1)">
+              {/* Outer ring */}
+              <circle cx="0" cy="0" r="6.5" className="s-stroke" style={{ strokeWidth: 1.2 }} />
+              {/* Celestial soft fill inside */}
+              <circle cx="0" cy="0" r="6.5" className="s-fill-soft" />
+              {/* Center star */}
+              <path d="M 0 -4 L 1 -1 L 4 0 L 1 1 L 0 4 L -1 1 L -4 0 L -1 -1 Z" className="s-fill" />
+            </g>
+          </g>
         </g>
         <circle cx="60" cy="60" r="3.2" className="s-fill" />
       </svg>
     ),
-    /* Restore Ahara, Vihara & Achara — the sun's daily arc over the horizon */
+    /* Restore Ahara, Vihara, Achara & Vichara — the sun's daily arc over the horizon */
     rhythm: (
       <svg viewBox="0 0 120 120" className="scene scene--rhythm">
-        <path d="M30 78 A30 30 0 0 1 90 78" className="s-stroke" strokeWidth="1.6" fill="none" opacity="0.4" />
-        <line x1="24" y1="78" x2="96" y2="78" className="s-stroke" strokeWidth="2.4" />
-        <g className="scene-arc">
-          <g className="scene-spin-rays">
-            <circle cx="60" cy="44" r="8" className="s-fill" />
-            <g className="s-stroke" strokeWidth="2" strokeLinecap="round">
-              <line x1="60" y1="28" x2="60" y2="33" />
-              <line x1="76" y1="44" x2="71" y2="44" />
-              <line x1="44" y1="44" x2="49" y2="44" />
-              <line x1="71" y1="33" x2="68" y2="36" />
-              <line x1="49" y1="33" x2="52" y2="36" />
+        <defs>
+          <clipPath id="skyClip"><rect x="0" y="0" width="120" height="78" /></clipPath>
+        </defs>
+        <path d="M30 78 A30 30 0 0 1 90 78" className="s-stroke" strokeWidth="1.6" fill="none" opacity="0.35" strokeDasharray="3 3" />
+        <line x1="20" y1="78" x2="100" y2="78" className="s-stroke" strokeWidth="2.2" opacity="0.4" />
+        <g clipPath="url(#skyClip)">
+          <g className="scene-arc">
+            {/* Sun */}
+            <g className="scene-spin-rays">
+              <circle cx="60" cy="48" r="8" className="s-fill" />
+              <g className="s-stroke" strokeWidth="2" strokeLinecap="round">
+                <line x1="60" y1="32" x2="60" y2="37" />
+                <line x1="76" y1="48" x2="71" y2="48" />
+                <line x1="44" y1="48" x2="49" y2="48" />
+                <line x1="71" y1="37" x2="68" y2="40" />
+                <line x1="49" y1="37" x2="52" y2="40" />
+              </g>
             </g>
+            {/* Crescent Moon (opposite to the sun at (60, 108)) */}
+            <path className="s-fill" d="M55 102 A6 6 0 1 1 65 110 A4.5 4.5 0 1 0 55 102 Z" />
           </g>
         </g>
       </svg>
@@ -425,7 +504,7 @@ function Methodology() {
     { Icon: Shell,    anim: "doshas",   label: "Balance Doshas",                        desc: "Harmonize Vata, Pitta, and Kapha to rebuild stability, resilience, and lasting vitality." },
     { Icon: Sun,      anim: "agni",     label: "Improve Digestion (Agni)",              desc: "Strengthen digestive fire to prevent the build-up of toxins (ama) and fuel metabolism from within." },
     { Icon: SunMoon,  anim: "elements", label: "Optimize the Five Elements",            desc: "Bring Earth, Water, Fire, Air & Ether back into balance to restore harmony across the system." },
-    { Icon: Compass,  anim: "rhythm",   label: "Restore Ahara, Vihara & Achara",       desc: "Realign your diet, daily rhythms, and conduct with your constitution for sustainable, whole-life healing." },
+    { Icon: Compass,  anim: "rhythm",   label: "Restore Ahara, Vihara, Achara & Vichara", desc: "Realign your diet, daily rhythms, conduct, and thought with your constitution for sustainable, whole-life healing." },
   ];
 
   const openDetail = (step, discipline, disciplineName, index) =>
@@ -455,7 +534,9 @@ function Methodology() {
           aria-haspopup="dialog"
           aria-label={`${label} — read more`}
         >
-          <span className="method-node__icon"><Icon size={20} strokeWidth={1.6} /></span>
+          <span className="method-node__icon">
+            {step.anim ? <StepScene kind={step.anim} /> : <Icon size={20} strokeWidth={1.6} />}
+          </span>
           <span className="method-node__label">{label}</span>
           <span className="method-node__more" aria-hidden="true"><ChevronDown size={13} strokeWidth={1.5} /></span>
         </button>
@@ -553,9 +634,13 @@ function Methodology() {
             >
               <X size={18} />
             </button>
-            <span className="method-detail__scene" aria-hidden="true">
-              {active.anim ? <StepScene kind={active.anim} /> : (ActiveIcon && <ActiveIcon size={26} strokeWidth={1.5} />)}
-            </span>
+            <div className="method-detail__image-container" aria-hidden="true">
+              <img
+                src={active.discipline === 'fm' ? functionalMedicineImg : ayurvedaImg}
+                alt={active.disciplineName}
+                className="method-detail__image"
+              />
+            </div>
             <span className="method-detail__tag">{active.disciplineName}</span>
             <h4 id="method-detail-title" className="method-detail__title">{active.label}</h4>
             <p className="method-detail__desc">{active.desc}</p>

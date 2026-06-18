@@ -869,10 +869,10 @@ body {
 
 /* Desktop hero eyebrow — sits above the statement as a quiet kicker */
 .hero-eyebrow {
-  font-family: var(--sans);
-  font-size: 12px;
+  font-family: var(--mono);
+  font-size: 11px;
   font-weight: 500;
-  letter-spacing: 0.32em;
+  letter-spacing: 0.42em;
   text-transform: uppercase;
   color: #f0d896;
   /* Flush-left with the statement below; nudge for optical letter-spacing */
@@ -1936,7 +1936,7 @@ footer {
   font-family: var(--serif);
   font-size: 26px;
   color: var(--ink);
-  font-weight: 350;
+  font-weight: 300;
   line-height: 1.15;
 }
 .sidebar-instructions {
@@ -3719,7 +3719,7 @@ section.spread.method-process {
 
 /* Icon design: circle with colored border, soft colored background */
 .method-node__icon {
-  flex: none; width: 44px; height: 44px;
+  flex: none; width: 56px; height: 56px;
   border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
   transition: transform 0.4s var(--ease), background 0.4s var(--ease), border-color 0.4s var(--ease);
 }
@@ -3748,7 +3748,8 @@ section.spread.method-process {
   background: radial-gradient(circle at 50% 35%, rgba(214, 122, 69, 0.22), rgba(214, 122, 69, 0.08));
   border-color: rgba(214, 122, 69, 0.46);
 }
-.method-node__icon svg { width: 18px; height: auto; }
+.method-node__icon svg { width: 20px; height: auto; }
+.method-node__icon svg.scene { width: 48px; height: 48px; display: block; }
 
 /* Card label */
 .method-node__label {
@@ -3882,24 +3883,21 @@ section.spread.method-process {
 }
 
 /* Animated illustration stage */
-.method-detail__scene {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 104px;
-  height: 104px;
-  border-radius: 50%;
-  margin-bottom: 18px;
+.method-detail__image-container {
+  width: 100%;
+  height: 170px;
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 22px;
+  border: 1px solid rgba(200, 169, 107, 0.2);
+  box-shadow: 0 8px 24px rgba(83, 67, 39, 0.05);
 }
-.method-detail__panel--fm .method-detail__scene {
-  background: radial-gradient(circle at 50% 36%, rgba(107, 132, 113, 0.14), rgba(107, 132, 113, 0.04) 70%, transparent);
-  color: #5e7468;
+.method-detail__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
-.method-detail__panel--ay .method-detail__scene {
-  background: radial-gradient(circle at 50% 36%, rgba(214, 122, 69, 0.13), rgba(214, 122, 69, 0.04) 70%, transparent);
-  color: #c9763f;
-}
-.method-detail__scene .scene { width: 92px; height: 92px; display: block; }
 
 /* Scene primitives */
 .scene .s-stroke { fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
@@ -3917,8 +3915,8 @@ section.spread.method-process {
   .scene-breathe    { animation: sceneBreathe 4s ease-in-out infinite; transform-origin: 60px 60px; transform-box: view-box; }
   .scene-orbit      { animation: sceneSpin 14s linear infinite; transform-origin: 60px 60px; transform-box: view-box; }
   .scene-spin-slow  { animation: sceneSpin 22s linear infinite; transform-origin: 60px 60px; transform-box: view-box; }
-  .scene-spin-rays  { animation: sceneSpin 26s linear infinite; transform-origin: 60px 44px; transform-box: view-box; }
-  .scene-arc        { animation: sceneSunBob 6s ease-in-out infinite; transform-origin: 60px 60px; transform-box: view-box; }
+  .scene-spin-rays  { animation: sceneSpin 26s linear infinite; transform-origin: 60px 48px; transform-box: view-box; }
+  .scene-arc        { animation: sceneArc 16s linear infinite; transform-origin: 60px 78px; transform-box: view-box; }
   .scene-drift      { animation: sceneDrift 5s linear infinite; }
   .scene-drift-rev  { animation: sceneDrift 6.5s linear infinite reverse; }
   .scene-drift-slow { animation: sceneSunBob 5.5s ease-in-out infinite; transform-origin: 80px 58px; transform-box: view-box; }
@@ -3933,6 +3931,47 @@ section.spread.method-process {
   .scene-st-3 { animation-delay: 0.9s; }
   .scene-st-4 { animation-delay: 1.35s; }
   .scene-st-5 { animation-delay: 1.8s; }
+  .scene--aura .scene-ripple {
+    transform-origin: 60px 62px;
+    transform-box: view-box;
+  }
+  .scene-breathe-figure {
+    animation: sceneBreatheFigure 4s ease-in-out infinite;
+    transform-origin: 60px 84px;
+    transform-box: view-box;
+  }
+  .scene--doshas .scene-st-1 {
+    transform-origin: 60px 29px;
+    transform-box: view-box;
+  }
+  .scene--doshas .scene-st-3 {
+    transform-origin: 34px 75px;
+    transform-box: view-box;
+  }
+  .scene--doshas .scene-st-5 {
+    transform-origin: 86px 75px;
+    transform-box: view-box;
+  }
+  .scene--elements .scene-st-1 {
+    transform-origin: 60px 28px;
+    transform-box: view-box;
+  }
+  .scene--elements .scene-st-2 {
+    transform-origin: 90px 50px;
+    transform-box: view-box;
+  }
+  .scene--elements .scene-st-3 {
+    transform-origin: 79px 86px;
+    transform-box: view-box;
+  }
+  .scene--elements .scene-st-4 {
+    transform-origin: 41px 86px;
+    transform-box: view-box;
+  }
+  .scene--elements .scene-st-5 {
+    transform-origin: 30px 50px;
+    transform-box: view-box;
+  }
 }
 @keyframes sceneFloat {
   0%, 100% { transform: translate(0, 0); }
@@ -3970,9 +4009,9 @@ section.spread.method-process {
   50%      { transform: scale(1.1); opacity: 1; }
 }
 @keyframes sceneFall {
-  0%   { transform: translateY(-6px); opacity: 0; }
-  30%  { opacity: 0.7; }
-  100% { transform: translateY(14px); opacity: 0; }
+  0%   { transform: translateY(0); opacity: 0; }
+  20%  { opacity: 0.8; }
+  100% { transform: translateY(28px); opacity: 0; }
 }
 @keyframes sceneFlame {
   0%, 100% { transform: scaleY(1) scaleX(1); }
@@ -3985,6 +4024,14 @@ section.spread.method-process {
 @keyframes sceneSunBob {
   0%, 100% { transform: translateY(2px); }
   50%      { transform: translateY(-3px); }
+}
+@keyframes sceneArc {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes sceneBreatheFigure {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.03) translateY(-1px); }
 }
 
 .method-detail__tag {
@@ -4033,8 +4080,7 @@ section.spread.method-process {
     to   { transform: translateY(0); }
   }
   .method-detail__icon { width: 56px; height: 56px; margin-bottom: 14px; }
-  .method-detail__scene { width: 92px; height: 92px; margin-bottom: 14px; }
-  .method-detail__scene .scene { width: 80px; height: 80px; }
+  .method-detail__image-container { height: 130px; margin-bottom: 16px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -4173,7 +4219,8 @@ section.spread.philosophy-vs {
   align-items: center;
   justify-content: center;
   width: 100%;
-  min-height: 1.3em;
+  min-height: clamp(72px, 10vh, 110px);
+  margin-bottom: clamp(8px, 2vh, 20px);
 }
 .phil-statement {
   position: relative;
@@ -4188,10 +4235,11 @@ section.spread.philosophy-vs {
 .phil-statement__text {
   font-family: var(--serif);
   font-weight: 300;
-  font-size: clamp(27px, 6vw, 60px);
+  font-size: clamp(18px, 5.2vw, 60px);
   line-height: 1.14;
   letter-spacing: -0.01em;
   color: var(--ink);
+  white-space: nowrap;
 }
 /* Thin reflective line that travels through the sentence */
 .phil-statement__strike {
@@ -4223,13 +4271,11 @@ section.spread.philosophy-vs {
 
 /* Emotional bridge into the chart */
 .phil-bridge {
-  margin-top: clamp(36px, 7vh, 84px);
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 1.3s var(--ease), transform 1.3s var(--ease);
-  pointer-events: none;
+  margin-top: clamp(48px, 9vh, 100px);
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
 }
-.phil-bridge.is-in { opacity: 1; transform: none; pointer-events: auto; }
 .phil-bridge__title {
   font-family: var(--serif);
   font-weight: 300;
