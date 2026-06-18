@@ -137,7 +137,7 @@ function Philosophy() {
   _useEffect(() => {
     const root = sectionRef.current;
     if (!root) return;
-    const targets = root.querySelectorAll(".vs, .phil-closing");
+    const targets = root.querySelectorAll(".section-tag, .vs, .phil-closing");
     const io = new IntersectionObserver((entries) => {
       entries.forEach((e) => {
         if (e.isIntersecting) { e.target.classList.add("is-in"); io.unobserve(e.target); }
