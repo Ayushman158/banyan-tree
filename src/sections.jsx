@@ -179,101 +179,156 @@ function Philosophy() {
    All motion is slow, low-contrast and loops gently — pure SVG + CSS. */
 function StepScene({ kind }) {
   const scenes = {
+    /* Root Cause Analysis — magnifying glass revealing cells, beside a test tube */
     lens: (
       <svg viewBox="0 0 120 120" className="scene scene--lens">
+        <g className="scene-drift-slow">
+          <rect x="74" y="34" width="13" height="50" rx="6.5" className="s-stroke" strokeWidth="2.4" />
+          <rect x="71" y="28" width="19" height="8" rx="2.5" className="s-fill" />
+          <path d="M74 60 Q80.5 64 87 60 L87 78 Q80.5 84 74 78 Z" className="s-fill-soft" />
+          <circle cx="80" cy="68" r="1.8" className="s-fill scene-twinkle scene-st-2" />
+          <circle cx="83" cy="74" r="1.5" className="s-fill scene-twinkle scene-st-3" />
+        </g>
         <g className="scene-float">
-          <circle cx="52" cy="52" r="25" className="s-stroke" />
-          <circle cx="52" cy="52" r="25" className="s-fill-soft" />
-          <line x1="70" y1="70" x2="90" y2="90" className="s-stroke" strokeWidth="4" />
-          <circle cx="52" cy="52" r="9" className="s-stroke scene-pulse" strokeWidth="2" />
+          <circle cx="46" cy="50" r="20" className="s-fill-soft" />
+          <circle cx="46" cy="50" r="20" className="s-stroke" strokeWidth="2.6" />
+          <line x1="61" y1="65" x2="82" y2="86" className="s-stroke" strokeWidth="5" />
+          <circle cx="39" cy="46" r="3.2" className="s-fill scene-twinkle scene-st-1" />
+          <circle cx="51" cy="44" r="2.4" className="s-fill scene-twinkle scene-st-2" />
+          <circle cx="44" cy="56" r="2.8" className="s-fill scene-twinkle scene-st-3" />
+          <circle cx="53" cy="55" r="2" className="s-fill scene-twinkle scene-st-4" />
         </g>
       </svg>
     ),
+    /* Fix Nutrient Deficiencies — seedling in soil drinking in nutrients */
     sprout: (
       <svg viewBox="0 0 120 120" className="scene scene--sprout">
-        <line x1="60" y1="94" x2="60" y2="52" className="s-stroke" strokeWidth="3" />
-        <path className="s-fill scene-sway-l" d="M60 64 C44 60 38 46 46 40 C58 42 62 56 60 64 Z" />
-        <path className="s-fill scene-sway-r" d="M60 56 C76 52 82 38 74 32 C62 34 58 48 60 56 Z" />
-        <circle className="s-fill scene-rise scene-rise-1" cx="46" cy="40" r="2.4" />
-        <circle className="s-fill scene-rise scene-rise-2" cx="74" cy="44" r="2" />
-        <circle className="s-fill scene-rise scene-rise-3" cx="60" cy="32" r="2" />
+        <path d="M30 86 Q60 78 90 86" className="s-stroke" strokeWidth="2.4" fill="none" />
+        <path d="M30 86 Q60 78 90 86 L90 94 L30 94 Z" className="s-fill-soft" />
+        <g className="scene-sway-base">
+          <path d="M60 86 C60 72 60 62 60 50" className="s-stroke" strokeWidth="2.6" />
+          <path className="s-fill" d="M60 66 C47 64 41 53 47 46 C58 48 62 59 60 66 Z" />
+          <path className="s-fill" d="M60 58 C73 56 79 45 73 38 C62 40 58 51 60 58 Z" />
+          <path className="s-stroke" d="M53 56 L60 60" strokeWidth="1.4" />
+          <path className="s-stroke" d="M67 49 L60 53" strokeWidth="1.4" />
+        </g>
+        <circle className="s-fill scene-rise scene-st-1" cx="42" cy="44" r="2.2" />
+        <circle className="s-fill scene-rise scene-st-3" cx="78" cy="48" r="2" />
+        <circle className="s-fill scene-rise scene-st-5" cx="60" cy="34" r="2" />
       </svg>
     ),
+    /* Heal Gut & Liver — soft fluid moving inside an organ */
     waves: (
       <svg viewBox="0 0 120 120" className="scene scene--waves">
-        <circle cx="60" cy="60" r="14" className="s-stroke scene-ripple scene-ripple-1" strokeWidth="2" />
-        <circle cx="60" cy="60" r="14" className="s-stroke scene-ripple scene-ripple-2" strokeWidth="2" />
-        <circle cx="60" cy="60" r="14" className="s-stroke scene-ripple scene-ripple-3" strokeWidth="2" />
-        <circle cx="60" cy="60" r="6" className="s-fill" />
+        <defs>
+          <clipPath id="gutClip"><circle cx="60" cy="62" r="29" /></clipPath>
+        </defs>
+        <g clipPath="url(#gutClip)">
+          <rect x="20" y="20" width="80" height="84" className="s-fill-soft" />
+          <path className="s-fill scene-drift" d="M14 66 q11 -7 22 0 t22 0 t22 0 t22 0 v40 h-110 Z" opacity="0.5" />
+          <path className="s-fill scene-drift-rev" d="M14 74 q11 -6 22 0 t22 0 t22 0 t22 0 v40 h-110 Z" opacity="0.32" />
+        </g>
+        <circle cx="60" cy="62" r="29" className="s-stroke" strokeWidth="2.6" />
+        <circle cx="50" cy="50" r="2" className="s-fill scene-twinkle scene-st-2" />
+        <circle cx="68" cy="46" r="1.6" className="s-fill scene-twinkle scene-st-4" />
       </svg>
     ),
+    /* Optimize Mitochondrial Health — a breathing cell with energy orbiting */
     cell: (
       <svg viewBox="0 0 120 120" className="scene scene--cell">
-        <circle cx="60" cy="60" r="22" className="s-stroke scene-breathe" strokeWidth="1.5" opacity="0.4" />
-        <circle cx="60" cy="60" r="13" className="s-fill scene-breathe" />
+        <circle cx="60" cy="60" r="30" className="s-stroke scene-breathe" strokeWidth="2" opacity="0.5" />
+        <g className="scene-breathe">
+          <ellipse cx="60" cy="60" rx="20" ry="11" className="s-stroke" strokeWidth="2.2" />
+          <ellipse cx="60" cy="60" rx="20" ry="11" className="s-fill-soft" />
+          <path d="M44 60 q5 -7 10 0 t10 0 t10 0" className="s-stroke" strokeWidth="1.6" fill="none" />
+        </g>
         <g className="scene-orbit">
-          <circle cx="60" cy="30" r="3" className="s-fill" />
-          <circle cx="90" cy="60" r="2.6" className="s-fill" />
-          <circle cx="60" cy="90" r="3" className="s-fill" />
-          <circle cx="30" cy="60" r="2.6" className="s-fill" />
+          <circle cx="60" cy="26" r="3" className="s-fill scene-twinkle scene-st-1" />
+          <circle cx="94" cy="60" r="2.6" className="s-fill scene-twinkle scene-st-3" />
+          <circle cx="60" cy="94" r="3" className="s-fill scene-twinkle scene-st-2" />
+          <circle cx="26" cy="60" r="2.6" className="s-fill scene-twinkle scene-st-4" />
         </g>
       </svg>
     ),
+    /* Support Detoxification — a leaf with veins shedding droplets */
     detox: (
       <svg viewBox="0 0 120 120" className="scene scene--detox">
-        <g className="scene-sway-l">
-          <path className="s-stroke" d="M62 38 C40 44 34 72 52 86 C74 80 84 52 62 38 Z" strokeWidth="2.5" fill="none" />
-          <path className="s-stroke" d="M62 38 C58 58 54 74 52 86" strokeWidth="2" fill="none" />
+        <g className="scene-sway-base">
+          <path className="s-stroke" d="M60 28 C38 38 34 70 56 88 C80 70 82 40 60 28 Z" strokeWidth="2.5" fill="none" />
+          <path className="s-fill-soft" d="M60 28 C38 38 34 70 56 88 C80 70 82 40 60 28 Z" />
+          <path className="s-stroke" d="M60 30 C58 52 56 72 56 88" strokeWidth="1.8" fill="none" />
+          <path className="s-stroke" d="M58 46 L46 44" strokeWidth="1.3" />
+          <path className="s-stroke" d="M58 58 L70 54" strokeWidth="1.3" />
+          <path className="s-stroke" d="M57 70 L46 70" strokeWidth="1.3" />
         </g>
-        <circle className="s-fill scene-fall scene-fall-1" cx="44" cy="52" r="2" />
-        <circle className="s-fill scene-fall scene-fall-2" cx="76" cy="60" r="2" />
-        <circle className="s-fill scene-fall scene-fall-3" cx="60" cy="70" r="1.6" />
+        <circle className="s-fill scene-fall scene-st-1" cx="44" cy="58" r="2" />
+        <circle className="s-fill scene-fall scene-st-3" cx="76" cy="64" r="2" />
+        <circle className="s-fill scene-fall scene-st-5" cx="60" cy="76" r="1.6" />
       </svg>
     ),
+    /* Prakriti Analysis — a seated figure radiating a calm aura */
     aura: (
       <svg viewBox="0 0 120 120" className="scene scene--aura">
-        <circle cx="60" cy="50" r="8" className="s-fill" />
-        <path className="s-fill" d="M42 80 C42 64 78 64 78 80 Z" />
-        <circle cx="60" cy="62" r="20" className="s-stroke scene-ripple scene-ripple-1" strokeWidth="1.6" />
-        <circle cx="60" cy="62" r="20" className="s-stroke scene-ripple scene-ripple-2" strokeWidth="1.6" />
-        <circle cx="60" cy="62" r="20" className="s-stroke scene-ripple scene-ripple-3" strokeWidth="1.6" />
+        <circle cx="60" cy="66" r="22" className="s-stroke scene-ripple scene-st-1" strokeWidth="1.6" />
+        <circle cx="60" cy="66" r="22" className="s-stroke scene-ripple scene-st-3" strokeWidth="1.6" />
+        <circle cx="60" cy="66" r="22" className="s-stroke scene-ripple scene-st-5" strokeWidth="1.6" />
+        <circle cx="60" cy="46" r="9" className="s-fill" />
+        <path className="s-fill" d="M40 84 C42 66 78 66 80 84 C70 88 50 88 40 84 Z" />
+        <path className="s-stroke" d="M40 84 C30 78 30 70 38 70" strokeWidth="2.4" fill="none" />
+        <path className="s-stroke" d="M80 84 C90 78 90 70 82 70" strokeWidth="2.4" fill="none" />
       </svg>
     ),
+    /* Balance Doshas — air, fire & water orbiting a still centre */
     doshas: (
       <svg viewBox="0 0 120 120" className="scene scene--doshas">
+        <circle cx="60" cy="60" r="30" className="s-stroke" strokeWidth="1.3" opacity="0.28" />
         <g className="scene-spin-slow">
-          <circle cx="60" cy="30" r="7" className="s-fill scene-twinkle scene-rise-1" />
-          <circle cx="34" cy="76" r="7" className="s-fill scene-twinkle scene-rise-2" />
-          <circle cx="86" cy="76" r="7" className="s-fill scene-twinkle scene-rise-3" />
-        </g>
-        <circle cx="60" cy="60" r="3" className="s-fill" />
-      </svg>
-    ),
-    agni: (
-      <svg viewBox="0 0 120 120" className="scene scene--agni">
-        <path className="s-fill scene-flame scene-flame-1" d="M60 96 C42 84 48 62 60 46 C72 62 78 84 60 96 Z" />
-        <path className="s-fill scene-flame scene-flame-2" d="M60 96 C50 88 52 72 60 60 C68 72 70 88 60 96 Z" opacity="0.55" />
-        <path className="s-flame-core scene-flame scene-flame-3" d="M60 96 C54 90 55 80 60 72 C65 80 66 90 60 96 Z" />
-      </svg>
-    ),
-    elements: (
-      <svg viewBox="0 0 120 120" className="scene scene--elements">
-        <g className="scene-spin-slow">
-          <circle cx="60" cy="30" r="5" className="s-fill scene-twinkle scene-rise-1" />
-          <circle cx="89" cy="51" r="5" className="s-fill scene-twinkle scene-rise-2" />
-          <circle cx="78" cy="85" r="5" className="s-fill scene-twinkle scene-rise-3" />
-          <circle cx="42" cy="85" r="5" className="s-fill scene-twinkle scene-rise-1" />
-          <circle cx="31" cy="51" r="5" className="s-fill scene-twinkle scene-rise-2" />
+          <path className="s-stroke scene-twinkle scene-st-1" d="M52 26 q10 -4 8 5 q-2 7 -8 5" strokeWidth="2.2" fill="none" />
+          <path className="s-fill scene-twinkle scene-st-3" d="M34 84 C28 78 30 70 34 65 C38 70 40 78 34 84 Z" />
+          <path className="s-fill scene-twinkle scene-st-5" d="M86 74 C86 80 82 84 78 84 C74 84 70 80 70 74 C70 68 78 60 78 60 C78 60 86 68 86 74 Z" />
         </g>
         <circle cx="60" cy="60" r="3.4" className="s-fill" />
       </svg>
     ),
+    /* Improve Digestion (Agni) — a living flame over a small hearth */
+    agni: (
+      <svg viewBox="0 0 120 120" className="scene scene--agni">
+        <path className="s-stroke" d="M40 92 Q60 104 80 92" strokeWidth="2.6" fill="none" />
+        <path className="s-fill scene-flame scene-flame-1" d="M60 90 C42 78 49 58 60 42 C71 58 78 78 60 90 Z" />
+        <path className="s-fill scene-flame scene-flame-2" d="M60 90 C50 82 52 67 60 56 C68 67 70 82 60 90 Z" opacity="0.55" />
+        <path className="s-flame-core scene-flame scene-flame-3" d="M60 90 C54 84 55 75 60 68 C65 75 66 84 60 90 Z" />
+      </svg>
+    ),
+    /* Optimize the Five Elements — earth, water, fire, air, ether in slow rotation */
+    elements: (
+      <svg viewBox="0 0 120 120" className="scene scene--elements">
+        <circle cx="60" cy="60" r="31" className="s-stroke" strokeWidth="1.2" opacity="0.26" />
+        <g className="scene-spin-slow">
+          <rect x="55" y="24" width="10" height="10" rx="1.5" className="s-fill scene-twinkle scene-st-1" />
+          <path className="s-fill scene-twinkle scene-st-2" d="M89 51 C89 55 86 58 82.5 58 C79 58 76 55 76 51 C76 47 82.5 41 82.5 41 C82.5 41 89 47 89 51 Z" />
+          <path className="s-fill scene-twinkle scene-st-3" d="M78 84 C71 78 74 70 78 65 C82 70 85 78 78 84 Z" />
+          <path className="s-stroke scene-twinkle scene-st-4" d="M36 80 q10 -4 8 4 q-2 6 -8 4" strokeWidth="2" fill="none" />
+          <circle cx="31" cy="51" r="5.4" className="s-stroke scene-twinkle scene-st-5" strokeWidth="2" />
+        </g>
+        <circle cx="60" cy="60" r="3.2" className="s-fill" />
+      </svg>
+    ),
+    /* Restore Ahara, Vihara & Achara — the sun's daily arc over the horizon */
     rhythm: (
       <svg viewBox="0 0 120 120" className="scene scene--rhythm">
-        <circle cx="60" cy="60" r="24" className="s-stroke" strokeWidth="1.4" opacity="0.32" />
-        <circle cx="60" cy="60" r="9" className="s-fill" opacity="0.55" />
-        <g className="scene-spin-orbit">
-          <circle cx="60" cy="36" r="6" className="s-fill" />
+        <path d="M30 78 A30 30 0 0 1 90 78" className="s-stroke" strokeWidth="1.6" fill="none" opacity="0.4" />
+        <line x1="24" y1="78" x2="96" y2="78" className="s-stroke" strokeWidth="2.4" />
+        <g className="scene-arc">
+          <g className="scene-spin-rays">
+            <circle cx="60" cy="44" r="8" className="s-fill" />
+            <g className="s-stroke" strokeWidth="2" strokeLinecap="round">
+              <line x1="60" y1="28" x2="60" y2="33" />
+              <line x1="76" y1="44" x2="71" y2="44" />
+              <line x1="44" y1="44" x2="49" y2="44" />
+              <line x1="71" y1="33" x2="68" y2="36" />
+              <line x1="49" y1="33" x2="52" y2="36" />
+            </g>
+          </g>
         </g>
       </svg>
     ),
