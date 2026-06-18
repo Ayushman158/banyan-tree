@@ -1,7 +1,7 @@
 /* Scroll-driven narrative sections — real content, editorial design.
    References: Awwwards editorial layouts · Stripe pricing clarity · v0 minimalism */
 
-import { useEffect as _useEffect, useRef as _useRef, useState as _useState } from 'react';
+import { useEffect as _useEffect, useRef as _useRef, useState as _useState, Fragment as _Fragment } from 'react';
 import { createPortal as _createPortal } from 'react-dom';
 import functionalMedicineImg from './assets/functional-medicine-method.jpg';
 import ayurvedaImg from './assets/ayurveda-method.jpg';
@@ -28,6 +28,17 @@ import {
   Feather,
   SunMoon,
   Shell,
+  Clock,
+  BarChart3,
+  ClipboardList,
+  ClipboardCheck,
+  Boxes,
+  Pill,
+  Stethoscope,
+  TreeDeciduous,
+  Target,
+  Network,
+  Map,
   Sun
 } from 'lucide-react';
 
@@ -85,36 +96,80 @@ function Parallax({ speed = 0.05, className = "", children, ...props }) {
 /* ── I · Philosophy ──────────────────────────────────────────────────────── */
 function Philosophy() {
   const ref = useReveal();
+  const rows = [
+    {
+      trad: { Icon: Clock,          label: "Short Consultations",        desc: "Limited time to address your concerns" },
+      root: { Icon: ClipboardCheck, label: "Deep Health Assessment",     desc: "Time to understand your full health story" },
+    },
+    {
+      trad: { Icon: BarChart3,      label: "Population-Based Ranges",     desc: "Labs read against population averages" },
+      root: { Icon: Target,         label: "Functional & Optimal Analysis", desc: "Beyond “normal” to what's optimal for you" },
+    },
+    {
+      trad: { Icon: ClipboardList,  label: "Symptom Management",          desc: "Focused on suppressing symptoms" },
+      root: { Icon: Search,         label: "Root-Cause Investigation",    desc: "Why symptoms developed in the first place" },
+    },
+    {
+      trad: { Icon: Boxes,          label: "Isolated Body Systems",       desc: "Each system treated separately" },
+      root: { Icon: Network,        label: "Whole-Body Systems View",     desc: "Gut, hormones, mind & lifestyle, connected" },
+    },
+    {
+      trad: { Icon: Pill,           label: "Reactive Care",               desc: "Addressing problems after they appear" },
+      root: { Icon: Map,            label: "Personalized Healing Roadmap", desc: "Step-by-step guidance for your biology" },
+    },
+  ];
+
+  const renderCell = (item, side, isLast) => (
+    <div className={`vs__cell vs__cell--${side}${isLast ? " is-last" : ""}`}>
+      <span className="vs__icon"><item.Icon size={18} strokeWidth={1.6} /></span>
+      <span className="vs__text">
+        <span className="vs__label">{item.label}</span>
+        <span className="vs__desc">{item.desc}</span>
+      </span>
+    </div>
+  );
+
   return (
-    <section className="spread spread--dark" id="philosophy" ref={ref}>
-      <div className="section-tag reveal"><span>III · Philosophy</span></div>
-      <div className="philosophy">
-        <div className="col-left">
-          <h2 className="section-h reveal">
-            Two sciences.<br/>
-            <em>One person.</em>
-          </h2>
+    <section className="spread philosophy-vs" id="philosophy" ref={ref}>
+      <div className="philosophy-vs__aura" aria-hidden="true" />
+
+      <header className="method-process__head">
+        <div className="section-tag reveal"><span>III · Philosophy</span></div>
+        <h2 className="section-h reveal">
+          Two paths.<br/><em>One clear choice.</em>
+        </h2>
+        <p className="method-process__intro reveal delay-1">
+          The same symptoms, approached two very different ways — the shift from
+          managing disease to understanding why it began.
+        </p>
+      </header>
+
+      <div className="vs reveal delay-2">
+        <span className="vs__spine" aria-hidden="true" />
+        <span className="vs__badge">VS</span>
+        <div className="vs__grid">
+          {/* Column headers */}
+          <div className="vs__head vs__head--trad">
+            <span className="vs__crest"><Stethoscope size={22} strokeWidth={1.5} /></span>
+            <h3 className="vs__name">Traditional Healthcare</h3>
+            <span className="vs__sub">Reactive &amp; symptom-focused</span>
+          </div>
+          <div className="vs__axis vs__axis--head" aria-hidden="true" />
+          <div className="vs__head vs__head--root">
+            <span className="vs__crest"><TreeDeciduous size={22} strokeWidth={1.5} /></span>
+            <h3 className="vs__name">Atlas of Root-Cause Healing</h3>
+            <span className="vs__sub">Proactive &amp; root-cause focused</span>
+          </div>
+
+          {/* Paired rows */}
+          {rows.map((row, i) => (
+            <_Fragment key={row.root.label}>
+              {renderCell(row.trad, "trad", i === rows.length - 1)}
+              <div className="vs__axis" aria-hidden="true" />
+              {renderCell(row.root, "root", i === rows.length - 1)}
+            </_Fragment>
+          ))}
         </div>
-        <Parallax speed={0.05} className="col-right">
-          <blockquote className="reveal delay-1">
-            Modern medicine arrives at the symptom.
-            Ancient wisdom asks what came before it.
-            Together, they trace back to what actually started it.
-          </blockquote>
-          <p className="reveal delay-2">
-            Functional Medicine provides the precision: lab markers, nutrient
-            deficiencies, gut ecology, hormonal cascades. The physiology of why
-            symptoms persist long after the trigger has passed.
-          </p>
-          <p className="reveal delay-3">
-            Ayurveda provides the context: your constitution, your digestive
-            fire, the rhythms your body was wired to move with. The conditions
-            in which a particular body tends to lose and regain its balance.
-          </p>
-          <p className="reveal delay-3">
-            Used together, they don't manage symptoms. They find the source.
-          </p>
-        </Parallax>
       </div>
     </section>
   );

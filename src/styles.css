@@ -3990,6 +3990,195 @@ section.spread.method-process {
 .method-process__foot em::before,
 .method-process__foot em::after { content: none; }
 
+/* ════════════════════════════════════════════════════════════════════════
+   III · Philosophy — Traditional Healthcare  VS  Root-Cause Healing
+   A paired-row comparison. The two columns share grid rows so every pair
+   stays aligned. The root-cause column carries a soft sage panel + crisp
+   colour to read as the clear, premium choice; traditional stays muted.
+   Side-by-side on every viewport, echoing the Method section's spine + badge.
+   ════════════════════════════════════════════════════════════════════════ */
+section.spread.philosophy-vs {
+  position: relative;
+  background: radial-gradient(ellipse at top center, #ffffff 0%, var(--paper) 100%);
+  color: var(--ink);
+  overflow: hidden;
+  padding-top: 4vh;
+  padding-bottom: 13vh;
+}
+.philosophy-vs__aura {
+  position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(46% 40% at 78% 42%, rgba(89, 110, 95, 0.06), transparent 72%),
+    radial-gradient(40% 34% at 20% 30%, rgba(31, 34, 30, 0.03), transparent 72%);
+}
+.philosophy-vs > *:not(.philosophy-vs__aura) { position: relative; z-index: 1; }
+
+.vs {
+  position: relative;
+  max-width: 1080px;
+  margin: 0 auto;
+}
+/* Central spine + VS badge — mirrors the Method amp line for design continuity */
+.vs__spine {
+  position: absolute;
+  top: 0; bottom: 0;
+  left: 50%;
+  width: 1px;
+  transform: translateX(-50%);
+  background: linear-gradient(to bottom,
+    transparent 4%,
+    rgba(200, 169, 107, 0.28) 12%,
+    rgba(200, 169, 107, 0.28) 88%,
+    transparent 96%);
+  z-index: 1;
+}
+.vs__badge {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  width: clamp(46px, 6vw, 60px);
+  height: clamp(46px, 6vw, 60px);
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--serif);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  font-size: clamp(15px, 1.8vw, 18px);
+  color: #f3ede0;
+  background: radial-gradient(circle at 50% 32%, #4b5e51 0%, #3a4a3f 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 12px 30px rgba(40, 30, 12, 0.18),
+    0 0 0 6px rgba(89, 110, 95, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.vs__grid {
+  display: grid;
+  grid-template-columns: 1fr clamp(40px, 6vw, 72px) 1fr;
+  align-items: stretch;
+}
+
+/* Column headers */
+.vs__head {
+  text-align: center;
+  padding: clamp(18px, 2.4vw, 28px) clamp(14px, 2.4vw, 30px) clamp(22px, 3vw, 32px);
+}
+.vs__head--root {
+  background: linear-gradient(180deg, rgba(89, 110, 95, 0.08), rgba(89, 110, 95, 0.05));
+  border-radius: 20px 20px 0 0;
+}
+.vs__crest {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 54px; height: 54px; border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 6px 16px rgba(83, 67, 39, 0.05);
+  margin-bottom: 14px;
+}
+.vs__head--trad .vs__crest { border: 1px solid rgba(31, 34, 30, 0.16); color: #5a5f59; }
+.vs__head--root .vs__crest { border: 1px solid rgba(89, 110, 95, 0.42); color: #4f6357; }
+.vs__name {
+  font-family: var(--serif); font-weight: 400;
+  font-size: clamp(16px, 2.1vw, 22px); line-height: 1.2;
+  letter-spacing: 0.01em; margin: 0;
+  text-wrap: balance;
+}
+.vs__head--trad .vs__name { color: #6a6f68; }
+.vs__head--root .vs__name { color: var(--ink); }
+.vs__sub {
+  display: block; margin-top: 8px;
+  font-family: var(--sans); font-size: clamp(10px, 1.2vw, 12px);
+  font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase;
+}
+.vs__head--trad .vs__sub { color: rgba(31, 34, 30, 0.45); }
+.vs__head--root .vs__sub { color: #6b8471; }
+
+/* Centre axis cells just hold space for the spine/badge */
+.vs__axis { min-width: 0; }
+
+/* Comparison rows */
+.vs__cell {
+  display: flex;
+  align-items: center;
+  gap: clamp(10px, 1.4vw, 16px);
+  text-align: left;
+  padding: clamp(16px, 2vw, 22px) clamp(14px, 2.4vw, 30px);
+  border-top: 1px solid rgba(31, 34, 30, 0.08);
+}
+.vs__cell--root {
+  background: linear-gradient(180deg, rgba(89, 110, 95, 0.05), rgba(89, 110, 95, 0.05));
+  border-top-color: rgba(89, 110, 95, 0.14);
+}
+.vs__cell--root.is-last { border-radius: 0 0 20px 20px; }
+
+.vs__icon {
+  flex: none;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: transform 0.4s var(--ease), background 0.4s var(--ease);
+}
+.vs__cell--trad .vs__icon {
+  background: rgba(31, 34, 30, 0.04);
+  border: 1px solid rgba(31, 34, 30, 0.12);
+  color: #6a6f68;
+}
+.vs__cell--root .vs__icon {
+  background: radial-gradient(circle at 50% 35%, rgba(89, 110, 95, 0.16), rgba(89, 110, 95, 0.06));
+  border: 1px solid rgba(89, 110, 95, 0.4);
+  color: #4f6357;
+}
+.vs__cell--root:hover .vs__icon { transform: scale(1.06); }
+.vs__icon svg { width: 18px; height: auto; }
+
+.vs__text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.vs__label {
+  font-family: var(--serif); font-weight: 500;
+  font-size: clamp(14px, 1.7vw, 18px); line-height: 1.25; letter-spacing: 0.01em;
+  text-wrap: balance;
+}
+.vs__cell--trad .vs__label { color: #6a6f68; }
+.vs__cell--root .vs__label { color: var(--ink); }
+.vs__desc {
+  font-family: var(--sans); font-size: clamp(11px, 1.3vw, 13px);
+  line-height: 1.45;
+}
+.vs__cell--trad .vs__desc { color: rgba(31, 34, 30, 0.5); }
+.vs__cell--root .vs__desc { color: var(--ink-soft); }
+
+/* Tablet / small desktop: stack icon above text so labels keep room */
+@media (max-width: 760px) {
+  .vs__grid { grid-template-columns: 1fr clamp(34px, 9vw, 52px) 1fr; }
+  .vs__cell {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 10px;
+    padding: 18px 10px;
+  }
+  .vs__text { align-items: center; gap: 4px; }
+  .vs__icon { width: 36px; height: 36px; }
+  .vs__icon svg { width: 16px; }
+  .vs__head { padding: 14px 8px 20px; }
+  .vs__crest { width: 44px; height: 44px; margin-bottom: 10px; }
+  .vs__crest svg { width: 18px; }
+}
+
+@media (max-width: 480px) {
+  .vs__name { font-size: 14px; }
+  .vs__sub { font-size: 9px; letter-spacing: 0.12em; }
+  .vs__label { font-size: 13px; }
+  .vs__desc { font-size: 10.5px; line-height: 1.4; }
+  .vs__icon { width: 32px; height: 32px; }
+  .vs__icon svg { width: 14px; }
+  .vs__cell { padding: 14px 6px; }
+  .vs__badge { width: 40px; height: 40px; font-size: 13px; }
+}
+
 /* ── Responsive ─────────────────────────────────────────────────────────── */
 @media (max-width: 900px) {
   .stats-strip { grid-template-columns: 1fr 1fr; }
