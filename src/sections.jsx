@@ -67,12 +67,11 @@ import {
   Sun
 } from 'lucide-react';
 
-/* ⚠️ TODO(client): replace WHATSAPP_NUMBER with Himanshu's real WhatsApp number
-   in international format — country code, no "+", no spaces (e.g. 919876543210).
-   Every contact CTA (program buttons, "Get in touch", footer "Contact") opens this. */
-const WHATSAPP_NUMBER = "910000000000";
-const WHATSAPP_MESSAGE = "Hi Himanshu, I'd like to begin my root-cause healing journey.";
-const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
+/* WhatsApp contact. Every contact CTA opens this number with a pre-filled
+   message; program buttons pass their own message so Himanshu sees which plan. */
+const WHATSAPP_NUMBER = "917906978483";
+const waUrl = (message) => `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+const WHATSAPP_URL = waUrl("Hi Himanshu, I'd like to book a 45-minute discovery call and begin root-cause healing.");
 
 function useReveal() {
   const ref = _useRef(null);
@@ -803,7 +802,7 @@ function Pricing() {
                 <p className="plan-for"><em>Best for:</em> {plan.forWhom}</p>
                 <a
                   className="btn btn--primary plan-cta"
-                  href={WHATSAPP_URL}
+                  href={waUrl(`Hi Himanshu, I'm interested in the ${plan.name} program (${plan.duration}). I'd like to begin.`)}
                   target="_blank"
                   rel="noopener noreferrer"
                   data-hoverable="true"
