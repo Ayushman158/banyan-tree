@@ -67,6 +67,13 @@ import {
   Sun
 } from 'lucide-react';
 
+/* ⚠️ TODO(client): replace WHATSAPP_NUMBER with Himanshu's real WhatsApp number
+   in international format — country code, no "+", no spaces (e.g. 919876543210).
+   Every contact CTA (program buttons, "Get in touch", footer "Contact") opens this. */
+const WHATSAPP_NUMBER = "910000000000";
+const WHATSAPP_MESSAGE = "Hi Himanshu, I'd like to begin my root-cause healing journey.";
+const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
+
 function useReveal() {
   const ref = _useRef(null);
   _useEffect(() => {
@@ -794,10 +801,16 @@ function Pricing() {
               </ul>
               <div className="plan-bottom">
                 <p className="plan-for"><em>Best for:</em> {plan.forWhom}</p>
-                <button className="btn btn--primary plan-cta" data-hoverable="true">
+                <a
+                  className="btn btn--primary plan-cta"
+                  href={WHATSAPP_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-hoverable="true"
+                >
                   Begin Your Healing Journey
                   <ArrowRight size={14} className="btn-icon-right" />
-                </button>
+                </a>
               </div>
             </div>
           </Parallax>
@@ -960,12 +973,18 @@ function FinalCTA() {
           we'll map the surface and explore what lies underneath.
         </p>
         <div className="reveal delay-3" style={{ display: "flex", gap: 14, marginTop: 12 }}>
-          <button className="btn btn--primary" data-hoverable="true">
+          <a
+            className="btn btn--primary"
+            href={WHATSAPP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-hoverable="true"
+          >
             Get in touch
-          </button>
-          <button className="btn btn--ghost" data-hoverable="true">
+          </a>
+          <a className="btn btn--ghost" href="#method" data-hoverable="true">
             Explore Healing Pathways
-          </button>
+          </a>
         </div>
       </Parallax>
     </section>
@@ -990,7 +1009,7 @@ function SiteFooter() {
             <a href="#philosophy" data-hoverable="true">Philosophy</a>
             <a href="#method" data-hoverable="true">Method</a>
             <a href="#programs" data-hoverable="true">Programs</a>
-            <a href="#begin" data-hoverable="true">Contact</a>
+            <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" data-hoverable="true">Contact</a>
           </div>
         </div>
         <nav className="footer-legal" aria-label="Legal">
