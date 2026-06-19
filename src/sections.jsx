@@ -924,34 +924,38 @@ function Qualifier() {
       </div>
 
       <div className="qualifier-grid">
-        <div className="qualifier-col reveal delay-1">
+        <div className="qualifier-col qualifier-col--yes reveal delay-1">
           <div className="qualifier-col__header qualifier-col__header--yes">
             <span className="qualifier-header-icon qualifier-header-icon--yes">
-              <Check size={14} strokeWidth={2.5} />
+              <Check size={15} strokeWidth={2.5} />
             </span>
             This is for you if
           </div>
           <ul className="qualifier-list qualifier-list--yes">
             {isFor.map((item, i) => (
               <li key={i}>
-                <Check className="qualifier-item-icon" size={14} />
+                <span className="qualifier-item-chip qualifier-item-chip--yes" aria-hidden="true">
+                  <Check size={12} strokeWidth={2.6} />
+                </span>
                 <span>{item}</span>
               </li>
             ))}
           </ul>
         </div>
 
-        <div className="qualifier-col reveal delay-2">
+        <div className="qualifier-col qualifier-col--no reveal delay-2">
           <div className="qualifier-col__header qualifier-col__header--no">
             <span className="qualifier-header-icon qualifier-header-icon--no">
-              <X size={14} strokeWidth={2.5} />
+              <X size={15} strokeWidth={2.5} />
             </span>
             This may not be for you if
           </div>
           <ul className="qualifier-list qualifier-list--no">
             {notFor.map((item, i) => (
               <li key={i}>
-                <X className="qualifier-item-icon" size={14} />
+                <span className="qualifier-item-chip qualifier-item-chip--no" aria-hidden="true">
+                  <X size={12} strokeWidth={2.6} />
+                </span>
                 <span>{item}</span>
               </li>
             ))}

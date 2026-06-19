@@ -3294,22 +3294,28 @@ footer {
   display: flex; flex-direction: column; gap: 0;
 }
 .qualifier-list li {
-  font-family: var(--sans); font-size: 14.5px; line-height: 1.65;
+  font-family: var(--sans); font-size: 14.5px; line-height: 1.6;
   color: var(--ink-soft);
-  padding: 14px 0; border-bottom: 1px solid var(--line);
+  padding: 15px 0; border-bottom: 1px solid rgba(83, 67, 39, 0.09);
   display: flex;
   align-items: flex-start;
-  gap: 12px;
+  gap: 13px;
 }
-.qualifier-item-icon {
+.qualifier-list li:last-child { border-bottom: none; padding-bottom: 0; }
+.qualifier-item-chip {
   flex-shrink: 0;
-  margin-top: 4px;
+  width: 22px; height: 22px;
+  margin-top: 1px;
+  border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
 }
-.qualifier-list--yes .qualifier-item-icon {
+.qualifier-item-chip--yes {
   color: var(--moss);
+  background: rgba(105, 125, 79, 0.14);
 }
-.qualifier-list--no .qualifier-item-icon {
+.qualifier-item-chip--no {
   color: #a14b30;
+  background: rgba(161, 75, 48, 0.13);
 }
 
 .qualifier-close {
@@ -5921,17 +5927,40 @@ body::after {
 
 /* ── Qualifier — give each column a quiet premium surface ────────────────── */
 .qualifier-col {
-  padding: 34px 32px;
+  position: relative;
+  padding: 36px 34px;
   border-radius: 18px;
   background: linear-gradient(170deg, hsla(42, 46%, 97.5%, 0.9), hsla(40, 36%, 95%, 0.85));
   border: 1px solid rgba(200, 169, 107, 0.28);
   box-shadow: 0 8px 30px rgba(83, 67, 39, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.55);
-  transition: box-shadow 0.5s var(--ease), transform 0.5s var(--ease);
+  transition: box-shadow 0.5s var(--ease), transform 0.5s var(--ease), border-color 0.5s var(--ease);
+  overflow: hidden;
 }
+/* Semantic accent: an inviting green for the fit, a warm clay for the misfit */
+.qualifier-col::after {
+  content: "";
+  position: absolute; inset: 0 0 auto 0; height: 3px;
+}
+.qualifier-col--yes {
+  background: linear-gradient(170deg, hsla(96, 30%, 97%, 0.95), hsla(96, 22%, 94.5%, 0.9));
+  border-color: rgba(105, 125, 79, 0.32);
+}
+.qualifier-col--yes::after { background: linear-gradient(90deg, var(--moss), rgba(105, 125, 79, 0)); }
+.qualifier-col--no {
+  background: linear-gradient(170deg, hsla(20, 32%, 97.5%, 0.95), hsla(22, 24%, 95%, 0.9));
+  border-color: rgba(161, 75, 48, 0.26);
+}
+.qualifier-col--no::after { background: linear-gradient(90deg, #a14b30, rgba(161, 75, 48, 0)); }
 .qualifier-col:hover {
   transform: translateY(-4px);
   box-shadow: 0 18px 44px rgba(83, 67, 39, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.65);
 }
+.qualifier-col--yes:hover { border-color: rgba(105, 125, 79, 0.5); }
+.qualifier-col--no:hover  { border-color: rgba(161, 75, 48, 0.42); }
+/* Headers sit cleaner with the new accent bar above */
+.qualifier-col__header { padding-bottom: 18px; margin-bottom: 4px; }
+.qualifier-col--yes .qualifier-col__header { border-bottom-color: rgba(105, 125, 79, 0.22); }
+.qualifier-col--no .qualifier-col__header { border-bottom-color: rgba(161, 75, 48, 0.18); }
 
 /* ── Method — framed imagery with warm grade & depth ─────────────────────── */
 .method-split {
