@@ -971,7 +971,7 @@ function FinalCTA() {
           health history, and goals. No urgency. No prescriptions. Together,
           we'll map the surface and explore what lies underneath.
         </p>
-        <div className="reveal delay-3" style={{ display: "flex", gap: 14, marginTop: 12 }}>
+        <div className="final-actions reveal delay-3">
           <a
             className="btn btn--primary"
             href={WHATSAPP_URL}
