@@ -3904,6 +3904,7 @@ section.spread.method-process {
   height: 100%;
   object-fit: cover;
   display: block;
+  filter: contrast(1.1) brightness(1.02) saturate(1.05);
 }
 
 /* Scene primitives */
