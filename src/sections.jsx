@@ -806,7 +806,6 @@ function Pricing() {
 /* ── IV · Voices ─────────────────────────────────────────────────────────── */
 function Voices() {
   const ref = useReveal();
-  const trackRef = _useRef(null);
   const voices = [
     {
       quote: "I had tried doctors, diets, and supplements for years with no lasting relief. For the first time, I understood why my body was behaving the way it was.",
@@ -824,50 +823,8 @@ function Voices() {
       detail: "Anxiety, Fatigue & Digestive Issues",
     },
   ];
-  // Duplicate the list so the track can loop seamlessly once it scrolls past the first set.
+  // Duplicate the list so the CSS marquee loops seamlessly at -50%.
   const loopVoices = [...voices, ...voices];
-
-  _useEffect(() => {
-    const track = trackRef.current;
-    if (!track) return;
-    const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) return;
-
-    let raf;
-    let paused = false;
-    let resumeTimer;
-    const SPEED = 0.45; // px per frame
-
-    const step = () => {
-      if (!paused) {
-        const half = track.scrollWidth / 2;
-        track.scrollLeft += SPEED;
-        if (track.scrollLeft >= half) track.scrollLeft -= half;
-      }
-      raf = requestAnimationFrame(step);
-    };
-    raf = requestAnimationFrame(step);
-
-    const pause = () => { paused = true; clearTimeout(resumeTimer); };
-    const resume = () => { resumeTimer = setTimeout(() => { paused = false; }, 1500); };
-    track.addEventListener("mouseenter", pause);
-    track.addEventListener("mouseleave", resume);
-    track.addEventListener("touchstart", pause, { passive: true });
-    track.addEventListener("touchend", resume);
-    track.addEventListener("pointerdown", pause);
-    track.addEventListener("pointerup", resume);
-
-    return () => {
-      cancelAnimationFrame(raf);
-      clearTimeout(resumeTimer);
-      track.removeEventListener("mouseenter", pause);
-      track.removeEventListener("mouseleave", resume);
-      track.removeEventListener("touchstart", pause);
-      track.removeEventListener("touchend", resume);
-      track.removeEventListener("pointerdown", pause);
-      track.removeEventListener("pointerup", resume);
-    };
-  }, []);
 
   return (
     <section className="spread" id="voices" ref={ref}>
@@ -881,16 +838,18 @@ function Voices() {
           What happens when you stop chasing symptoms and start healing at the root.
         </p>
       </div>
-      <div className="voices reveal delay-1" ref={trackRef}>
-        {loopVoices.map((v, i) => (
-          <article className="voice" key={`${v.name}-${i}`}>
-            <p className="quote">"{v.quote}"</p>
-            <div className="who">
-              <span className="name">{v.name}</span>
-              <span className="detail">{v.detail}</span>
-            </div>
-          </article>
-        ))}
+      <div className="voices reveal delay-1">
+        <div className="voices-track">
+          {loopVoices.map((v, i) => (
+            <article className="voice" key={`${v.name}-${i}`} aria-hidden={i >= voices.length}>
+              <p className="quote">"{v.quote}"</p>
+              <div className="who">
+                <span className="name">{v.name}</span>
+                <span className="detail">{v.detail}</span>
+              </div>
+            </article>
+          ))}
+        </div>
       </div>
     </section>
   );

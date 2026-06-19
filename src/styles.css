@@ -1214,16 +1214,28 @@ section.spread { position: relative; padding: 18vh 7vw; z-index: 15; background:
 
 .voices {
   margin-top: 70px;
+  overflow: hidden;
+  /* Fade the edges so the loop seam never shows as a hard cut */
+  mask-image: linear-gradient(to right, transparent 0, #000 48px, #000 calc(100% - 48px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 48px, #000 calc(100% - 48px), transparent 100%);
+}
+/* Continuously translating row; content is duplicated so -50% loops seamlessly.
+   Trailing padding-right matches the gap so the half-point lands exactly on a card. */
+.voices-track {
   display: flex;
   gap: 28px;
-  overflow-x: auto;
-  scroll-behavior: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  /* Fade the edges so the auto-scroll loop point isn't an obvious hard cut */
-  mask-image: linear-gradient(to right, transparent 0, #000 40px, #000 calc(100% - 40px), transparent 100%);
+  padding-right: 28px;
+  width: max-content;
+  animation: voicesMarquee 42s linear infinite;
 }
-.voices::-webkit-scrollbar { display: none; }
+.voices:hover .voices-track { animation-play-state: paused; }
+@keyframes voicesMarquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .voices-track { animation: none; }
+}
 .voice { flex: 0 0 clamp(280px, 32vw, 380px); }
 @keyframes floaty {
   0% { transform: translateY(0px); }
