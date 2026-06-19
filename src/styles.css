@@ -3374,6 +3374,44 @@ footer::before {
 }
 .plan-card--featured .plan-duration { color: var(--ink-faint); }
 
+/* "Everything in <tier>, plus" carry-over note above the additional features */
+.plan-inherits {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--sans);
+  font-size: 12.5px;
+  letter-spacing: 0.01em;
+  color: var(--ink-mute);
+  padding-bottom: 14px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid var(--line);
+}
+.plan-inherits::before {
+  content: "+";
+  flex-shrink: 0;
+  width: 20px; height: 20px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  font-size: 13px; font-weight: 500; line-height: 1;
+  color: var(--gold-deep);
+  background: rgba(200, 169, 107, 0.16);
+  border: 1px solid rgba(200, 169, 107, 0.34);
+}
+.plan-inherits strong {
+  font-weight: 600;
+  font-style: italic;
+  font-family: var(--serif);
+  font-size: 15px;
+  color: var(--gold-deep);
+}
+.plan-card--featured .plan-inherits strong { color: var(--moss); }
+.plan-card--featured .plan-inherits::before {
+  color: var(--moss);
+  background: rgba(80, 101, 78, 0.12);
+  border-color: rgba(80, 101, 78, 0.3);
+}
+
 .plan-features {
   list-style: none;
   display: flex; flex-direction: column; gap: 0;
