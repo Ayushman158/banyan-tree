@@ -3827,11 +3827,13 @@ section.spread.method-process {
   to   { opacity: 1; }
 }
 .method-detail__panel {
+  --panel-pt: 44px;
+  --panel-px: 36px;
   position: relative;
   width: 100%;
-  max-width: 440px;
+  max-width: 480px;
   text-align: center;
-  padding: 44px 36px 40px;
+  padding: var(--panel-pt) var(--panel-px) 40px;
   border-radius: 24px;
   background: linear-gradient(168deg, #ffffff 0%, #fdfaf3 100%);
   border: 1px solid rgba(200, 169, 107, 0.25);
@@ -3858,7 +3860,8 @@ section.spread.method-process {
   justify-content: center;
   border-radius: 50%;
   border: 1px solid rgba(200, 169, 107, 0.28);
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(4px);
   color: var(--ink-soft);
   cursor: pointer;
   transition: transform 0.3s var(--ease), border-color 0.3s var(--ease), color 0.3s var(--ease);
@@ -3889,15 +3892,14 @@ section.spread.method-process {
   color: #D67A45;
 }
 
-/* Illustration stage */
+/* Illustration stage — full-bleed to the card's top & sides for a larger image */
 .method-detail__image-container {
-  width: 100%;
+  width: auto;
   aspect-ratio: 3 / 2;
-  border-radius: 16px;
+  margin: calc(var(--panel-pt) * -1) calc(var(--panel-px) * -1) 26px;
+  border-radius: 24px 24px 0 0;
   overflow: hidden;
-  margin-bottom: 22px;
-  border: 1px solid rgba(200, 169, 107, 0.2);
-  box-shadow: 0 8px 24px rgba(83, 67, 39, 0.05);
+  border-bottom: 1px solid rgba(200, 169, 107, 0.22);
 }
 .method-detail__image {
   width: 100%;
@@ -4078,8 +4080,10 @@ section.spread.method-process {
     padding: 0;
   }
   .method-detail__panel {
+    --panel-pt: 38px;
+    --panel-px: 26px;
     max-width: 100%;
-    padding: 38px 26px 40px;
+    padding: var(--panel-pt) var(--panel-px) 40px;
     border-radius: 24px 24px 0 0;
     animation: methodSheetUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
@@ -4088,7 +4092,7 @@ section.spread.method-process {
     to   { transform: translateY(0); }
   }
   .method-detail__icon { width: 56px; height: 56px; margin-bottom: 14px; }
-  .method-detail__image-container { margin-bottom: 16px; }
+  .method-detail__image-container { margin-bottom: 18px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
