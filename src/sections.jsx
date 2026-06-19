@@ -750,7 +750,7 @@ function Pricing() {
 
   return (
     <section className="spread pricing-section" id="programs" ref={ref}>
-      <div className="section-tag reveal"><span>III · Programs</span></div>
+      <div className="section-tag reveal"><span>IV · Programs</span></div>
       <div className="pricing-header">
         <h2 className="section-h reveal">
           Choose the depth<br/>
@@ -870,7 +870,7 @@ function Voices() {
 
   return (
     <section className="spread" id="voices" ref={ref}>
-      <div className="section-tag reveal"><span>IV · Voices</span></div>
+      <div className="section-tag reveal"><span>III · Voices</span></div>
       <div className="voices-header">
         <h2 className="section-h reveal">
           Real stories.<br/>
