@@ -634,11 +634,17 @@ function Methodology() {
               <X size={18} />
             </button>
             <div className="method-detail__image-container" aria-hidden="true">
-              <img
-                src={active.discipline === 'fm' ? functionalMedicineImg : ayurvedaImg}
-                alt={active.disciplineName}
-                className="method-detail__image"
-              />
+              {active.anim ? (
+                <div className="method-detail__scene-stage">
+                  <StepScene kind={active.anim} />
+                </div>
+              ) : (
+                <img
+                  src={active.discipline === 'fm' ? functionalMedicineImg : ayurvedaImg}
+                  alt={active.disciplineName}
+                  className="method-detail__image"
+                />
+              )}
             </div>
             <span className="method-detail__tag">{active.disciplineName}</span>
             <h4 id="method-detail-title" className="method-detail__title">{active.label}</h4>
