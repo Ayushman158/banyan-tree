@@ -943,7 +943,7 @@ function SiteFooter() {
             <span className="footer-logo">h.</span>
             <div className="footer-brand-text">
               <span className="mark">Himanshu Garg</span>
-              <span className="footer-role">Functional Medicine Practitioner</span>
+              <span className="footer-role">Functional Medicine Health Coach</span>
             </div>
           </div>
           <div className="footer-nav">
