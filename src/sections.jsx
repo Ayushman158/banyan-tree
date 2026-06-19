@@ -546,6 +546,11 @@ function Methodology() {
     };
   }, [active]);
 
+  const preloadIllustration = (step) => {
+    const src = STEP_ILLUSTRATIONS[step.anim];
+    if (src) { const img = new Image(); img.src = src; }
+  };
+
   const renderNode = (step, i, discipline, disciplineName) => {
     const { Icon, label } = step;
     return (
@@ -554,6 +559,8 @@ function Methodology() {
           type="button"
           className="method-node__inner"
           onClick={() => openDetail(step, discipline, disciplineName, i)}
+          onMouseEnter={() => preloadIllustration(step)}
+          onFocus={() => preloadIllustration(step)}
           aria-haspopup="dialog"
           aria-label={`${label} — read more`}
         >
