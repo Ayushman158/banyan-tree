@@ -6,6 +6,30 @@ import { createPortal as _createPortal } from 'react-dom';
 import functionalMedicineImg from './assets/functional-medicine-method.jpg';
 import ayurvedaImg from './assets/ayurveda-method.jpg';
 import beginAtRootBg from './assets/begin-at-root-bg.jpg';
+// Per-step illustrations for the method detail popup
+import illoLens from './assets/The Method Assets/Root Cause Analysis.png';
+import illoSprout from './assets/The Method Assets/Fix Nutrient Deficiencies.png';
+import illoWaves from './assets/The Method Assets/Heal Gut and Liver.png';
+import illoCell from './assets/The Method Assets/Optimise Mitochondrial Health.png';
+import illoDetox from './assets/The Method Assets/Support Detoxification.png';
+import illoAura from './assets/The Method Assets/Prakriti analysis.png';
+import illoDoshas from './assets/The Method Assets/Balance Doshas.png';
+import illoAgni from './assets/The Method Assets/Improve Digestion(Agni).png';
+import illoElements from './assets/The Method Assets/Optimise the Five Elements.png';
+import illoRhythm from './assets/The Method Assets/Restore Ahara, Vihara, Achara & Vichara.png';
+
+const STEP_ILLUSTRATIONS = {
+  lens: illoLens,
+  sprout: illoSprout,
+  waves: illoWaves,
+  cell: illoCell,
+  detox: illoDetox,
+  aura: illoAura,
+  doshas: illoDoshas,
+  agni: illoAgni,
+  elements: illoElements,
+  rhythm: illoRhythm,
+};
 import {
   Droplet,
   Shield,
@@ -634,17 +658,11 @@ function Methodology() {
               <X size={18} />
             </button>
             <div className="method-detail__image-container" aria-hidden="true">
-              {active.anim ? (
-                <div className="method-detail__scene-stage">
-                  <StepScene kind={active.anim} />
-                </div>
-              ) : (
-                <img
-                  src={active.discipline === 'fm' ? functionalMedicineImg : ayurvedaImg}
-                  alt={active.disciplineName}
-                  className="method-detail__image"
-                />
-              )}
+              <img
+                src={STEP_ILLUSTRATIONS[active.anim] || (active.discipline === 'fm' ? functionalMedicineImg : ayurvedaImg)}
+                alt={active.label}
+                className="method-detail__image"
+              />
             </div>
             <span className="method-detail__tag">{active.disciplineName}</span>
             <h4 id="method-detail-title" className="method-detail__title">{active.label}</h4>

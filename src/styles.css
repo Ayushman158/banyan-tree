@@ -3889,10 +3889,10 @@ section.spread.method-process {
   color: #D67A45;
 }
 
-/* Animated illustration stage */
+/* Illustration stage */
 .method-detail__image-container {
   width: 100%;
-  height: 170px;
+  aspect-ratio: 3 / 2;
   border-radius: 16px;
   overflow: hidden;
   margin-bottom: 22px;
@@ -3905,22 +3905,6 @@ section.spread.method-process {
   object-fit: cover;
   display: block;
 }
-.method-detail__scene-stage {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.method-detail__scene-stage .scene { width: 64%; height: 64%; max-width: 200px; max-height: 200px; }
-.method-detail__panel--fm .method-detail__image-container {
-  background: radial-gradient(circle at 50% 38%, rgba(107, 132, 113, 0.16), rgba(107, 132, 113, 0.04));
-}
-.method-detail__panel--fm .method-detail__scene-stage { color: #4f6357; }
-.method-detail__panel--ay .method-detail__image-container {
-  background: radial-gradient(circle at 50% 38%, rgba(214, 122, 69, 0.16), rgba(214, 122, 69, 0.04));
-}
-.method-detail__panel--ay .method-detail__scene-stage { color: #b8632f; }
 
 /* Scene primitives */
 .scene .s-stroke { fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
@@ -4103,7 +4087,7 @@ section.spread.method-process {
     to   { transform: translateY(0); }
   }
   .method-detail__icon { width: 56px; height: 56px; margin-bottom: 14px; }
-  .method-detail__image-container { height: 130px; margin-bottom: 16px; }
+  .method-detail__image-container { margin-bottom: 16px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
