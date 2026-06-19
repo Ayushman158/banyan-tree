@@ -4529,7 +4529,8 @@ section.spread.philosophy-vs {
   .method-node:hover { transform: translateY(-2px); }
   .method-node__inner {
     gap: 10px; padding: 16px 8px; border-radius: 12px; box-shadow: 0 5px 15px rgba(83, 67, 39, 0.02);
-    min-height: 104px; box-sizing: border-box; justify-content: center; display: flex; flex-direction: column;
+    min-height: 0; box-sizing: border-box; justify-content: center; display: flex; flex-direction: column;
+    overflow: visible;
   }
   .method-node__inner:hover { box-shadow: 0 10px 24px rgba(83, 67, 39, 0.05); }
   .method-node::before { filter: blur(10px); }
@@ -4543,7 +4544,7 @@ section.spread.philosophy-vs {
 
   .method-node__icon { width: 32px; height: 32px; }
   .method-node__icon svg { width: 14px; }
-  .method-node__label { font-size: 13.5px; }
+  .method-node__label { font-size: 12.5px; min-height: 0; }
   .method-node__label::after { width: 20px; margin-top: 6px; }
   .method-node__more { bottom: 6px; }
   
