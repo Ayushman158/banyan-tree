@@ -955,16 +955,16 @@ function FinalCTA() {
           <em className="line">root.</em>
         </h2>
         <p className="reveal delay-2">
-          A 90-minute first consultation, in person or remote. No urgency,
-          no prescriptions. I map the surface with you, and listen for
-          what is underneath.
+          A 45-minute discovery call designed to understand your symptoms,
+          health history, and goals. No urgency. No prescriptions. Together,
+          we'll map the surface and explore what lies underneath.
         </p>
         <div className="reveal delay-3" style={{ display: "flex", gap: 14, marginTop: 12 }}>
           <button className="btn btn--primary" data-hoverable="true">
-            Schedule a consultation
+            Get in touch
           </button>
           <button className="btn btn--ghost" data-hoverable="true">
-            Read the philosophy
+            Explore Healing Pathways
           </button>
         </div>
       </Parallax>
