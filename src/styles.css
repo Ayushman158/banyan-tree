@@ -3851,6 +3851,7 @@ section.spread.method-process {
 
 .method-detail__close {
   position: absolute;
+  z-index: 5;
   top: 16px;
   right: 16px;
   width: 34px;

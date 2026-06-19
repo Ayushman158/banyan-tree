@@ -758,7 +758,7 @@ function Pricing() {
         </h2>
         <p className="pricing-subhead reveal delay-1">
           Three levels of engagement, each a complete program. Not a subscription.
-          The difference is depth, duration, and how far down the root we go together.
+          The difference is depth, duration, and how far down the root I go with you.
         </p>
       </div>
 
@@ -834,7 +834,7 @@ function Voices() {
           <em>Real healing.</em>
         </h2>
         <p className="voices-subhead reveal delay-1">
-          What happens when we stop chasing symptoms and start healing at the root.
+          What happens when you stop chasing symptoms and start healing at the root.
         </p>
       </div>
       <div className="voices">
@@ -878,7 +878,7 @@ function Qualifier() {
         </h2>
         <p className="qualifier-body">
           This is not a supplement plan. Not a crash diet. Not a collection of protocols
-          we hand you and wish you luck with. It is committed, guided, root-cause healing. It requires you to show up for it.
+          I hand you and wish you luck with. It is committed, guided, root-cause healing. It requires you to show up for it.
         </p>
       </div>
 
@@ -947,7 +947,7 @@ function FinalCTA() {
         </h2>
         <p className="reveal delay-2">
           A 90-minute first consultation, in person or remote. No urgency,
-          no prescriptions. We map the surface together, and we listen for
+          no prescriptions. I map the surface with you, and listen for
           what is underneath.
         </p>
         <div className="reveal delay-3" style={{ display: "flex", gap: 14, marginTop: 12 }}>
