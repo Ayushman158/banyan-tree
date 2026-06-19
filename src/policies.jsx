@@ -12,11 +12,11 @@ import { X } from 'lucide-react';
 const CONTACT = {
   name: "Himanshu Garg",
   role: "Functional Medicine Health Coach",
-  email: "hello@example.com",        // ← replace with real contact email
-  location: "India",                  // ← replace with city for governing law, e.g. "Pune, India"
+  email: "himanshugargcoaching@gmail.com",
+  location: "India",
 };
 
-const EFFECTIVE = "June 2026";        // ← update when the policies are published
+const EFFECTIVE = "June 2026";
 
 /* Each policy: { id, title, sections: [{ h, p?: string[], list?: string[] }] } */
 export const POLICIES = [
@@ -276,6 +276,60 @@ export const POLICIES = [
         p: [
           "Your participation is entirely voluntary. By enrolling, you confirm that you've read and understood these terms and consent to them freely.",
         ],
+      },
+    ],
+  },
+
+  {
+    id: "disclaimer",
+    title: "Medical Disclaimer",
+    intro: "Please read this carefully. The information and coaching I provide support your health journey — but they are not medical advice and never replace care from your own doctor.",
+    sections: [
+      {
+        h: "1 · Educational purpose only",
+        p: [
+          `The content on this website and within my programs is provided by ${CONTACT.name}, ${CONTACT.role}, for educational and informational purposes only. Nothing here is intended to take the place of a consultation with a physician, dietitian, or other qualified healthcare professional.`,
+        ],
+      },
+      {
+        h: "2 · Not medical advice",
+        p: [
+          "I offer functional-medicine and Ayurveda-informed health coaching — not medical diagnosis, treatment, or prescription. My guidance is based on the information you share and is designed to complement, not replace, the care of your medical doctor.",
+        ],
+      },
+      {
+        h: "3 · Always consult your doctor",
+        p: [
+          "Always seek the advice of your physician before starting any new diet, supplement, or lifestyle program, and before changing or stopping any medication. Never disregard professional medical advice or delay seeking it because of something you read or were guided on here.",
+        ],
+      },
+      {
+        h: "4 · Not for emergencies",
+        p: [
+          "This practice does not handle acute or emergency health conditions. If you think you may have a medical emergency, contact your doctor or emergency services immediately.",
+        ],
+      },
+      {
+        h: "5 · Individual results vary",
+        p: [
+          "Healing depends on your unique biology, history, and level of participation. I cannot predict or guarantee that you'll achieve any particular result. Testimonials reflect the genuine experiences of individual clients and are not a promise of similar outcomes for you.",
+        ],
+      },
+      {
+        h: "6 · Assumption of responsibility",
+        p: [
+          "Your use of any information or recommendation is voluntary, and you accept full responsibility for how you apply it. I am not liable for any direct or indirect outcome arising from the use of this website or its content.",
+        ],
+      },
+      {
+        h: "7 · Accuracy & no warranties",
+        p: [
+          "I make every reasonable effort to keep information accurate and current, but nutritional and medical science evolve. The content is provided “as is,” without warranties of any kind regarding its completeness, accuracy, or fitness for a particular purpose.",
+        ],
+      },
+      {
+        h: "8 · Contact",
+        p: [`If anything here is unclear, please ask before acting on it — write to ${CONTACT.email}.`],
       },
     ],
   },
