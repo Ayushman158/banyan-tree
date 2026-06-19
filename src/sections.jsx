@@ -687,7 +687,7 @@ function Pricing() {
   const ref = useReveal();
   const plans = [
     {
-      tier: "ALIVE 1.0",
+      tier: "1 Month",
       name: "Foundation",
       tagline: "Your first step into root-cause healing.",
       price: "59,999",
@@ -706,7 +706,7 @@ function Pricing() {
       forWhom: "Beginners, clarity seekers, and mild-to-moderate symptoms.",
     },
     {
-      tier: "ALIVE 2.0",
+      tier: "2 Month",
       name: "Deep Healing",
       tagline: "Three months of systematic, guided root work.",
       price: "1,49,999",
@@ -725,7 +725,7 @@ function Pricing() {
       forWhom: "Chronic issues, metabolic & hormonal imbalance, gut healing.",
     },
     {
-      tier: "ALIVE 3.0",
+      tier: "3 Month",
       name: "Transformation",
       tagline: "Full immersion. A roadmap built for the long term.",
       price: "2,79,999",
@@ -805,26 +805,69 @@ function Pricing() {
 /* ── IV · Voices ─────────────────────────────────────────────────────────── */
 function Voices() {
   const ref = useReveal();
+  const trackRef = _useRef(null);
   const voices = [
     {
       quote: "I had tried doctors, diets, and supplements for years with no lasting relief. For the first time, I understood why my body was behaving the way it was.",
       name: "Anonymous, F · 38",
       detail: "Gut & Hormonal Health",
-      speed: 0.02,
     },
     {
       quote: "This was not a quick fix. That's exactly why it worked. The guidance, accountability, and education helped me take control of my health instead of depending on medicines.",
       name: "Anonymous, M · 45",
       detail: "Metabolic & Lifestyle Conditions",
-      speed: 0.05,
     },
     {
       quote: "I finally stopped jumping from one practitioner to another. The process helped me calm my system, rebuild my digestion, and trust my body again.",
       name: "Anonymous, F · 32",
       detail: "Anxiety, Fatigue & Digestive Issues",
-      speed: 0.03,
     },
   ];
+  // Duplicate the list so the track can loop seamlessly once it scrolls past the first set.
+  const loopVoices = [...voices, ...voices];
+
+  _useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) return;
+
+    let raf;
+    let paused = false;
+    let resumeTimer;
+    const SPEED = 0.45; // px per frame
+
+    const step = () => {
+      if (!paused) {
+        const half = track.scrollWidth / 2;
+        track.scrollLeft += SPEED;
+        if (track.scrollLeft >= half) track.scrollLeft -= half;
+      }
+      raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+
+    const pause = () => { paused = true; clearTimeout(resumeTimer); };
+    const resume = () => { resumeTimer = setTimeout(() => { paused = false; }, 1500); };
+    track.addEventListener("mouseenter", pause);
+    track.addEventListener("mouseleave", resume);
+    track.addEventListener("touchstart", pause, { passive: true });
+    track.addEventListener("touchend", resume);
+    track.addEventListener("pointerdown", pause);
+    track.addEventListener("pointerup", resume);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(resumeTimer);
+      track.removeEventListener("mouseenter", pause);
+      track.removeEventListener("mouseleave", resume);
+      track.removeEventListener("touchstart", pause);
+      track.removeEventListener("touchend", resume);
+      track.removeEventListener("pointerdown", pause);
+      track.removeEventListener("pointerup", resume);
+    };
+  }, []);
+
   return (
     <section className="spread" id="voices" ref={ref}>
       <div className="section-tag reveal"><span>IV · Voices</span></div>
@@ -837,17 +880,15 @@ function Voices() {
           What happens when you stop chasing symptoms and start healing at the root.
         </p>
       </div>
-      <div className="voices">
-        {voices.map((v, i) => (
-          <Parallax speed={v.speed} key={v.name}>
-            <article className={`voice reveal delay-${(i % 3) + 1}`}>
-              <p className="quote">"{v.quote}"</p>
-              <div className="who">
-                <span className="name">{v.name}</span>
-                <span className="detail">{v.detail}</span>
-              </div>
-            </article>
-          </Parallax>
+      <div className="voices reveal delay-1" ref={trackRef}>
+        {loopVoices.map((v, i) => (
+          <article className="voice" key={`${v.name}-${i}`}>
+            <p className="quote">"{v.quote}"</p>
+            <div className="who">
+              <span className="name">{v.name}</span>
+              <span className="detail">{v.detail}</span>
+            </div>
+          </article>
         ))}
       </div>
     </section>

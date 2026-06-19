@@ -1212,7 +1212,19 @@ section.spread { position: relative; padding: 18vh 7vw; z-index: 15; background:
 .method-step h3 { font-family: var(--serif); font-style: italic; font-weight: 400; font-size: 30px; color: var(--ink); }
 .method-step p { font-size: 14.5px; line-height: 1.7; color: var(--ink-soft); }
 
-.voices { margin-top: 70px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+.voices {
+  margin-top: 70px;
+  display: flex;
+  gap: 28px;
+  overflow-x: auto;
+  scroll-behavior: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  /* Fade the edges so the auto-scroll loop point isn't an obvious hard cut */
+  mask-image: linear-gradient(to right, transparent 0, #000 40px, #000 calc(100% - 40px), transparent 100%);
+}
+.voices::-webkit-scrollbar { display: none; }
+.voice { flex: 0 0 clamp(280px, 32vw, 380px); }
 @keyframes floaty {
   0% { transform: translateY(0px); }
   50% { transform: translateY(-8px); }
@@ -1553,7 +1565,7 @@ footer {
   .philosophy { grid-template-columns: 1fr; gap: 36px; }
   .philosophy .col-right { padding-top: 0; }
   .method { grid-template-columns: 1fr 1fr; gap: 30px; }
-  .voices { grid-template-columns: 1fr; }
+  .voice { flex-basis: 78vw; }
   .panel { padding: 28px 22px; }
   .panel-meta { grid-template-columns: 1fr; gap: 16px; }
   .ol-cat__name { font-size: 13px; }
@@ -3317,8 +3329,24 @@ footer {
   .pillar-divider__line { width: 80px; height: 1px; }
 
   .pricing-header { grid-template-columns: 1fr; gap: 16px; margin-bottom: 32px; }
-  .pricing-grid { grid-template-columns: 1fr; gap: 16px; }
-  .plan-card { padding: 28px 20px 22px; gap: 20px; }
+  .pricing-grid {
+    display: flex;
+    grid-template-columns: none;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 16px;
+    margin: 0 -7vw;
+    padding: 4px 7vw 14px;
+  }
+  .pricing-grid::-webkit-scrollbar { display: none; }
+  .pricing-grid .parallax-item {
+    flex: 0 0 85%;
+    max-width: 85%;
+    scroll-snap-align: center;
+  }
+  .plan-card { padding: 28px 20px 22px; gap: 20px; height: 100%; }
   .plan-price-block { padding: 14px 0; }
   .plan-features li { padding: 7px 0; font-size: 12.5px; }
   .plan-bottom { gap: 12px; }
