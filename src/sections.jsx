@@ -880,7 +880,7 @@ function Qualifier() {
     "You want to be educated and empowered, not just handed another protocol to follow blindly.",
   ];
   const notFor = [
-    "You're unwilling to change diet or lifestyle.",
+    "You're unwilling to change food or lifestyle.",
     "You expect healing without personal involvement or responsibility.",
     "You're looking for instant results or a quick fix.",
     "You are attached to symptom suppression rather than root-cause resolution.",
