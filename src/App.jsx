@@ -670,8 +670,8 @@ function App() {
 
         {/* Underground: bottom-right healing pathways */}
         <div className={`underground-cta ${(phase === 'roots' || phase === 'detail') && rootsReady && !scrolledPastHero ? 'is-visible' : ''}`}>
-          <button className="btn btn--ghost underground-cta__btn" onClick={() => goToSection('method')} data-hoverable="true">
-            View Healing Pathways
+          <button className="btn btn--ghost underground-cta__btn" onClick={() => goToSection('philosophy')} data-hoverable="true">
+            The Why
             <span className="underground-cta__arrow">→</span>
           </button>
         </div>
