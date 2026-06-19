@@ -7,6 +7,7 @@ import functionalMedicineImg from './assets/functional-medicine-method.jpg';
 import ayurvedaImg from './assets/ayurveda-method.jpg';
 import beginAtRootBg from './assets/begin-at-root-bg.jpg';
 import { POLICIES, PolicyModal } from './policies.jsx';
+import { BrandMark } from './BrandMark.jsx';
 // Per-step illustrations for the method detail popup
 import illoLens from './assets/The Method Assets/Root Cause Analysis.png';
 import illoSprout from './assets/The Method Assets/Fix Nutrient Deficiencies.png';
@@ -952,7 +953,7 @@ function FinalCTA() {
   const ref = useReveal();
   return (
     <section className="spread final" id="begin" ref={ref} style={{ backgroundImage: `url("${beginAtRootBg}")` }}>
-      <div className="final-bg-mark" aria-hidden="true">h.</div>
+      <div className="final-bg-mark" aria-hidden="true">HG</div>
       <Parallax speed={0.03} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 36, width: "100%" }}>
         <div className="section-tag reveal" style={{ marginBottom: 24 }}>
           <span>VI · Begin</span>
@@ -998,7 +999,7 @@ function SiteFooter() {
       <div className="footer-container">
         <div className="footer-top">
           <div className="footer-brand">
-            <span className="footer-logo">h.</span>
+            <span className="footer-logo"><BrandMark /></span>
             <div className="footer-brand-text">
               <span className="mark">Himanshu Garg</span>
               <span className="footer-role">Functional Medicine Health Coach</span>

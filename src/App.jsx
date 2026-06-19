@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { BanyanData } from './data.js';
 import TreeScene3D from './TreeScene3D.jsx';
 import { Philosophy, Methodology, Pricing, Voices, Qualifier, FinalCTA, SiteFooter } from './sections.jsx';
+import { BrandMark } from './BrandMark.jsx';
 import { initSoundscape } from './sound.js';
 // The journal/profile are heavy (charts, lucide icons) and only mount on demand —
 // code-split them out of the initial bundle.
@@ -152,7 +153,7 @@ function Loader({ gone }) {
   return (
     <div className={`loader ${gone ? "is-gone" : ""}`}>
       <div className="loader-ring">
-        <span className="loader-mark">h.</span>
+        <span className="loader-mark"><BrandMark /></span>
       </div>
       <div className="loader-label">Tuning the atmosphere</div>
     </div>
