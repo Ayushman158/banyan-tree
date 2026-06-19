@@ -212,13 +212,11 @@ function Philosophy() {
           <div className="vs__head vs__head--trad">
             <span className="vs__crest"><Stethoscope size={22} strokeWidth={1.5} /></span>
             <h3 className="vs__name">Traditional Healthcare</h3>
-            <span className="vs__sub">Reactive &amp; symptom-focused</span>
           </div>
           <div className="vs__axis vs__axis--head" aria-hidden="true" />
           <div className="vs__head vs__head--root">
             <span className="vs__crest"><TreeDeciduous size={22} strokeWidth={1.5} /></span>
             <h3 className="vs__name">Root Cause Healing</h3>
-            <span className="vs__sub">Proactive &amp; root-cause focused</span>
           </div>
 
           {/* Paired rows */}
