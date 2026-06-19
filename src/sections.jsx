@@ -6,6 +6,7 @@ import { createPortal as _createPortal } from 'react-dom';
 import functionalMedicineImg from './assets/functional-medicine-method.jpg';
 import ayurvedaImg from './assets/ayurveda-method.jpg';
 import beginAtRootBg from './assets/begin-at-root-bg.jpg';
+import { POLICIES, PolicyModal } from './policies.jsx';
 // Per-step illustrations for the method detail popup
 import illoLens from './assets/The Method Assets/Root Cause Analysis.png';
 import illoSprout from './assets/The Method Assets/Fix Nutrient Deficiencies.png';
@@ -1010,6 +1011,7 @@ function FinalCTA() {
 
 /* ── Footer ──────────────────────────────────────────────────────────────── */
 function SiteFooter() {
+  const [activePolicy, setActivePolicy] = _useState(null);
   return (
     <footer>
       <div className="footer-container">
@@ -1028,11 +1030,25 @@ function SiteFooter() {
             <a href="#begin" data-hoverable="true">Contact</a>
           </div>
         </div>
+        <nav className="footer-legal" aria-label="Legal">
+          {POLICIES.map((p) => (
+            <button
+              type="button"
+              key={p.id}
+              className="footer-legal__link"
+              onClick={() => setActivePolicy(p)}
+              data-hoverable="true"
+            >
+              {p.title}
+            </button>
+          ))}
+        </nav>
         <div className="footer-bottom">
           <p className="copyright">&copy; {new Date().getFullYear()} Himanshu Garg. All rights reserved.</p>
           <p className="footer-tagline">Healing at the root.</p>
         </div>
       </div>
+      <PolicyModal policy={activePolicy} onClose={() => setActivePolicy(null)} />
     </footer>
   );
 }
