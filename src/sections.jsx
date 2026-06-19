@@ -184,7 +184,7 @@ function Philosophy() {
     <section className="spread philosophy-vs" id="philosophy" ref={sectionRef}>
       <div className="philosophy-vs__aura" aria-hidden="true" />
 
-      <div className="section-tag reveal"><span>I · The Philosophy</span></div>
+      <div className="section-tag reveal"><span>I · The Why</span></div>
 
       {/* Cinematic editorial intro — dismissals questioned, then the bridge */}
       <div className="phil-intro" ref={introRef}>
@@ -195,6 +195,7 @@ function Philosophy() {
               <span className="phil-statement__strike" aria-hidden="true" />
             </div>
           )}
+          <p className="phil-caption">Common answers. Unresolved symptoms.</p>
         </div>
         <div className="phil-bridge is-in">
           <h2 className="phil-bridge__title">Why root cause healing?</h2>
