@@ -725,11 +725,11 @@ function Pricing() {
       inheritsFrom: "Foundation",
       features: [
         "Advanced test interpretation & review",
-        "Gut microbiome support",
-        "Detoxification pathway optimisation",
+        "Gut microbiome healing & restoration",
+        "Detoxification pathway optimization",
         "Lymphatic system support",
-        "Sleep optimisation",
-        "Circadian rhythm optimisation",
+        "Sleep optimization",
+        "Circadian rhythm optimization",
       ],
       forWhom: "Chronic issues, metabolic & hormonal imbalance, gut healing.",
     },
@@ -745,7 +745,7 @@ function Pricing() {
         "Ongoing protocol adjustments",
         "Advanced breathwork practices",
         "Environmental toxins assessment",
-        "Daily routine & lifestyle optimisation",
+        "Daily routine & lifestyle optimization",
         "Dopamine & productivity rewiring",
         "Habit rewiring & relapse prevention",
         "Long-term maintenance protocol",
@@ -788,7 +788,9 @@ function Pricing() {
               </div>
               {plan.inheritsFrom && (
                 <p className="plan-inherits">
-                  Everything in <strong>{plan.inheritsFrom}</strong>, plus
+                  <span className="plan-inherits__text">
+                    Everything in <strong>{plan.inheritsFrom}</strong>, plus
+                  </span>
                 </p>
               )}
               <ul className="plan-features">
@@ -881,10 +883,12 @@ function Qualifier() {
     "You want to be educated and empowered, not just handed another protocol to follow blindly.",
   ];
   const notFor = [
-    "You're unwilling to change food or lifestyle.",
+    "You are unwilling to change food or lifestyle.",
     "You expect healing without personal involvement or responsibility.",
-    "You're looking for instant results or a quick fix.",
-    "You are attached to symptom suppression rather than root-cause resolution.",
+    "Work and social commitments currently take priority over focused health healing.",
+    "You are too busy to follow the process consistently.",
+    "You are attached to symptom suppression instead of root-cause healing.",
+    "You are constantly jumping from one practitioner or program to another.",
   ];
   return (
     <section className="spread qualifier-section" id="apply" ref={ref}>
