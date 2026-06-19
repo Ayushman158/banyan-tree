@@ -195,8 +195,8 @@ function Philosophy() {
               <span className="phil-statement__strike" aria-hidden="true" />
             </div>
           )}
-          <p className="phil-caption">Common answers. Unresolved symptoms.</p>
         </div>
+        <p className="phil-caption">Common answers. Unresolved symptoms.</p>
         <div className="phil-bridge is-in">
           <h2 className="phil-bridge__title">Why root cause healing?</h2>
           <p className="phil-bridge__sub">
