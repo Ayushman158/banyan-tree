@@ -5,7 +5,7 @@ import React, { useEffect as useE, useRef as useR, useState as useS, useMemo as 
 import { motion, AnimatePresence } from 'framer-motion';
 import { BanyanData } from './data.js';
 import TreeScene3D from './TreeScene3D.jsx';
-import { Philosophy, Methodology, Pricing, Voices, Qualifier, FinalCTA, SiteFooter } from './sections.jsx';
+import { Philosophy, Methodology, Pricing, Voices, Qualifier, FinalCTA, SiteFooter, WHATSAPP_URL } from './sections.jsx';
 import { BrandMark } from './BrandMark.jsx';
 import { initSoundscape } from './sound.js';
 // The journal/profile are heavy (charts, lucide icons) and only mount on demand —
@@ -185,7 +185,7 @@ function Nav({ onNavigate }) {
             <a href="#method" onClick={(e) => { e.preventDefault(); onNavigate('method'); }} data-hoverable="true">Method</a>
             <a href="#voices" onClick={(e) => { e.preventDefault(); onNavigate('voices'); }} data-hoverable="true">Voices</a>
           </div>
-          <a href="#apply" className="nav-cta" onClick={(e) => { e.preventDefault(); onNavigate('apply'); }} data-hoverable="true">Apply for Consult</a>
+          <a href={WHATSAPP_URL} className="nav-cta" target="_blank" rel="noopener noreferrer" data-hoverable="true">Get in touch</a>
         </div>
       </nav>
 
@@ -218,8 +218,8 @@ function Nav({ onNavigate }) {
               <a href="#philosophy" onClick={() => setMobileMenuOpen(false)}>Philosophy</a>
               <a href="#method" onClick={() => setMobileMenuOpen(false)}>Method</a>
               <a href="#voices" onClick={() => setMobileMenuOpen(false)}>Voices</a>
-              <a href="#apply" className="mobile-menu-cta" onClick={() => setMobileMenuOpen(false)}>
-                Apply for Consult
+              <a href={WHATSAPP_URL} className="mobile-menu-cta" target="_blank" rel="noopener noreferrer" onClick={() => setMobileMenuOpen(false)}>
+                Get in touch
               </a>
             </div>
           </motion.div>

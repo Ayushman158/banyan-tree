@@ -46,6 +46,7 @@ import {
   ArrowDown,
   ChevronDown,
   Search,
+  Play,
   Leaf,
   Flower2,
   User,
@@ -72,7 +73,7 @@ import {
    message; program buttons pass their own message so Himanshu sees which plan. */
 const WHATSAPP_NUMBER = "917906978483";
 const waUrl = (message) => `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-const WHATSAPP_URL = waUrl("Hi Himanshu, I'd like to book a 45-minute discovery call and begin root-cause healing.");
+export const WHATSAPP_URL = waUrl("Hi Himanshu, I'd like to book a 45-minute discovery call and begin root-cause healing.");
 
 function useReveal() {
   const ref = _useRef(null);
@@ -823,27 +824,79 @@ function Pricing() {
 }
 
 /* ── IV · Voices ─────────────────────────────────────────────────────────── */
+/* Lightbox that plays a client's story video. Self-hosted mp4 by default;
+   set `story.video` to the imported file. Closes on backdrop click or Esc. */
+function VideoLightbox({ story, onClose }) {
+  _useEffect(() => {
+    const onKey = (e) => { if (e.key === "Escape") onClose(); };
+    document.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.removeEventListener("keydown", onKey); document.body.style.overflow = prev; };
+  }, [onClose]);
+
+  return _createPortal(
+    <div className="video-lightbox" role="dialog" aria-modal="true" onClick={onClose}>
+      <div className="video-lightbox__panel" onClick={(e) => e.stopPropagation()}>
+        <button type="button" className="video-lightbox__close" onClick={onClose} aria-label="Close">
+          <X size={18} />
+        </button>
+        {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+        <video
+          className="video-lightbox__video"
+          src={story.video}
+          poster={story.poster || undefined}
+          controls
+          autoPlay
+          playsInline
+        />
+        <div className="video-lightbox__caption">
+          <span className="story-name">{story.name}</span>
+          <span className="story-meta">{story.age} · {story.profession}</span>
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
+}
+
 function Voices() {
   const ref = useReveal();
-  const voices = [
+  const [activeVideo, setActiveVideo] = _useState(null);
+
+  /* Client success stories — a short video + the "after": what changed once
+     they went through the program.
+     ⚠️ TODO(client): videos are in editing. To activate a card, import the file
+     at the top (e.g. `import storyAnita from './assets/stories/anita.mp4';`),
+     set `video: storyAnita` and optionally `poster: <imported jpg>`. Until then
+     the frame shows a "coming soon" state. Replace the placeholder names, ages,
+     and professions with each client's real details. */
+  const stories = [
     {
-      quote: "I had tried doctors, diets, and supplements for years with no lasting relief. For the first time, I understood why my body was behaving the way it was.",
-      name: "Anonymous, F · 38",
-      detail: "Gut & Hormonal Health",
+      name: "Coming soon",
+      age: 39,
+      profession: "Marketing Professional",
+      after: "In 3 months, years of acidity-driven migraines, breathlessness, and chronic fatigue eased dramatically. Lab work confirmed improved metabolic markers and resolved insulin resistance — without adding a single new medication.",
+      video: null,
+      poster: null,
     },
     {
-      quote: "This was not a quick fix. That's exactly why it worked. The guidance, accountability, and education helped me take control of my health instead of depending on medicines.",
-      name: "Anonymous, M · 45",
-      detail: "Metabolic & Lifestyle Conditions",
+      name: "Coming soon",
+      age: 45,
+      profession: "Business Owner",
+      after: "After a season of guided, root-cause work, the dependence on daily medication gave way to steady energy, better digestion, and sleep that finally felt restorative. The change held — confirmed by post-protocol blood tests.",
+      video: null,
+      poster: null,
     },
     {
-      quote: "I finally stopped jumping from one practitioner to another. The process helped me calm my system, rebuild my digestion, and trust my body again.",
-      name: "Anonymous, F · 32",
-      detail: "Anxiety, Fatigue & Digestive Issues",
+      name: "Coming soon",
+      age: 32,
+      profession: "Software Engineer",
+      after: "The constant jumping between practitioners stopped. A calmer nervous system, a rebuilt gut, and a renewed trust in her own body replaced the anxiety, fatigue, and bloating she'd carried for years.",
+      video: null,
+      poster: null,
     },
   ];
-  // Duplicate the list so the CSS marquee loops seamlessly at -50%.
-  const loopVoices = [...voices, ...voices];
 
   return (
     <section className="spread" id="voices" ref={ref}>
@@ -854,22 +907,40 @@ function Voices() {
           <em>Real healing.</em>
         </h2>
         <p className="voices-subhead reveal delay-1">
-          What happens when you stop chasing symptoms and start healing at the root.
+          What changed once they stopped chasing symptoms and started healing at the root.
         </p>
       </div>
-      <div className="voices reveal delay-1">
-        <div className="voices-track">
-          {loopVoices.map((v, i) => (
-            <article className="voice" key={`${v.name}-${i}`} aria-hidden={i >= voices.length}>
-              <p className="quote">"{v.quote}"</p>
-              <div className="who">
-                <span className="name">{v.name}</span>
-                <span className="detail">{v.detail}</span>
+
+      <div className="story-grid">
+        {stories.map((s, i) => (
+          <article className={`story-card reveal delay-${i + 1}`} key={i}>
+            <button
+              type="button"
+              className={`story-media ${s.video ? "is-playable" : "is-pending"}`}
+              style={s.poster ? { backgroundImage: `url(${s.poster})` } : undefined}
+              onClick={() => s.video && setActiveVideo(s)}
+              disabled={!s.video}
+              aria-label={s.video ? `Play ${s.name}'s story` : "Video coming soon"}
+            >
+              <span className="story-play" aria-hidden="true">
+                <Play size={22} fill="currentColor" />
+              </span>
+              {!s.video && <span className="story-pending-label">Video coming soon</span>}
+              <span className="story-media-tag">Their Story</span>
+            </button>
+            <div className="story-body">
+              <span className="story-after-tag">After</span>
+              <p className="story-after">{s.after}</p>
+              <div className="story-who">
+                <span className="story-name">{s.name}</span>
+                <span className="story-meta">{s.age} · {s.profession}</span>
               </div>
-            </article>
-          ))}
-        </div>
+            </div>
+          </article>
+        ))}
       </div>
+
+      {activeVideo && <VideoLightbox story={activeVideo} onClose={() => setActiveVideo(null)} />}
     </section>
   );
 }
