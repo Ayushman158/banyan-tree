@@ -1167,7 +1167,9 @@ body {
 /* ══════════════════════════════════════════════════════════════════════════
    SECTIONS — Philosophy / Method / Voices / CTA
    ══════════════════════════════════════════════════════════════════════════ */
-section.spread { position: relative; padding: 18vh 7vw; z-index: 15; background: var(--paper); }
+/* Container via padding: on wide monitors content caps at ~1360px and centers,
+   while laptops keep the original 7vw gutters. Section backgrounds stay full-bleed. */
+section.spread { position: relative; padding: 18vh max(7vw, calc((100% - 1360px) / 2)); z-index: 15; background: var(--paper); }
 .spread + .spread { border-top: 1px solid var(--line); }
 .stage + .botanical-divider + section.spread { border-top: none; box-shadow: none; }
 
@@ -1214,13 +1216,33 @@ section.spread { position: relative; padding: 18vh 7vw; z-index: 15; background:
 .method-step p { font-size: 14.5px; line-height: 1.7; color: var(--ink-soft); }
 
 /* ── Voices — client video success stories ───────────────────────────────── */
-.story-grid {
+.story-marquee {
   margin-top: 64px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  overflow: hidden;
+  /* Fade the edges so the loop seam never shows as a hard cut */
+  mask-image: linear-gradient(to right, transparent 0, #000 56px, #000 calc(100% - 56px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 56px, #000 calc(100% - 56px), transparent 100%);
+}
+/* Continuously translating row; content is duplicated so -50% loops seamlessly.
+   Trailing padding-right matches the gap so the half-point lands on a card edge. */
+.story-track {
+  display: flex;
   gap: 32px;
+  padding: 6px 32px 6px 0;
+  width: max-content;
+  animation: storyMarquee 48s linear infinite;
+}
+.story-marquee:hover .story-track,
+.story-track:focus-within { animation-play-state: paused; }
+@keyframes storyMarquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .story-track { animation: none; }
 }
 .story-card {
+  flex: 0 0 clamp(300px, 30vw, 360px);
   display: flex;
   flex-direction: column;
   border-radius: 18px;
@@ -3429,8 +3451,11 @@ footer::before {
 
 .pricing-grid {
   display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 24px; align-items: start;
+  gap: 24px; align-items: stretch;
 }
+/* Equal-height cards on desktop: the Parallax wrapper and card fill the row */
+.pricing-grid > .parallax-item { display: flex; }
+.pricing-grid > .parallax-item > .plan-card { width: 100%; height: 100%; }
 
 .plan-card {
   position: relative;
@@ -3573,7 +3598,7 @@ footer::before {
 }
 .plan-card--featured .plan-feature-icon { color: var(--moss); }
 
-.plan-bottom { display: flex; flex-direction: column; gap: 16px; }
+.plan-bottom { display: flex; flex-direction: column; gap: 16px; margin-top: auto; }
 
 .plan-for {
   font-family: var(--sans); font-size: 12px; line-height: 1.5;
@@ -3742,21 +3767,9 @@ footer::before {
   .plan-cta .btn-icon-right { display: none; }
 
   .voices-header { grid-template-columns: 1fr; gap: 16px; margin-bottom: 36px; }
-  .story-grid {
-    margin-top: 40px;
-    grid-auto-flow: column;
-    grid-template-columns: none;
-    grid-auto-columns: 82%;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    gap: 16px;
-    margin-left: -7vw; margin-right: -7vw;
-    padding: 4px 7vw 14px;
-  }
-  .story-grid::-webkit-scrollbar { display: none; }
-  .story-card { scroll-snap-align: center; }
+  .story-marquee { margin-top: 40px; }
+  .story-track { gap: 16px; padding-right: 16px; animation-duration: 36s; }
+  .story-card { flex-basis: 78vw; }
   .story-body { padding: 22px 20px 24px; }
 
   .qualifier-statement { grid-template-columns: 1fr; gap: 24px; margin-bottom: 48px; }

@@ -911,33 +911,37 @@ function Voices() {
         </p>
       </div>
 
-      <div className="story-grid">
-        {stories.map((s, i) => (
-          <article className={`story-card reveal delay-${i + 1}`} key={i}>
-            <button
-              type="button"
-              className={`story-media ${s.video ? "is-playable" : "is-pending"}`}
-              style={s.poster ? { backgroundImage: `url(${s.poster})` } : undefined}
-              onClick={() => s.video && setActiveVideo(s)}
-              disabled={!s.video}
-              aria-label={s.video ? `Play ${s.name}'s story` : "Video coming soon"}
-            >
-              <span className="story-play" aria-hidden="true">
-                <Play size={22} fill="currentColor" />
-              </span>
-              {!s.video && <span className="story-pending-label">Video coming soon</span>}
-              <span className="story-media-tag">Their Story</span>
-            </button>
-            <div className="story-body">
-              <span className="story-after-tag">After</span>
-              <p className="story-after">{s.after}</p>
-              <div className="story-who">
-                <span className="story-name">{s.name}</span>
-                <span className="story-meta">{s.age} · {s.profession}</span>
+      {/* Duplicate the list so the CSS marquee loops seamlessly at -50%. */}
+      <div className="story-marquee reveal delay-1">
+        <div className="story-track">
+          {[...stories, ...stories].map((s, i) => (
+            <article className="story-card" key={i} aria-hidden={i >= stories.length}>
+              <button
+                type="button"
+                className={`story-media ${s.video ? "is-playable" : "is-pending"}`}
+                style={s.poster ? { backgroundImage: `url(${s.poster})` } : undefined}
+                onClick={() => s.video && setActiveVideo(s)}
+                disabled={!s.video}
+                tabIndex={i >= stories.length ? -1 : 0}
+                aria-label={s.video ? `Play ${s.name}'s story` : "Video coming soon"}
+              >
+                <span className="story-play" aria-hidden="true">
+                  <Play size={22} fill="currentColor" />
+                </span>
+                {!s.video && <span className="story-pending-label">Video coming soon</span>}
+                <span className="story-media-tag">Their Story</span>
+              </button>
+              <div className="story-body">
+                <span className="story-after-tag">What Changed</span>
+                <p className="story-after">{s.after}</p>
+                <div className="story-who">
+                  <span className="story-name">{s.name}</span>
+                  <span className="story-meta">{s.age} · {s.profession}</span>
+                </div>
               </div>
-            </div>
-          </article>
-        ))}
+            </article>
+          ))}
+        </div>
       </div>
 
       {activeVideo && <VideoLightbox story={activeVideo} onClose={() => setActiveVideo(null)} />}
