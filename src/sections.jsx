@@ -245,7 +245,7 @@ function Philosophy() {
           {/* Column headers */}
           <div className="vs__head vs__head--trad">
             <span className="vs__crest"><Stethoscope size={22} strokeWidth={1.5} /></span>
-            <h3 className="vs__name">Traditional Healthcare</h3>
+            <h3 className="vs__name">Conventional Healthcare</h3>
           </div>
           <div className="vs__axis vs__axis--head" aria-hidden="true" />
           <div className="vs__head vs__head--root">

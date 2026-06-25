@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Icon } from '@iconify/react';
 import { BanyanData } from './data.js';
+import { WHATSAPP_URL } from './sections.jsx';
 import { playHoverSound } from './sound.js';
 import gsap from 'gsap';
 import canopyImg from './assets/Final hero.jpg';
@@ -1022,12 +1023,9 @@ export default function TreeScene3D({
                   ))}
                 </dl>
                 <div className="panel-actions">
-                  <button className="btn btn--primary" data-hoverable="true">
+                  <a className="btn btn--primary" href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" data-hoverable="true">
                     Get in touch
-                  </button>
-                  <button className="btn btn--ghost" data-hoverable="true" onClick={() => onCrumbJump('roots')}>
-                    Continue exploring
-                  </button>
+                  </a>
                 </div>
               </div>
             </motion.div>

@@ -2431,6 +2431,13 @@ footer::before {
 .roots-back-link:hover {
   color: var(--gold);
 }
+/* Inside the light detail panel the white default is invisible — use ink */
+.roots-left-panel .roots-back-link {
+  color: var(--ink-soft);
+}
+.roots-left-panel .roots-back-link:hover {
+  color: var(--gold-deep);
+}
 .roots-condition-detail {
   display: flex;
   flex-direction: column;
