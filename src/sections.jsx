@@ -823,9 +823,85 @@ function Pricing() {
   );
 }
 
-/* ── IV · Voices ─────────────────────────────────────────────────────────── */
-/* Lightbox that plays a client's story video. Self-hosted mp4 by default;
-   set `story.video` to the imported file. Closes on backdrop click or Esc. */
+/* ── IV · Voices — client video testimonials ─────────────────────────────────
+   Videos live on YouTube (Unlisted is fine — embeddable but not searchable).
+   Cards are populated from a Google Sheet the client owns, so he can add new
+   testimonials himself with no code and no redeploy: he adds a row
+   (name, age, profession, youtube_url, after_text) and it appears live.
+
+   Wire it up by setting VITE_TESTIMONIALS_SHEET_CSV to the sheet's
+   "Publish to web → CSV" link. If it's unset or unreachable, the placeholder
+   stories below are shown instead. */
+const TESTIMONIALS_SHEET_CSV = import.meta.env.VITE_TESTIMONIALS_SHEET_CSV || "";
+
+const FALLBACK_STORIES = [
+  {
+    name: "Coming soon", age: "39", profession: "Marketing Professional",
+    after: "In 3 months, years of acidity-driven migraines, breathlessness, and chronic fatigue eased dramatically. Lab work confirmed improved metabolic markers and resolved insulin resistance — without adding a single new medication.",
+    youtubeId: null, thumb: null,
+  },
+  {
+    name: "Coming soon", age: "45", profession: "Business Owner",
+    after: "After a season of guided, root-cause work, the dependence on daily medication gave way to steady energy, better digestion, and sleep that finally felt restorative. The change held — confirmed by post-protocol blood tests.",
+    youtubeId: null, thumb: null,
+  },
+  {
+    name: "Coming soon", age: "32", profession: "Software Engineer",
+    after: "The constant jumping between practitioners stopped. A calmer nervous system, a rebuilt gut, and a renewed trust in her own body replaced the anxiety, fatigue, and bloating she'd carried for years.",
+    youtubeId: null, thumb: null,
+  },
+];
+
+// Extract the 11-char video id from any common YouTube URL form
+function youtubeId(url = "") {
+  const m = String(url).match(/(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:watch\?v=|embed\/|shorts\/|v\/))([\w-]{11})/);
+  return m ? m[1] : null;
+}
+const youtubeThumb = (id) => `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+const youtubeEmbed = (id) => `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&playsinline=1&modestbranding=1`;
+
+// Minimal RFC-4180 CSV parser (handles quoted fields, embedded commas/newlines)
+function parseCSV(text) {
+  const rows = [];
+  let row = [], field = "", inQuotes = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inQuotes) {
+      if (c === '"') {
+        if (text[i + 1] === '"') { field += '"'; i++; }
+        else inQuotes = false;
+      } else field += c;
+    } else if (c === '"') inQuotes = true;
+    else if (c === ',') { row.push(field); field = ""; }
+    else if (c === '\n') { row.push(field); rows.push(row); row = []; field = ""; }
+    else if (c !== '\r') field += c;
+  }
+  if (field.length || row.length) { row.push(field); rows.push(row); }
+  return rows;
+}
+
+// Map sheet rows → story objects by header name (order-independent)
+function rowsToStories(rows) {
+  if (!rows.length) return [];
+  const headers = rows[0].map((h) => h.trim().toLowerCase());
+  const col = (name) => headers.indexOf(name);
+  const iName = col("name"), iAge = col("age"), iProf = col("profession"),
+        iUrl = col("youtube_url"), iAfter = col("after_text");
+  return rows.slice(1)
+    .filter((r) => r.some((c) => c && c.trim()))
+    .map((r) => {
+      const id = youtubeId(iUrl >= 0 ? r[iUrl] : "");
+      const get = (i) => (i >= 0 && r[i] ? r[i].trim() : "");
+      return {
+        name: get(iName), age: get(iAge), profession: get(iProf), after: get(iAfter),
+        youtubeId: id, thumb: id ? youtubeThumb(id) : null,
+      };
+    })
+    .filter((s) => s.name && s.after);
+}
+
+/* Lightbox that plays a client's YouTube story. Loads the player only on open
+   (click-to-play facade), so the page stays fast. Closes on backdrop/Esc. */
 function VideoLightbox({ story, onClose }) {
   _useEffect(() => {
     const onKey = (e) => { if (e.key === "Escape") onClose(); };
@@ -841,18 +917,18 @@ function VideoLightbox({ story, onClose }) {
         <button type="button" className="video-lightbox__close" onClick={onClose} aria-label="Close">
           <X size={18} />
         </button>
-        {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
-        <video
-          className="video-lightbox__video"
-          src={story.video}
-          poster={story.poster || undefined}
-          controls
-          autoPlay
-          playsInline
-        />
+        <div className="video-lightbox__video">
+          <iframe
+            src={youtubeEmbed(story.youtubeId)}
+            title={`${story.name} — story`}
+            allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+            allowFullScreen
+            frameBorder="0"
+          />
+        </div>
         <div className="video-lightbox__caption">
           <span className="story-name">{story.name}</span>
-          <span className="story-meta">{story.age} · {story.profession}</span>
+          <span className="story-meta">{[story.age, story.profession].filter(Boolean).join(" · ")}</span>
         </div>
       </div>
     </div>,
@@ -863,40 +939,25 @@ function VideoLightbox({ story, onClose }) {
 function Voices() {
   const ref = useReveal();
   const [activeVideo, setActiveVideo] = _useState(null);
+  const [stories, setStories] = _useState(FALLBACK_STORIES);
 
-  /* Client success stories — a short video + the "after": what changed once
-     they went through the program.
-     ⚠️ TODO(client): videos are in editing. To activate a card, import the file
-     at the top (e.g. `import storyAnita from './assets/stories/anita.mp4';`),
-     set `video: storyAnita` and optionally `poster: <imported jpg>`. Until then
-     the frame shows a "coming soon" state. Replace the placeholder names, ages,
-     and professions with each client's real details. */
-  const stories = [
-    {
-      name: "Coming soon",
-      age: 39,
-      profession: "Marketing Professional",
-      after: "In 3 months, years of acidity-driven migraines, breathlessness, and chronic fatigue eased dramatically. Lab work confirmed improved metabolic markers and resolved insulin resistance — without adding a single new medication.",
-      video: null,
-      poster: null,
-    },
-    {
-      name: "Coming soon",
-      age: 45,
-      profession: "Business Owner",
-      after: "After a season of guided, root-cause work, the dependence on daily medication gave way to steady energy, better digestion, and sleep that finally felt restorative. The change held — confirmed by post-protocol blood tests.",
-      video: null,
-      poster: null,
-    },
-    {
-      name: "Coming soon",
-      age: 32,
-      profession: "Software Engineer",
-      after: "The constant jumping between practitioners stopped. A calmer nervous system, a rebuilt gut, and a renewed trust in her own body replaced the anxiety, fatigue, and bloating she'd carried for years.",
-      video: null,
-      poster: null,
-    },
-  ];
+  // Pull live testimonials from the client's published Google Sheet.
+  _useEffect(() => {
+    if (!TESTIMONIALS_SHEET_CSV) return;
+    let cancelled = false;
+    fetch(TESTIMONIALS_SHEET_CSV)
+      .then((r) => (r.ok ? r.text() : Promise.reject(r.status)))
+      .then((text) => {
+        const parsed = rowsToStories(parseCSV(text));
+        if (!cancelled && parsed.length) setStories(parsed);
+      })
+      .catch(() => { /* keep the placeholder fallback */ });
+    return () => { cancelled = true; };
+  }, []);
+
+  // Marquee needs enough cards to fill the track twice; pad short lists.
+  const base = stories.length ? stories : FALLBACK_STORIES;
+  const loop = base.length < 3 ? [...base, ...base, ...base, ...base] : [...base, ...base];
 
   return (
     <section className="spread" id="voices" ref={ref}>
@@ -914,33 +975,36 @@ function Voices() {
       {/* Duplicate the list so the CSS marquee loops seamlessly at -50%. */}
       <div className="story-marquee reveal delay-1">
         <div className="story-track">
-          {[...stories, ...stories].map((s, i) => (
-            <article className="story-card" key={i} aria-hidden={i >= stories.length}>
-              <button
-                type="button"
-                className={`story-media ${s.video ? "is-playable" : "is-pending"}`}
-                style={s.poster ? { backgroundImage: `url(${s.poster})` } : undefined}
-                onClick={() => s.video && setActiveVideo(s)}
-                disabled={!s.video}
-                tabIndex={i >= stories.length ? -1 : 0}
-                aria-label={s.video ? `Play ${s.name}'s story` : "Video coming soon"}
-              >
-                <span className="story-play" aria-hidden="true">
-                  <Play size={22} fill="currentColor" />
-                </span>
-                {!s.video && <span className="story-pending-label">Video coming soon</span>}
-                <span className="story-media-tag">Their Story</span>
-              </button>
-              <div className="story-body">
-                <span className="story-after-tag">What Changed</span>
-                <p className="story-after">{s.after}</p>
-                <div className="story-who">
-                  <span className="story-name">{s.name}</span>
-                  <span className="story-meta">{s.age} · {s.profession}</span>
+          {loop.map((s, i) => {
+            const playable = Boolean(s.youtubeId);
+            return (
+              <article className="story-card" key={i} aria-hidden={i >= base.length}>
+                <button
+                  type="button"
+                  className={`story-media ${playable ? "is-playable" : "is-pending"}`}
+                  style={s.thumb ? { backgroundImage: `url(${s.thumb})` } : undefined}
+                  onClick={() => playable && setActiveVideo(s)}
+                  disabled={!playable}
+                  tabIndex={i >= base.length ? -1 : 0}
+                  aria-label={playable ? `Play ${s.name}'s story` : "Video coming soon"}
+                >
+                  <span className="story-play" aria-hidden="true">
+                    <Play size={22} fill="currentColor" />
+                  </span>
+                  {!playable && <span className="story-pending-label">Video coming soon</span>}
+                  <span className="story-media-tag">Their Story</span>
+                </button>
+                <div className="story-body">
+                  <span className="story-after-tag">What Changed</span>
+                  <p className="story-after">{s.after}</p>
+                  <div className="story-who">
+                    <span className="story-name">{s.name}</span>
+                    <span className="story-meta">{[s.age, s.profession].filter(Boolean).join(" · ")}</span>
+                  </div>
                 </div>
-              </div>
-            </article>
-          ))}
+              </article>
+            );
+          })}
         </div>
       </div>
 
