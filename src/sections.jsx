@@ -832,7 +832,8 @@ function Pricing() {
    Wire it up by setting VITE_TESTIMONIALS_SHEET_CSV to the sheet's
    "Publish to web → CSV" link. If it's unset or unreachable, the placeholder
    stories below are shown instead. */
-const TESTIMONIALS_SHEET_CSV = import.meta.env.VITE_TESTIMONIALS_SHEET_CSV || "";
+const TESTIMONIALS_SHEET_CSV = import.meta.env.VITE_TESTIMONIALS_SHEET_CSV ||
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vRlipE7TtkWiES65tAAyv8XoSsQr_-yU93d-fjvMHws2JtuSOAcWyohJQGFX48sF5vA5btSdGI-SNFt/pub?output=csv";
 
 const FALLBACK_STORIES = [
   {
@@ -897,7 +898,9 @@ function rowsToStories(rows) {
         youtubeId: id, thumb: id ? youtubeThumb(id) : null,
       };
     })
-    .filter((s) => s.name && s.after);
+    // A row shows as long as it has a name; video + paragraph are optional
+    // (no video → "coming soon" card; no paragraph → just name & profession).
+    .filter((s) => s.name);
 }
 
 /* Lightbox that plays a client's YouTube story. Loads the player only on open
@@ -995,9 +998,9 @@ function Voices() {
                   <span className="story-media-tag">Their Story</span>
                 </button>
                 <div className="story-body">
-                  <span className="story-after-tag">What Changed</span>
-                  <p className="story-after">{s.after}</p>
-                  <div className="story-who">
+                  {s.after && <span className="story-after-tag">What Changed</span>}
+                  {s.after && <p className="story-after">{s.after}</p>}
+                  <div className={`story-who ${s.after ? "" : "story-who--bare"}`}>
                     <span className="story-name">{s.name}</span>
                     <span className="story-meta">{[s.age, s.profession].filter(Boolean).join(" · ")}</span>
                   </div>
