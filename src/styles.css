@@ -792,14 +792,14 @@ body {
 }
 
 .hero-tagline {
-  position: absolute; left: 6vw; bottom: 9vh; top: auto; z-index: 20;
-  pointer-events: none; width: auto; max-width: 460px;
-  display: flex; flex-direction: column; align-items: flex-start;
-  text-align: left;
-  transform: translateY(28px);
+  position: absolute; left: 50%; right: auto; top: 8vh; bottom: auto; z-index: 20;
+  pointer-events: none; width: auto; max-width: 720px;
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center;
+  transform: translateX(-50%) translateY(28px);
   transition: opacity 0.9s var(--ease), transform 1.5s var(--ease);
 }
-.hero-tagline.is-entered { transform: translateY(0); }
+.hero-tagline.is-entered { transform: translateX(-50%) translateY(0); }
 
 /* Ground scrim — a soft, full-width grade across the lower canopy so the
    hero statement reads cleanly against the bright ground, without looking
@@ -2181,27 +2181,39 @@ footer::before {
   position: absolute;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 6px;
+  justify-content: flex-start;
+  gap: 12px;
   font-family: var(--sans);
   font-weight: 500;
-  font-size: 11px;
+  font-size: 15px;
   line-height: 1.2;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: #ffffff;
-  background: transparent;
-  border: none;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: var(--ink);
+  /* Premium cream glass capsule — two clean columns flank the trunk */
+  min-width: 230px;
+  padding: 13px 22px;
+  border-radius: 99px;
+  background: linear-gradient(155deg, rgba(253, 251, 245, 0.96), rgba(244, 236, 219, 0.9));
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  backdrop-filter: blur(12px) saturate(140%);
+  border: 1px solid rgba(200, 169, 107, 0.5);
+  box-shadow: 0 6px 22px rgba(40, 50, 35, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.6);
   cursor: pointer;
   pointer-events: auto;
   white-space: nowrap;
-  text-shadow: 0 1px 3px rgba(15, 24, 20, 0.65), 0 4px 12px rgba(15, 24, 20, 0.4);
-  transition: all 0.35s var(--ease);
+  text-shadow: none;
+  transition: transform 0.3s var(--ease), background 0.3s var(--ease), box-shadow 0.3s var(--ease), border-color 0.3s var(--ease);
 }
 .category-label:hover, .category-label.is-hovered, .category-label.is-active {
-  color: #fff9e7;
-  text-shadow: 0 0 14px var(--gold-soft), 0 1px 4px rgba(0, 0, 0, 0.8);
+  color: var(--ink);
+  background: linear-gradient(155deg, rgba(255, 253, 247, 1), rgba(247, 239, 223, 0.96));
+  border-color: var(--gold);
+  box-shadow: 0 0 0 1px rgba(200, 169, 107, 0.3), 0 12px 30px rgba(40, 50, 35, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  transform: var(--desktop-transform, translate(-50%, -50%)) scale(1.03);
 }
+/* The scatter connector lines don't suit a two-column list */
+.canopy-svg .desktop-path { display: none !important; }
 
 .pill-icon {
   position: relative;
@@ -2794,15 +2806,18 @@ footer::before {
 .category-label {
   font-family: var(--sans) !important;
   font-weight: 600 !important;
-  font-size: 9px !important;
-  letter-spacing: 0.015em !important;
+  font-size: 14.5px !important;
+  letter-spacing: 0.01em !important;
   text-transform: none !important;
   color: var(--deep-forest) !important;
   background: linear-gradient(155deg, rgba(253, 251, 246, 0.97), rgba(246, 239, 225, 0.93)) !important;
   border: 1px solid rgba(200, 169, 107, 0.42) !important;
   border-radius: 99px !important;
-  padding: 3px 14px 3px 3px !important;
-  gap: 7px !important;
+  /* Two-column atlas list: uniform-width capsules, icon flush-left */
+  min-width: 232px !important;
+  padding: 12px 22px 12px 10px !important;
+  gap: 12px !important;
+  justify-content: flex-start !important;
   backdrop-filter: blur(12px) saturate(125%) !important;
   -webkit-backdrop-filter: blur(12px) saturate(125%) !important;
   text-shadow: none !important;

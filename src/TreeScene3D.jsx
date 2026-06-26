@@ -78,6 +78,26 @@ const getCategoryCoords = (cat, isMobile) => {
   return { x: mc.x, y: mc.y, labelX: mc.x, labelY: mc.y };
 };
 
+// Desktop two-column "atlas list" layout — mirrors the clean mobile arrangement
+// (two columns flanking the trunk) but tuned for wide screens. Pills are centred
+// on each anchor (translate(-50%,-50%)). Tweak x for column spread, y for rows.
+const DESKTOP_LIST_COORDS = {
+  // Left column
+  "neurological":    { x: 38, y: 42 },
+  "hormonal":        { x: 38, y: 49 },
+  "gut":             { x: 38, y: 56 },
+  "skin":            { x: 38, y: 63 },
+  "respiratory":     { x: 38, y: 70 },
+  "oral":            { x: 38, y: 77 },
+  // Right column
+  "mental":          { x: 62, y: 42 },
+  "cardiovascular":  { x: 62, y: 49 },
+  "autoimmune":      { x: 62, y: 56 },
+  "metabolic":       { x: 62, y: 63 },
+  "musculoskeletal": { x: 62, y: 70 },
+  "renal":           { x: 62, y: 77 },
+};
+
 // On mobile: two balanced columns flanking the trunk. Pills are centred on these
 // anchors (nodes removed), so the columns sit well clear of the centre.
 const getMobileConditionCoords = (idx, total) => {
@@ -723,20 +743,24 @@ export default function TreeScene3D({
                 <button
                   type="button"
                   className={`category-label ${isActive ? 'is-active' : ''} ${isHovered ? 'is-hovered' : ''}`}
-                  style={{
-                    '--desktop-x': `${cat.labelX}%`,
-                    '--desktop-y': `${cat.labelY}%`,
-                    '--mobile-x': `${coords.x}%`,
-                    '--mobile-y': `${coords.y}%`,
-                    '--mobile-transform': mobileTransform,
-                    '--mobile-text-align': mobileTextAlign,
-                    '--desktop-transform': cat.align === 'right' ? 'translate(calc(-100% - 12px), -50%)' : 'translate(12px, -50%)',
-                    '--desktop-text-align': cat.align === 'right' ? 'right' : 'left',
-                    left: 'var(--desktop-x)',
-                    top: 'var(--desktop-y)',
-                    textAlign: 'var(--desktop-text-align)',
-                    transform: 'var(--desktop-transform)'
-                  }}
+                  style={(() => {
+                    // Desktop now uses the clean two-column list (mirrors mobile)
+                    const dc = DESKTOP_LIST_COORDS[cat.id] || { x: cat.labelX, y: cat.labelY };
+                    return {
+                      '--desktop-x': `${dc.x}%`,
+                      '--desktop-y': `${dc.y}%`,
+                      '--mobile-x': `${coords.x}%`,
+                      '--mobile-y': `${coords.y}%`,
+                      '--mobile-transform': mobileTransform,
+                      '--mobile-text-align': mobileTextAlign,
+                      '--desktop-transform': 'translate(-50%, -50%)',
+                      '--desktop-text-align': 'center',
+                      left: 'var(--desktop-x)',
+                      top: 'var(--desktop-y)',
+                      textAlign: 'var(--desktop-text-align)',
+                      transform: 'var(--desktop-transform)'
+                    };
+                  })()}
                   onClick={() => onCategoryClick(resolvedClickIdx)}
                   onMouseEnter={() => { setHoverCategory(cat.id); playHoverSound(); }}
                   onMouseLeave={() => setHoverCategory(null)}
