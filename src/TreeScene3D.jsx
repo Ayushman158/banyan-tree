@@ -83,19 +83,19 @@ const getCategoryCoords = (cat, isMobile) => {
 // on each anchor (translate(-50%,-50%)). Tweak x for column spread, y for rows.
 const DESKTOP_LIST_COORDS = {
   // Left column — start below the heading block so pills never touch the subtitle
-  "neurological":    { x: 38, y: 50 },
-  "hormonal":        { x: 38, y: 56 },
-  "gut":             { x: 38, y: 62 },
-  "skin":            { x: 38, y: 68 },
-  "respiratory":     { x: 38, y: 74 },
-  "oral":            { x: 38, y: 80 },
+  "neurological":    { x: 38, y: 47 },
+  "hormonal":        { x: 38, y: 53 },
+  "gut":             { x: 38, y: 59 },
+  "skin":            { x: 38, y: 65 },
+  "respiratory":     { x: 38, y: 71 },
+  "oral":            { x: 38, y: 77 },
   // Right column
-  "mental":          { x: 62, y: 50 },
-  "cardiovascular":  { x: 62, y: 56 },
-  "autoimmune":      { x: 62, y: 62 },
-  "metabolic":       { x: 62, y: 68 },
-  "musculoskeletal": { x: 62, y: 74 },
-  "renal":           { x: 62, y: 80 },
+  "mental":          { x: 62, y: 47 },
+  "cardiovascular":  { x: 62, y: 53 },
+  "autoimmune":      { x: 62, y: 59 },
+  "metabolic":       { x: 62, y: 65 },
+  "musculoskeletal": { x: 62, y: 71 },
+  "renal":           { x: 62, y: 77 },
 };
 
 // On mobile: two balanced columns flanking the trunk. Pills are centred on these

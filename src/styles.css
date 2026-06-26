@@ -792,7 +792,7 @@ body {
 }
 
 .hero-tagline {
-  position: absolute; left: 50%; right: auto; top: 8vh; bottom: auto; z-index: 20;
+  position: absolute; left: 50%; right: auto; top: 5vh; bottom: auto; z-index: 20;
   pointer-events: none; width: auto; max-width: 720px;
   display: flex; flex-direction: column; align-items: center;
   text-align: center;
@@ -808,12 +808,14 @@ body {
   position: absolute; inset: 0; z-index: 14; pointer-events: none;
   opacity: 0;
   transition: opacity 1.2s var(--ease);
-  background: linear-gradient(
-    to top,
-    rgba(8, 14, 10, 0.5) 0%,
-    rgba(8, 14, 10, 0.22) 28%,
-    transparent 58%
-  );
+  /* Soft pool of shadow behind the top hero text (mirrors the mobile vignette),
+     leaving the rest of the canopy bright */
+  background: radial-gradient(ellipse 40% 34% at 50% 26%,
+    rgba(8, 18, 14, 0.56) 0%,
+    rgba(8, 18, 14, 0.42) 42%,
+    rgba(8, 18, 14, 0.2) 68%,
+    rgba(8, 18, 14, 0.07) 86%,
+    transparent 100%);
 }
 .hero-ground-scrim.is-visible { opacity: 1; }
 
