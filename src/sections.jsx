@@ -731,6 +731,7 @@ function Pricing() {
         "Lymphatic system support",
         "Sleep optimization",
         "Circadian rhythm optimization",
+        "Doctor consultations (if needed)",
       ],
       forWhom: "Chronic issues, metabolic & hormonal imbalance, gut healing.",
     },
