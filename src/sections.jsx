@@ -859,7 +859,9 @@ function youtubeId(url = "") {
   const m = String(url).match(/(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:watch\?v=|embed\/|shorts\/|v\/))([\w-]{11})/);
   return m ? m[1] : null;
 }
-const youtubeThumb = (id) => `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+// Prefer the HD (1280×720) thumbnail; fall back to hqdefault for older/SD uploads.
+const youtubeThumb = (id) => `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
+const youtubeThumbFallback = (id) => `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
 const youtubeEmbed = (id) => `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&playsinline=1&modestbranding=1`;
 
 /* Render the "What Changed" text, turning **double-asterisk** phrases into
@@ -1107,12 +1109,25 @@ function Voices() {
                 <button
                   type="button"
                   className={`story-media ${playable ? "is-playable" : "is-pending"}`}
-                  style={s.thumb ? { backgroundImage: `url(${s.thumb})` } : undefined}
                   onClick={() => playable && setActiveVideo(s)}
                   disabled={!playable}
                   tabIndex={i >= base.length ? -1 : 0}
                   aria-label={playable ? `Play ${s.name}'s story` : "Video coming soon"}
                 >
+                  {s.thumb && (
+                    <img
+                      className="story-media-img"
+                      src={s.thumb}
+                      alt=""
+                      loading="lazy"
+                      draggable="false"
+                      onError={(e) => {
+                        // maxresdefault missing (SD upload): fall back once to hqdefault.
+                        const fb = s.youtubeId ? youtubeThumbFallback(s.youtubeId) : "";
+                        if (fb && e.currentTarget.src !== fb) e.currentTarget.src = fb;
+                      }}
+                    />
+                  )}
                   <span className="story-play" aria-hidden="true">
                     <Play size={22} fill="currentColor" />
                   </span>

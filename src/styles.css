@@ -1282,6 +1282,16 @@ section.spread { position: relative; padding: 18vh max(7vw, calc((100% - 1360px)
 }
 .story-media.is-playable { cursor: pointer; }
 .story-media.is-pending { cursor: default; }
+.story-media-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  user-select: none;
+  -webkit-user-drag: none;
+}
 .story-media::after {
   content: "";
   position: absolute;
