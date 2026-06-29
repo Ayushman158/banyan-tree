@@ -1019,7 +1019,23 @@ function Voices() {
       track.style.transform = `translate3d(${offset}px,0,0)`;
     };
 
-    startAuto();
+    // Stay parked on the first card until the section scrolls into view, so the
+    // first testimonial is never missed. Then begin the auto-scroll (once).
+    let started = false;
+    const beginOnce = () => {
+      if (started) return;
+      started = true;
+      startAuto();
+    };
+    let io = null;
+    if (typeof IntersectionObserver !== "undefined") {
+      io = new IntersectionObserver((entries) => {
+        if (entries.some((e) => e.isIntersecting)) { beginOnce(); io.disconnect(); io = null; }
+      }, { threshold: 0.3 });
+      io.observe(el);
+    } else {
+      beginOnce();
+    }
 
     const scheduleResume = () => {
       clearTimeout(resumeTimer);
@@ -1070,6 +1086,7 @@ function Voices() {
     return () => {
       clearTimeout(resumeTimer);
       if (ro) ro.disconnect();
+      if (io) io.disconnect();
       window.removeEventListener("resize", measure);
       el.removeEventListener("mouseenter", onEnter);
       el.removeEventListener("mouseleave", onLeave);
