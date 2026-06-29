@@ -969,7 +969,8 @@ function Voices() {
     if (!el || !track) return;
     const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let raf, resumeTimer, paused = reduce;
-    const SPEED = 0.5; // px per frame (~30px/s at 60fps)
+    const PX_PER_SEC = 32; // time-based so speed is identical at 60Hz or 120Hz
+    let last = 0;
 
     let offset = 0;   // translateX in px (0 → -half, then wraps)
     let half = 0;     // one full copy of the list
@@ -992,10 +993,12 @@ function Voices() {
       resumeTimer = setTimeout(() => { if (!reduce) paused = false; }, 1600);
     };
 
-    const tick = () => {
+    const tick = (now) => {
+      const dt = last ? Math.min(now - last, 50) : 0; // clamp jumps (tab switch)
+      last = now;
       if (half <= 0) measure();
       if (half > 0 && !paused) {
-        offset -= SPEED;
+        offset -= (PX_PER_SEC * dt) / 1000;
         wrap();
         apply();
       }
