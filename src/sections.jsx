@@ -976,13 +976,20 @@ function Voices() {
       resumeTimer = setTimeout(() => { if (!reduce) paused = false; }, 1600);
     };
 
+    // Track position in a float: scrollLeft is integer-rounded in many browsers,
+    // so a 0.5px/frame increment read back as scrollLeft would never advance.
+    let pos = el.scrollLeft || 0;
     const tick = () => {
       const half = el.scrollWidth / 2;
       if (half > 0) {
-        if (!paused) el.scrollLeft += SPEED;
-        // Normalize for a seamless loop (covers auto + manual scrolling)
-        if (el.scrollLeft >= half) el.scrollLeft -= half;
-        else if (el.scrollLeft < 0) el.scrollLeft += half;
+        if (paused) {
+          pos = el.scrollLeft; // follow the user while they scroll
+        } else {
+          pos += SPEED;
+          if (pos >= half) pos -= half;       // seamless wrap forward
+          else if (pos < 0) pos += half;      // …and backward
+          el.scrollLeft = pos;
+        }
       }
       raf = requestAnimationFrame(tick);
     };
