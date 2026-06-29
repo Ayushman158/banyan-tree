@@ -1241,6 +1241,15 @@ section.spread { position: relative; padding: 18vh max(7vw, calc((100% - 1360px)
   touch-action: pan-y;
   will-change: transform;
 }
+/* Auto-scroll runs on the compositor thread (smooth on iOS). Duration is set in
+   JS from the measured width; manual drag toggles this class off. */
+.story-track.is-auto {
+  animation: storyMarquee linear infinite;
+}
+@keyframes storyMarquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
 .story-card {
   flex: 0 0 clamp(300px, 30vw, 360px);
   display: flex;

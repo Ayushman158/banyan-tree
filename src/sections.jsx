@@ -959,22 +959,23 @@ function Voices() {
     return () => { cancelled = true; };
   }, []);
 
-  /* Auto-advance the row using a GPU-composited transform (smooth on mobile),
-     and drive manual drag/swipe through the same transform so everything stays
-     on the compositor — no per-frame scrollLeft (which janks on phones). Content
-     is duplicated, so the offset wraps at the half-point for a seamless loop. */
+  /* Auto-advance with a pure CSS keyframe animation (runs on the compositor
+     thread, so it stays smooth on iOS even when the main thread is busy). Manual
+     drag/swipe is handled in JS: we pause the CSS animation, take over the
+     transform, then hand control back — resuming the animation from the exact
+     current position via a negative animation-delay so there's no jump. */
   _useEffect(() => {
     const el = scrollerRef.current;
     const track = el && el.firstElementChild;
     if (!el || !track) return;
     const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    let raf, resumeTimer, paused = reduce;
-    const PX_PER_SEC = 32; // time-based so speed is identical at 60Hz or 120Hz
-    let last = 0;
+    const PX_PER_SEC = 32;
+    let half = 0, offset = 0, resumeTimer;
 
-    let offset = 0;   // translateX in px (0 → -half, then wraps)
-    let half = 0;     // one full copy of the list
-    const measure = () => { half = track.scrollWidth / 2; };
+    const measure = () => {
+      half = track.scrollWidth / 2;
+      if (half > 0) track.style.animationDuration = (half / PX_PER_SEC) + "s";
+    };
     measure();
     const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(measure) : null;
     if (ro) ro.observe(track);
@@ -985,28 +986,33 @@ function Voices() {
       while (offset <= -half) offset += half;
       while (offset > 0) offset -= half;
     };
-    const apply = () => { track.style.transform = `translate3d(${offset}px,0,0)`; };
 
-    const pause = () => { paused = true; };
+    // Resume the compositor animation seamlessly from the current offset
+    const startAuto = () => {
+      if (reduce || half <= 0) return;
+      wrap();
+      const phase = (-offset) / half;          // 0..1 along the loop
+      const dur = half / PX_PER_SEC;
+      track.style.transform = "";              // let the animation drive it
+      track.style.animationDelay = (-(phase * dur)) + "s";
+      track.classList.add("is-auto");
+    };
+    // Freeze at the current animated position and take over manually
+    const stopAuto = () => {
+      const m = new DOMMatrixReadOnly(getComputedStyle(track).transform);
+      offset = m.m41 || offset;
+      track.classList.remove("is-auto");
+      track.style.transform = `translate3d(${offset}px,0,0)`;
+    };
+
+    startAuto();
+
     const scheduleResume = () => {
       clearTimeout(resumeTimer);
-      resumeTimer = setTimeout(() => { if (!reduce) paused = false; }, 1600);
+      resumeTimer = setTimeout(startAuto, 1600);
     };
 
-    const tick = (now) => {
-      const dt = last ? Math.min(now - last, 50) : 0; // clamp jumps (tab switch)
-      last = now;
-      if (half <= 0) measure();
-      if (half > 0 && !paused) {
-        offset -= (PX_PER_SEC * dt) / 1000;
-        wrap();
-        apply();
-      }
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-
-    const onEnter = () => pause();
+    const onEnter = () => stopAuto();
     const onLeave = () => scheduleResume();
     el.addEventListener("mouseenter", onEnter);
     el.addEventListener("mouseleave", onLeave);
@@ -1015,8 +1021,10 @@ function Voices() {
     const onWheel = (e) => {
       const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
       if (!d) return;
-      pause(); scheduleResume();
-      offset -= d; wrap(); apply();
+      stopAuto();
+      offset -= d; wrap();
+      track.style.transform = `translate3d(${offset}px,0,0)`;
+      scheduleResume();
     };
     el.addEventListener("wheel", onWheel, { passive: true });
 
@@ -1024,13 +1032,15 @@ function Voices() {
     // page scroll pass through while we own horizontal drags.
     let down = false, startX = 0, startOffset = 0, moved = false;
     const onDown = (e) => {
-      down = true; moved = false; startX = e.clientX; startOffset = offset; pause();
+      down = true; moved = false; startX = e.clientX;
+      stopAuto(); startOffset = offset;
     };
     const onMove = (e) => {
       if (!down) return;
       const dx = e.clientX - startX;
       if (Math.abs(dx) > 3) { moved = true; el.classList.add("is-dragging"); }
-      offset = startOffset + dx; wrap(); apply();
+      offset = startOffset + dx; wrap();
+      track.style.transform = `translate3d(${offset}px,0,0)`;
     };
     const onUp = () => {
       if (!down) return;
@@ -1044,7 +1054,7 @@ function Voices() {
     el.addEventListener("click", onClickCapture, true);
 
     return () => {
-      cancelAnimationFrame(raf); clearTimeout(resumeTimer);
+      clearTimeout(resumeTimer);
       if (ro) ro.disconnect();
       window.removeEventListener("resize", measure);
       el.removeEventListener("mouseenter", onEnter);
