@@ -1324,17 +1324,14 @@ section.spread { position: relative; padding: 18vh max(7vw, calc((100% - 1360px)
   font-size: 9.5px; letter-spacing: 0.3em; text-transform: uppercase;
   color: rgba(242, 231, 204, 0.78);
 }
-.story-media-tag {
+.story-media-who {
   position: absolute; z-index: 1;
-  top: 16px; left: 16px;
-  font-family: var(--mono);
-  font-size: 9px; letter-spacing: 0.32em; text-transform: uppercase;
-  color: rgba(242, 231, 204, 0.92);
-  padding: 5px 10px;
-  border-radius: 99px;
-  background: rgba(28, 42, 33, 0.4);
-  border: 1px solid rgba(242, 231, 204, 0.28);
+  top: 16px; left: 18px; right: 18px;
+  display: flex; flex-direction: column; gap: 3px;
+  text-shadow: 0 1px 10px rgba(28, 42, 33, 0.65);
 }
+.story-media-who .story-name { color: var(--paper); font-size: 16px; }
+.story-media-who .story-meta { color: rgba(242, 231, 204, 0.78); }
 
 .story-body {
   padding: 26px 26px 28px;

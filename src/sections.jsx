@@ -1132,16 +1132,19 @@ function Voices() {
                     <Play size={22} fill="currentColor" />
                   </span>
                   {!playable && <span className="story-pending-label">Video coming soon</span>}
-                  <span className="story-media-tag">Their Story</span>
-                </button>
-                <div className="story-body">
-                  <div className={`story-who ${s.after ? "" : "story-who--bare"}`}>
+                  <div className="story-media-who">
                     <span className="story-name">{s.name}</span>
-                    <span className="story-meta">{[s.age, s.profession].filter(Boolean).join(" · ")}</span>
+                    {(s.age || s.profession) && (
+                      <span className="story-meta">{[s.age, s.profession].filter(Boolean).join(" · ")}</span>
+                    )}
                   </div>
-                  {s.after && <span className="story-after-tag">What Changed</span>}
-                  {s.after && <p className="story-after">{renderHighlights(s.after)}</p>}
-                </div>
+                </button>
+                {s.after && (
+                  <div className="story-body">
+                    <span className="story-after-tag">What Changed</span>
+                    <p className="story-after">{renderHighlights(s.after)}</p>
+                  </div>
+                )}
               </article>
             );
           })}
