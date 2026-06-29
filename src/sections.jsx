@@ -1135,12 +1135,12 @@ function Voices() {
                   <span className="story-media-tag">Their Story</span>
                 </button>
                 <div className="story-body">
-                  {s.after && <span className="story-after-tag">What Changed</span>}
-                  {s.after && <p className="story-after">{renderHighlights(s.after)}</p>}
                   <div className={`story-who ${s.after ? "" : "story-who--bare"}`}>
                     <span className="story-name">{s.name}</span>
                     <span className="story-meta">{[s.age, s.profession].filter(Boolean).join(" · ")}</span>
                   </div>
+                  {s.after && <span className="story-after-tag">What Changed</span>}
+                  {s.after && <p className="story-after">{renderHighlights(s.after)}</p>}
                 </div>
               </article>
             );

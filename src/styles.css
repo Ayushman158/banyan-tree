@@ -1360,11 +1360,11 @@ section.spread { position: relative; padding: 18vh max(7vw, calc((100% - 1360px)
 }
 .story-who {
   display: flex; flex-direction: column; gap: 4px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
 }
 .story-highlight { color: var(--gold-deep); font-weight: 600; font-style: normal; }
-.story-who--bare { border-top: none; padding-top: 0; }
+.story-who--bare { border-bottom: none; padding-bottom: 0; }
 .story-name { font-family: var(--sans); font-weight: 600; font-size: 14px; color: var(--ink); }
 .story-meta { font-family: var(--mono); font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--ink-soft); }
 
