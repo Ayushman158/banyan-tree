@@ -38,6 +38,21 @@ Then just **save**. That's it.
 
 ---
 
+## Highlighting key words
+
+To make important words stand out (**bold + gold**) in the "What Changed"
+paragraph, wrap them in **double asterisks** in the `after_text` cell:
+
+```
+In just 3 months, Mansi healed persistent **acne and hives** after multiple
+failed dermatologist treatments and achieved significant **fat loss** — without
+any medications or serums.
+```
+
+→ "acne and hives" and "fat loss" appear bold and gold on the site.
+
+---
+
 ## Good to know
 
 - Changes show on the site in **1–2 minutes** (refresh the page if needed).
