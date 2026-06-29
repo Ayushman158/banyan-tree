@@ -669,8 +669,9 @@ function App() {
           <span className="soil-story__path soil-story__path--three" />
         </div>
 
-        {/* Underground: bottom-right healing pathways */}
-        <div className={`underground-cta ${(phase === 'roots' || phase === 'detail') && rootsReady && !scrolledPastHero ? 'is-visible' : ''}`}>
+        {/* Underground: bottom-right healing pathways. Hidden while a root-cause
+            detail panel is open so it doesn't overlap that panel's CTA. */}
+        <div className={`underground-cta ${phase === 'roots' && rootsReady && !scrolledPastHero ? 'is-visible' : ''}`}>
           <button className="btn btn--ghost underground-cta__btn" onClick={() => goToSection('philosophy')} data-hoverable="true">
             The Why
             <span className="underground-cta__arrow">→</span>

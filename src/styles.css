@@ -3781,7 +3781,9 @@ footer::before {
     scrollbar-width: none;
     gap: 16px;
     margin: 0 -7vw;
-    padding: 4px 7vw 14px;
+    /* Top padding leaves room for the "Most chosen" badge (top:-12px) so the
+       scroll container doesn't clip it */
+    padding: 22px 7vw 14px;
   }
   .pricing-grid::-webkit-scrollbar { display: none; }
   .pricing-grid .parallax-item {
@@ -3789,7 +3791,12 @@ footer::before {
     max-width: 85%;
     scroll-snap-align: center;
   }
-  .plan-card { padding: 28px 20px 22px; gap: 20px; height: 100%; }
+  /* No sticky hover-lift on touch (it lingers after a tap and looks glitchy) */
+  .plan-card, .plan-card:hover,
+  .plan-card--featured, .plan-card--featured:hover {
+    transform: none !important;
+  }
+  .plan-card { padding: 28px 20px 22px; gap: 20px; height: 100%; -webkit-tap-highlight-color: transparent; }
   .plan-price-block { padding: 14px 0; }
   .plan-features li { padding: 7px 0; font-size: 12.5px; }
   .plan-bottom { gap: 12px; }
