@@ -1314,7 +1314,6 @@ section.spread { position: relative; padding: 18vh max(7vw, calc((100% - 1360px)
   color: var(--paper);
   background: rgba(200, 169, 107, 0.22);
   border: 1.5px solid rgba(242, 231, 204, 0.8);
-  backdrop-filter: blur(2px);
   padding-left: 3px;
   transition: transform 0.4s var(--ease), background 0.4s var(--ease);
 }
