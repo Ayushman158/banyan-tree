@@ -1296,7 +1296,14 @@ section.spread { position: relative; padding: 18vh max(7vw, calc((100% - 1360px)
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(28, 42, 33, 0.15) 0%, rgba(28, 42, 33, 0.55) 100%);
+  /* Darker top (behind the name) and bottom, lighter through the middle. */
+  background: linear-gradient(
+    180deg,
+    rgba(28, 42, 33, 0.62) 0%,
+    rgba(28, 42, 33, 0.18) 32%,
+    rgba(28, 42, 33, 0.2) 62%,
+    rgba(28, 42, 33, 0.55) 100%
+  );
 }
 .story-play {
   position: relative;
@@ -1328,7 +1335,7 @@ section.spread { position: relative; padding: 18vh max(7vw, calc((100% - 1360px)
   position: absolute; z-index: 1;
   top: 16px; left: 18px; right: 18px;
   display: flex; flex-direction: column; gap: 3px;
-  text-shadow: 0 1px 10px rgba(28, 42, 33, 0.65);
+  text-shadow: 0 1px 12px rgba(28, 42, 33, 0.85);
 }
 .story-media-who .story-name { color: var(--paper); font-size: 16px; }
 .story-media-who .story-meta { color: rgba(242, 231, 204, 0.78); }
