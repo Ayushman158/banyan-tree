@@ -941,6 +941,7 @@ function VideoLightbox({ story, onClose }) {
 
 function Voices() {
   const ref = useReveal();
+  const scrollerRef = _useRef(null);
   const [activeVideo, setActiveVideo] = _useState(null);
   const [stories, setStories] = _useState(FALLBACK_STORIES);
 
@@ -958,7 +959,81 @@ function Voices() {
     return () => { cancelled = true; };
   }, []);
 
-  // Marquee needs enough cards to fill the track twice; pad short lists.
+  /* Auto-advance the row, but on a *real* scroll container so the user can also
+     swipe, wheel, or drag through it. Auto-scroll pauses while they interact and
+     resumes after a short idle. The content is duplicated, so we wrap scrollLeft
+     at the half-point for a seamless infinite loop in either direction. */
+  _useEffect(() => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let raf, resumeTimer, paused = reduce;
+    const SPEED = 0.5; // px per frame (~30px/s at 60fps)
+
+    const pause = () => { paused = true; };
+    const scheduleResume = () => {
+      clearTimeout(resumeTimer);
+      resumeTimer = setTimeout(() => { if (!reduce) paused = false; }, 1600);
+    };
+
+    const tick = () => {
+      const half = el.scrollWidth / 2;
+      if (half > 0) {
+        if (!paused) el.scrollLeft += SPEED;
+        // Normalize for a seamless loop (covers auto + manual scrolling)
+        if (el.scrollLeft >= half) el.scrollLeft -= half;
+        else if (el.scrollLeft < 0) el.scrollLeft += half;
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+
+    const onEnter = () => pause();
+    const onLeave = () => scheduleResume();
+    const onUserScroll = () => { pause(); scheduleResume(); };
+    el.addEventListener("mouseenter", onEnter);
+    el.addEventListener("mouseleave", onLeave);
+    el.addEventListener("wheel", onUserScroll, { passive: true });
+    el.addEventListener("touchstart", pause, { passive: true });
+    el.addEventListener("touchend", scheduleResume, { passive: true });
+
+    // Drag-to-scroll for mouse (the scrollbar is hidden)
+    let down = false, startX = 0, startScroll = 0, moved = false;
+    const onDown = (e) => {
+      down = true; moved = false; startX = e.clientX; startScroll = el.scrollLeft; pause();
+    };
+    const onMove = (e) => {
+      if (!down) return;
+      const dx = e.clientX - startX;
+      if (Math.abs(dx) > 3) { moved = true; el.classList.add("is-dragging"); }
+      el.scrollLeft = startScroll - dx;
+    };
+    const onUp = () => {
+      if (!down) return;
+      down = false; el.classList.remove("is-dragging"); scheduleResume();
+    };
+    el.addEventListener("pointerdown", onDown);
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+    // Don't let a drag turn into a card click
+    const onClickCapture = (e) => { if (moved) { e.stopPropagation(); e.preventDefault(); moved = false; } };
+    el.addEventListener("click", onClickCapture, true);
+
+    return () => {
+      cancelAnimationFrame(raf); clearTimeout(resumeTimer);
+      el.removeEventListener("mouseenter", onEnter);
+      el.removeEventListener("mouseleave", onLeave);
+      el.removeEventListener("wheel", onUserScroll);
+      el.removeEventListener("touchstart", pause);
+      el.removeEventListener("touchend", scheduleResume);
+      el.removeEventListener("pointerdown", onDown);
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+      el.removeEventListener("click", onClickCapture, true);
+    };
+  }, [stories]);
+
+  // Need enough cards to fill the row twice; pad short lists.
   const base = stories.length ? stories : FALLBACK_STORIES;
   const loop = base.length < 3 ? [...base, ...base, ...base, ...base] : [...base, ...base];
 
@@ -975,8 +1050,9 @@ function Voices() {
         </p>
       </div>
 
-      {/* Duplicate the list so the CSS marquee loops seamlessly at -50%. */}
-      <div className="story-marquee reveal delay-1">
+      {/* Real scroll container: auto-advances, but the user can swipe/drag/wheel.
+          Content is duplicated so scrollLeft can wrap for a seamless loop. */}
+      <div className="story-marquee reveal delay-1" ref={scrollerRef}>
         <div className="story-track">
           {loop.map((s, i) => {
             const playable = Boolean(s.youtubeId);

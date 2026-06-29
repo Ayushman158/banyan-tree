@@ -1220,30 +1220,27 @@ section.spread { position: relative; padding: 18vh max(7vw, calc((100% - 1360px)
 .method-step p { font-size: 14.5px; line-height: 1.7; color: var(--ink-soft); }
 
 /* ── Voices — client video success stories ───────────────────────────────── */
+/* Real horizontal scroll container: JS auto-advances it, but the user can also
+   swipe / wheel / drag. Scrollbar hidden; edges faded so the loop seam is soft. */
 .story-marquee {
   margin-top: 64px;
-  overflow: hidden;
-  /* Fade the edges so the loop seam never shows as a hard cut */
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  cursor: grab;
   mask-image: linear-gradient(to right, transparent 0, #000 56px, #000 calc(100% - 56px), transparent 100%);
   -webkit-mask-image: linear-gradient(to right, transparent 0, #000 56px, #000 calc(100% - 56px), transparent 100%);
 }
-/* Continuously translating row; content is duplicated so -50% loops seamlessly.
-   Trailing padding-right matches the gap so the half-point lands on a card edge. */
+.story-marquee::-webkit-scrollbar { display: none; }
+.story-marquee.is-dragging { cursor: grabbing; }
+.story-marquee.is-dragging .story-media { cursor: grabbing; }
 .story-track {
   display: flex;
   gap: 32px;
   padding: 6px 32px 6px 0;
   width: max-content;
-  animation: storyMarquee 48s linear infinite;
-}
-.story-marquee:hover .story-track,
-.story-track:focus-within { animation-play-state: paused; }
-@keyframes storyMarquee {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .story-track { animation: none; }
+  user-select: none;
 }
 .story-card {
   flex: 0 0 clamp(300px, 30vw, 360px);
@@ -3802,7 +3799,7 @@ footer::before {
 
   .voices-header { grid-template-columns: 1fr; gap: 16px; margin-bottom: 36px; }
   .story-marquee { margin-top: 40px; }
-  .story-track { gap: 16px; padding-right: 16px; animation-duration: 36s; }
+  .story-track { gap: 16px; padding-right: 16px; }
   .story-card { flex-basis: 78vw; }
   .story-body { padding: 22px 20px 24px; }
 
