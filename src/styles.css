@@ -4474,6 +4474,13 @@ section.spread.method-process {
     transform-box: view-box;
   }
 }
+/* Touch devices janked with 10 continuously-animating SVG icons running at
+   once, and have no hover to reveal motion anyway — so render them static and
+   smooth there. Desktop keeps the ambient motion. */
+@media (hover: none), (pointer: coarse) {
+  .method-node__icon .scene,
+  .method-node__icon .scene * { animation: none !important; }
+}
 @keyframes sceneFloat {
   0%, 100% { transform: translate(0, 0); }
   50%      { transform: translate(5px, -4px); }
