@@ -959,16 +959,32 @@ function Voices() {
     return () => { cancelled = true; };
   }, []);
 
-  /* Auto-advance the row, but on a *real* scroll container so the user can also
-     swipe, wheel, or drag through it. Auto-scroll pauses while they interact and
-     resumes after a short idle. The content is duplicated, so we wrap scrollLeft
-     at the half-point for a seamless infinite loop in either direction. */
+  /* Auto-advance the row using a GPU-composited transform (smooth on mobile),
+     and drive manual drag/swipe through the same transform so everything stays
+     on the compositor — no per-frame scrollLeft (which janks on phones). Content
+     is duplicated, so the offset wraps at the half-point for a seamless loop. */
   _useEffect(() => {
     const el = scrollerRef.current;
-    if (!el) return;
+    const track = el && el.firstElementChild;
+    if (!el || !track) return;
     const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let raf, resumeTimer, paused = reduce;
     const SPEED = 0.5; // px per frame (~30px/s at 60fps)
+
+    let offset = 0;   // translateX in px (0 → -half, then wraps)
+    let half = 0;     // one full copy of the list
+    const measure = () => { half = track.scrollWidth / 2; };
+    measure();
+    const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(measure) : null;
+    if (ro) ro.observe(track);
+    window.addEventListener("resize", measure);
+
+    const wrap = () => {
+      if (half <= 0) return;
+      while (offset <= -half) offset += half;
+      while (offset > 0) offset -= half;
+    };
+    const apply = () => { track.style.transform = `translate3d(${offset}px,0,0)`; };
 
     const pause = () => { paused = true; };
     const scheduleResume = () => {
@@ -976,29 +992,12 @@ function Voices() {
       resumeTimer = setTimeout(() => { if (!reduce) paused = false; }, 1600);
     };
 
-    // Track position in a float: scrollLeft is integer-rounded in many browsers,
-    // so a 0.5px/frame increment read back as scrollLeft would never advance.
-    let pos = el.scrollLeft || 0;
-    // Cache the wrap point — reading scrollWidth every frame forces a layout
-    // recalculation, which is the main source of jank on mobile.
-    let half = 0;
-    const measure = () => { half = el.scrollWidth / 2; };
-    measure();
-    const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(measure) : null;
-    if (ro && el.firstElementChild) ro.observe(el.firstElementChild);
-    window.addEventListener("resize", measure);
-
     const tick = () => {
       if (half <= 0) measure();
-      if (half > 0) {
-        if (paused) {
-          pos = el.scrollLeft; // follow the user while they scroll
-        } else {
-          pos += SPEED;
-          if (pos >= half) pos -= half;       // seamless wrap forward
-          else if (pos < 0) pos += half;      // …and backward
-          el.scrollLeft = pos;
-        }
+      if (half > 0 && !paused) {
+        offset -= SPEED;
+        wrap();
+        apply();
       }
       raf = requestAnimationFrame(tick);
     };
@@ -1006,23 +1005,29 @@ function Voices() {
 
     const onEnter = () => pause();
     const onLeave = () => scheduleResume();
-    const onUserScroll = () => { pause(); scheduleResume(); };
     el.addEventListener("mouseenter", onEnter);
     el.addEventListener("mouseleave", onLeave);
-    el.addEventListener("wheel", onUserScroll, { passive: true });
-    el.addEventListener("touchstart", pause, { passive: true });
-    el.addEventListener("touchend", scheduleResume, { passive: true });
 
-    // Drag-to-scroll for mouse (the scrollbar is hidden)
-    let down = false, startX = 0, startScroll = 0, moved = false;
+    // Horizontal wheel / trackpad nudges the row too
+    const onWheel = (e) => {
+      const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      if (!d) return;
+      pause(); scheduleResume();
+      offset -= d; wrap(); apply();
+    };
+    el.addEventListener("wheel", onWheel, { passive: true });
+
+    // Unified pointer drag (mouse + touch). touch-action:pan-y lets vertical
+    // page scroll pass through while we own horizontal drags.
+    let down = false, startX = 0, startOffset = 0, moved = false;
     const onDown = (e) => {
-      down = true; moved = false; startX = e.clientX; startScroll = el.scrollLeft; pause();
+      down = true; moved = false; startX = e.clientX; startOffset = offset; pause();
     };
     const onMove = (e) => {
       if (!down) return;
       const dx = e.clientX - startX;
       if (Math.abs(dx) > 3) { moved = true; el.classList.add("is-dragging"); }
-      el.scrollLeft = startScroll - dx;
+      offset = startOffset + dx; wrap(); apply();
     };
     const onUp = () => {
       if (!down) return;
@@ -1041,9 +1046,7 @@ function Voices() {
       window.removeEventListener("resize", measure);
       el.removeEventListener("mouseenter", onEnter);
       el.removeEventListener("mouseleave", onLeave);
-      el.removeEventListener("wheel", onUserScroll);
-      el.removeEventListener("touchstart", pause);
-      el.removeEventListener("touchend", scheduleResume);
+      el.removeEventListener("wheel", onWheel);
       el.removeEventListener("pointerdown", onDown);
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("pointerup", onUp);

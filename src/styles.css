@@ -1224,23 +1224,22 @@ section.spread { position: relative; padding: 18vh max(7vw, calc((100% - 1360px)
    swipe / wheel / drag. Scrollbar hidden; edges faded so the loop seam is soft. */
 .story-marquee {
   margin-top: 64px;
-  overflow-x: auto;
-  overflow-y: hidden;
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
+  overflow: hidden;
   cursor: grab;
   mask-image: linear-gradient(to right, transparent 0, #000 56px, #000 calc(100% - 56px), transparent 100%);
   -webkit-mask-image: linear-gradient(to right, transparent 0, #000 56px, #000 calc(100% - 56px), transparent 100%);
 }
-.story-marquee::-webkit-scrollbar { display: none; }
 .story-marquee.is-dragging { cursor: grabbing; }
 .story-marquee.is-dragging .story-media { cursor: grabbing; }
+/* GPU-composited transform marquee; pan-y lets vertical page scroll pass through */
 .story-track {
   display: flex;
   gap: 32px;
   padding: 6px 32px 6px 0;
   width: max-content;
   user-select: none;
+  touch-action: pan-y;
+  will-change: transform;
 }
 .story-card {
   flex: 0 0 clamp(300px, 30vw, 360px);
