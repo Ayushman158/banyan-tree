@@ -862,6 +862,17 @@ function youtubeId(url = "") {
 const youtubeThumb = (id) => `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
 const youtubeEmbed = (id) => `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&playsinline=1&modestbranding=1`;
 
+/* Render the "What Changed" text, turning **double-asterisk** phrases into
+   highlighted (bold, brand-gold) spans. Splits into plain text + emphasis —
+   no HTML injection, so it's safe for client-authored sheet content. */
+function renderHighlights(text = "") {
+  return String(text).split(/(\*\*[^*]+\*\*)/g).map((part, i) =>
+    part.startsWith("**") && part.endsWith("**")
+      ? <strong key={i} className="story-highlight">{part.slice(2, -2)}</strong>
+      : part
+  );
+}
+
 // Minimal RFC-4180 CSV parser (handles quoted fields, embedded commas/newlines)
 function parseCSV(text) {
   const rows = [];
@@ -1110,7 +1121,7 @@ function Voices() {
                 </button>
                 <div className="story-body">
                   {s.after && <span className="story-after-tag">What Changed</span>}
-                  {s.after && <p className="story-after">{s.after}</p>}
+                  {s.after && <p className="story-after">{renderHighlights(s.after)}</p>}
                   <div className={`story-who ${s.after ? "" : "story-who--bare"}`}>
                     <span className="story-name">{s.name}</span>
                     <span className="story-meta">{[s.age, s.profession].filter(Boolean).join(" · ")}</span>
