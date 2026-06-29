@@ -979,8 +979,17 @@ function Voices() {
     // Track position in a float: scrollLeft is integer-rounded in many browsers,
     // so a 0.5px/frame increment read back as scrollLeft would never advance.
     let pos = el.scrollLeft || 0;
+    // Cache the wrap point — reading scrollWidth every frame forces a layout
+    // recalculation, which is the main source of jank on mobile.
+    let half = 0;
+    const measure = () => { half = el.scrollWidth / 2; };
+    measure();
+    const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(measure) : null;
+    if (ro && el.firstElementChild) ro.observe(el.firstElementChild);
+    window.addEventListener("resize", measure);
+
     const tick = () => {
-      const half = el.scrollWidth / 2;
+      if (half <= 0) measure();
       if (half > 0) {
         if (paused) {
           pos = el.scrollLeft; // follow the user while they scroll
@@ -1028,6 +1037,8 @@ function Voices() {
 
     return () => {
       cancelAnimationFrame(raf); clearTimeout(resumeTimer);
+      if (ro) ro.disconnect();
+      window.removeEventListener("resize", measure);
       el.removeEventListener("mouseenter", onEnter);
       el.removeEventListener("mouseleave", onLeave);
       el.removeEventListener("wheel", onUserScroll);

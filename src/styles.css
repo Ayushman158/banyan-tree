@@ -3798,7 +3798,8 @@ footer::before {
   .plan-cta .btn-icon-right { display: none; }
 
   .voices-header { grid-template-columns: 1fr; gap: 16px; margin-bottom: 36px; }
-  .story-marquee { margin-top: 40px; }
+  /* Drop the edge mask on mobile — it repaints the fade every scroll frame */
+  .story-marquee { margin-top: 40px; mask-image: none; -webkit-mask-image: none; }
   .story-track { gap: 16px; padding-right: 16px; }
   .story-card { flex-basis: 78vw; }
   .story-body { padding: 22px 20px 24px; }
