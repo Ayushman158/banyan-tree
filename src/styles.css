@@ -4474,13 +4474,13 @@ section.spread.method-process {
     transform-box: view-box;
   }
 }
-/* Touch devices janked with 10 continuously-animating SVG icons running at
-   once, and have no hover to reveal motion anyway — so render them static and
-   smooth there. Desktop keeps the ambient motion. */
-@media (hover: none), (pointer: coarse) {
-  .method-node__icon .scene,
-  .method-node__icon .scene * { animation: none !important; }
-}
+/* The icon ambient motion runs ONLY while the method section is on screen.
+   Ten always-on SVG animations janked on mobile; pausing them when the section
+   is scrolled away keeps the motion but eliminates the wasted off-screen work. */
+.method-node__icon .scene,
+.method-node__icon .scene * { animation-play-state: paused; }
+.method-process.is-animating .method-node__icon .scene,
+.method-process.is-animating .method-node__icon .scene * { animation-play-state: running; }
 @keyframes sceneFloat {
   0%, 100% { transform: translate(0, 0); }
   50%      { transform: translate(5px, -4px); }

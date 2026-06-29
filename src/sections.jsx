@@ -524,6 +524,19 @@ function StepScene({ kind }) {
 function Methodology() {
   const ref = useReveal();
   const [active, setActive] = _useState(null);
+
+  // Run the icon ambient motion only while this section is on screen; pause it
+  // when scrolled away so 10 looping SVGs don't animate off-screen (mobile lag).
+  _useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (typeof IntersectionObserver === "undefined") { el.classList.add("is-animating"); return; }
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => el.classList.toggle("is-animating", e.isIntersecting));
+    }, { threshold: 0.05 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
   const fmSteps = [
     { Icon: Search,    anim: "lens",   label: "Root Cause Analysis",           desc: "Identify the upstream drivers behind your symptoms — not just what you feel, but why it's happening." },
     { Icon: Sprout,    anim: "sprout", label: "Fix Nutrient Deficiencies",     desc: "Restore the vitamins, minerals, amino acids, and cofactors your body needs to repair and function." },
