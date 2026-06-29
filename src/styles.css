@@ -1312,14 +1312,14 @@ section.spread { position: relative; padding: 18vh max(7vw, calc((100% - 1360px)
   display: grid; place-items: center;
   border-radius: 50%;
   color: var(--paper);
-  background: rgba(200, 169, 107, 0.22);
+  background: rgba(200, 169, 107, 0.1);
   border: 1.5px solid rgba(242, 231, 204, 0.8);
   padding-left: 3px;
   transition: transform 0.4s var(--ease), background 0.4s var(--ease);
 }
 .story-media.is-playable:hover .story-play {
   transform: scale(1.08);
-  background: rgba(200, 169, 107, 0.42);
+  background: rgba(200, 169, 107, 0.25);
 }
 .story-media.is-pending .story-play { opacity: 0.55; }
 .story-pending-label {
