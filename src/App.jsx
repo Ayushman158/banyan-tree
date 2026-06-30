@@ -106,10 +106,13 @@ function Cursor() {
       }
     };
     const tick = () => {
-      rx += (mx - rx) * 0.18;
-      ry += (my - ry) * 0.18;
-      dx += (mx - dx) * 0.5;
-      dy += (my - dy) * 0.5;
+      // Ring trails for character; tightened so it doesn't feel sluggish on a
+      // Windows mouse. Dot tracks the pointer 1:1 so clicking stays precise
+      // (the native cursor is hidden, so the dot is the real aiming point).
+      rx += (mx - rx) * 0.32;
+      ry += (my - ry) * 0.32;
+      dx = mx;
+      dy = my;
       if (ringRef.current) ringRef.current.style.transform =
         `translate(${rx}px, ${ry}px) translate(-50%, -50%)`;
       if (dotRef.current) dotRef.current.style.transform =
