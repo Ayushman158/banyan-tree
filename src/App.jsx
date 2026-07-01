@@ -559,6 +559,7 @@ function App() {
           onConditionClick={onConditionClick}
           onRootClick={onRootClick}
           onCrumbJump={onCrumbJump}
+          onContinue={() => goToSection('philosophy')}
         />
 
         {/* Mobile top vignette for text legibility (all phase header background) */}

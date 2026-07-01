@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Icon } from '@iconify/react';
 import { BanyanData } from './data.js';
-import { WHATSAPP_URL } from './sections.jsx';
 import { playHoverSound } from './sound.js';
 import gsap from 'gsap';
 import canopyImg from './assets/Final hero.jpg';
@@ -261,7 +260,8 @@ export default function TreeScene3D({
   onCategoryClick,
   onConditionClick,
   onRootClick,
-  onCrumbJump
+  onCrumbJump,
+  onContinue
 }) {
   const [hoverCategory, setHoverCategory] = useState(null);
   const [hoverCondition, setHoverCondition] = useState(null);
@@ -1047,9 +1047,15 @@ export default function TreeScene3D({
                   ))}
                 </dl>
                 <div className="panel-actions">
-                  <a className="btn btn--primary" href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" data-hoverable="true">
-                    Get in touch
-                  </a>
+                  <button
+                    type="button"
+                    className="btn btn--primary"
+                    onClick={() => onContinue && onContinue()}
+                    data-hoverable="true"
+                  >
+                    The Why
+                    <span className="underground-cta__arrow">→</span>
+                  </button>
                 </div>
               </div>
             </motion.div>
